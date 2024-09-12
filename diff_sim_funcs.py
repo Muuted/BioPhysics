@@ -29,19 +29,23 @@ def RungeKutta(C,x,y,dx,dy,h):
 
     #first part Runge Kutta
     dx,dy = 2*dx, 2*dy
-    dcdxdx = (C[y][x+dx] - 2*C[y][x] + C[y][x-dx])/(dx**2)
-
-    dcdydy = (C[y+dy][x] - 2*C[y][x] + C[y-dy][x])/(dy**2)
-   
-    k1x,ky1 = dcdxdx, dcdydy 
-
-    # 2nd part Runge kutta
-    dx, dy = dx/2 , dy/2
+    
     dcdxdx = (C[y][x+dx] - 2*C[y][x] + C[y][x-dy] )/(dx**2)
 
     dcdydy = (C[y+dy][x] - 2*C[y][x] + C[y-dx][x])/(dy**2)
 
-    k2 = dcdxdx + dcdydy 
+   
+    Cxy = C[y][x] + ( dx*dcdxdx/2 + dy*dcdydy/2)/2
+    
+    #k1x,ky1 = dcdxdx, dcdydy 
+
+    # 2nd part Runge kutta
+    dx, dy = dx/2 , dy/2
+    dcdxdx = (C[y][x+dx] - 2*Cxy + C[y][x-dy] )/(dx**2)
+
+    dcdydy = (C[y+dy][x] - 2*Cxy + C[y-dx][x])/(dy**2)
+
+    
 
 
     
