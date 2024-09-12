@@ -16,9 +16,9 @@ def boundary_conditions(x,y,Xsize,Ysize,holesize,open):
     nx, ny = x + 1, y + 1
     bx,by = x - 1, y - 1
 
-    if bx < 0 or bx == Ysize:
+    if bx < 0 or bx == Ysize+1:
         bx = x
-    if nx == Ysize or nx == Xsize:
+    if nx == Ysize+1 or nx == Xsize:
         nx = x
 
     if by < 0:
@@ -29,8 +29,10 @@ def boundary_conditions(x,y,Xsize,Ysize,holesize,open):
     if open == True:
         if x == Ysize+1 and  by <= (Ysize - holesize)/2 :
             by = y
+            nx = x + 1
         if x == Ysize+1 and  ny >= (Ysize + holesize)/2 :
             ny = y
+            nx = x + 1
 
     return nx,x,bx , ny,y,by
 
