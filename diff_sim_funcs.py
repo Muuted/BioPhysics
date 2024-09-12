@@ -18,21 +18,31 @@ def boundary_conditions(x,y,Xsize,Ysize,holesize,open):
 
     if bx < 0 or bx == Ysize+1:
         bx = x
+        #print(f"here x={x}")
     if nx == Ysize+1 or nx == Xsize:
         nx = x
+        #print(f"here x={x}")
 
     if by < 0:
         by = y
     if ny == Ysize:
         ny = y
-
+    
     if open == True:
         if x == Ysize+1 and  by <= (Ysize - holesize)/2 :
             by = y
-            nx = x + 1
         if x == Ysize+1 and  ny >= (Ysize + holesize)/2 :
             ny = y
+
+        if (Ysize-holesize)/2 < y < (Ysize+holesize)/2:
+            bx = x - 1
             nx = x + 1
+            
+            if bx < 0:
+                bx = x
+            if nx == Xsize:
+                nx = x
+                
 
     return nx,x,bx , ny,y,by
 
