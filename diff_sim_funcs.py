@@ -12,13 +12,34 @@ def check_volume(grid)-> float:
     
     return tot_conc
 
+def boundary_conditions(x,y,Xsize,Ysize,holesize,open):
+    nx, ny = x + 1, y + 1
+    bx,by = x - 1, y - 1
 
+    if bx < 0 or bx == Ysize:
+        bx = x
+    if nx == Ysize or nx == Xsize:
+        nx = x
 
-def dCondt(C,x,y,dx,dy,h) -> float:
+    if by < 0:
+        by = y
+    if ny == Ysize:
+        ny = y
 
-    dcdxdx = (C[y][x + dx] - 2*C[y][x] + C[y][x-dx])/(dx**2)
+    if open == True:
+        if x == Ysize+1 and  by <= (Ysize - holesize)/2 :
+            by = y
+        if x == Ysize+1 and  ny >= (Ysize + holesize)/2 :
+            ny = y
 
-    dcdydy = (C[y + dx][x] - 2*C[y][x] + C[y-dx][x])/(dy**2)
+    return nx,x,bx , ny,y,by
+
+def dCondt(C,pos,dx,dy,h) -> float:
+
+    nx,x,bx,ny,y,by = pos
+    dcdxdx = (C[y][nx] - 2*C[y][x] + C[y][bx])/(dx**2)
+
+    dcdydy = (C[ny][x] - 2*C[y][x] + C[by][x])/(dy**2)
    
     dcdt = dcdxdx + dcdydy 
     
