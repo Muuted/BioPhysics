@@ -70,7 +70,7 @@ def test():
         
         for x in range(1,N-1):
             for y in range(1,N-1):
-                change_val = dt*D*dCdt(C=test_grid[t1]
+                change_val = dt*D*dCondt(C=test_grid[t1]
                                     ,x=x,y=y,dx=dx,dy=dy
                                     )
                 test_grid[t2][y][x] = test_grid[t1][y][x] + change_val
