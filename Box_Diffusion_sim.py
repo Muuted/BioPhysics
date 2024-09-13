@@ -1,7 +1,7 @@
 import numpy as np
 import matplotlib.pyplot as plt
 import scipy as sp
-from diff_sim_funcs import dCondt, check_volume, boundary_conditions
+from Box_diff_sim_funcs import dCondt, check_volume, boundary_conditions
 
 
 
@@ -38,7 +38,7 @@ for x in range(0,Xsize):
 
 plt.matshow(Grid_diff[0])
 #plt.grid()
-plt.show()
+#plt.show()
 
 conc_list.append(
     #check_volume(grid=Grid_diff[0])

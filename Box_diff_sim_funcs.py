@@ -18,10 +18,9 @@ def boundary_conditions(x,y,Xsize,Ysize,holesize,open):
 
     if bx < 0 or bx == Ysize+1:
         bx = x
-        #print(f"here x={x}")
+
     if nx == Ysize+1 or nx == Xsize:
         nx = x
-        #print(f"here x={x}")
 
     if by < 0:
         by = y
@@ -42,7 +41,6 @@ def boundary_conditions(x,y,Xsize,Ysize,holesize,open):
                 bx = x
             if nx == Xsize:
                 nx = x
-                
 
     return nx,x,bx , ny,y,by
 
@@ -56,30 +54,6 @@ def dCondt(C,pos,dx,dy,h) -> float:
     dcdt = dcdxdx + dcdydy 
     
     return dcdt
-
-
-def RungeKutta(C,x,y,dx,dy,h):
-
-    #first part Runge Kutta
-    dx,dy = 2*dx, 2*dy
-    
-    dcdxdx = (C[y][x+dx] - 2*C[y][x] + C[y][x-dy] )/(dx**2)
-
-    dcdydy = (C[y+dy][x] - 2*C[y][x] + C[y-dx][x])/(dy**2)
-
-   
-    Cxy = C[y][x] + ( dx*dcdxdx/2 + dy*dcdydy/2)/2
-    
-    #k1x,ky1 = dcdxdx, dcdydy 
-
-    # 2nd part Runge kutta
-    dx, dy = dx/2 , dy/2
-    dcdxdx = (C[y][x+dx] - 2*Cxy + C[y][x-dy] )/(dx**2)
-
-    dcdydy = (C[y+dy][x] - 2*Cxy + C[y-dx][x])/(dy**2)
-
-    
-
 
     
 def test():
