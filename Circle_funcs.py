@@ -1,9 +1,57 @@
 import numpy as np
 import matplotlib.pyplot as plt
-import scipy as sp
+
+
+def Ring_sum(boxsize:int, offsets
+             #,xstart:int,ystart:int
+             ,Radius:int,dR:int
+             ):
+    xstart = offsets[0] + Radius
+    xend = xstart - 2*Radius
+    ystart = offsets[1] - Radius
+    yend = offsets[1] + Radius
+    for x in range(xstart,xend,-1):
+        for y in range(ystart,yend):
+            pass
+
+    
+
+def stabil_condi(dt,dx,dy,D):
+    # Von Neumann stability condition
+    const1 = (1/dx)**2 + (1/dy)**2
+    const2 = 1/(2*D*const1)
+
+    for _ in range(0,20):
+        if dt > const2:
+            dt *= 0.1
+        
+    return dt
+
+
+def open_close_membrane(Grid
+                        ,Radius:int,dRadius:int
+                        ,offsets,holesize:int
+                        ,open_val:int ,wall_val:int
+                        ,open_wall:bool
+                        ):
+    
+    boxlen = np.shape(Grid)[0]
+    x0, y0 = offsets
+    xlowlim, xuplim  = int( x0 + Radius - holesize), int( x0 + Radius + holesize)
+    ylowlim, yuplim  = int( y0 - holesize)  ,int( y0 + holesize)
+
+    for x in range(xlowlim ,xuplim):
+        for y in range(ylowlim ,yuplim):
+            if open_wall == True:
+                if Grid[y][x] == wall_val:
+                    Grid[y][x] = open_val
+
+            if open_wall == False:
+                if Grid[y][x] == open_val:
+                    Grid[y][x] = wall_val
+    return Grid
 
 def replenish(Grid,boxsize:int,c_out):
-
     for x in range(boxsize):
         Grid[0][x] = c_out
         Grid[1][x] = c_out
@@ -21,16 +69,6 @@ def cicle_boundary(x:int,y:int,boxlen:int,ref_matrix,refval):
     nx, ny = x+1 , y+1
     bx, by = x-1 , y-1
 
-    #outer box boundary first
-    if bx < 0:
-        bx = x
-    if nx == boxlen:
-        nx = x
-    if by < 0:
-        by = y
-    if ny == boxlen:
-        ny = y
-
     # circle in the middle.
     if ref_matrix[y][nx] == refval:
         nx = x
@@ -44,28 +82,54 @@ def cicle_boundary(x:int,y:int,boxlen:int,ref_matrix,refval):
     return nx,x,bx , ny,y,by
 
 
-def init_circle(boxlen:int,time:int
-                , Radius:int ,dRadius:int
-                ,c_in:float, c_out:float
-                ,refval, center:int
-                ):
+def init_conc(ref_grid, time:int
+              ,c_in:float ,c_out:float
+              ,inside_val:int ,outside_val:int
+              ):
+    ref_shape = np.shape(ref_grid)[0] # assuming NxN box shape.
+    Grid = np.zeros(shape=(time,ref_shape,ref_shape))
+    
+    for x in range(ref_shape):
+        for y in range(ref_shape):
 
-    Grit = np.zeros(shape=(time,boxlen,boxlen))
+            if ref_grid[y][x] == inside_val:
+                Grid[0][y][x] = c_in
+            
+            if ref_grid[y][x] == outside_val:
+                Grid[0][y][x] = c_out
+
+            #if x == 0 or y == 0 or x == ref_shape-1 or y == ref_shape-1:
+             #   Grid[0][y][x] = c_out
+    return Grid
+
+def init_ref_circle(boxlen:int
+                ,Radius:int ,dRadius:int
+                ,offsets:list
+                ,inside_val:int,outside_val:int,wall_val:int
+                ):
+    
+    x0,y0 = offsets
     ref_Grit = np.zeros(shape=(boxlen,boxlen))
     
     for y in range(boxlen):
         for x in range(boxlen):
-            radii = np.sqrt(    (x-center)**2 + (y-center)**2   )
-
-            if radii < Radius :
-                Grit[0][y][x] = c_in
-            if radii > Radius + dRadius:
-                Grit[0][y][x] = c_out
+            radii = np.sqrt(    (x-x0)**2 + (y-y0)**2   )
 
             if Radius <= radii <= Radius + dRadius:
-                ref_Grit[y][x] = refval
+                ref_Grit[y][x] = wall_val
+            
+            if radii < Radius:
+                ref_Grit[y][x] = inside_val
+            
+            if Radius + dRadius < radii:
+                ref_Grit[y][x] = outside_val
+            
+            if x == 0 or y == 0 or x ==boxlen-1 or y == boxlen-1:
+                # this one comes last, as to override the value from the
+                # if statement -> Radius + dRadius < radii:
+                ref_Grit[y][x] = wall_val 
 
-    return Grit, ref_Grit
+    return ref_Grit
 
 def circle_dCondt(C,pos,dx,dy) -> float:
     nx,x,bx,ny,y,by = pos
@@ -80,56 +144,7 @@ def circle_dCondt(C,pos,dx,dy) -> float:
 
 
 
-def test_init_circle():
-    sidelen = 100
-    T_tot = 100
-    wall_val = 100
-    conc_list = []
-    R = sidelen*0.7/2
-    dR = 2
-    dx,dy = 1, 1
-    dt,D = 0.1, 0.5
-    center = int(sidelen/2)
-
-    Grid,ref_Grid = init_circle(boxlen=sidelen,time=T_tot
-                                ,R=(sidelen*0.6)/2,dR=2
-                                ,c_in=0,c_out=10
-                                ,refval=100,center=center
-                                )
-
-    Grid[0][center][center] = 1000
-
-    for t in np.arange(0,T_tot-1):
-        t1, t2 = t%2, (t+1)%2 # to change the matricies back and forth
-        for x in range(0,sidelen):
-            for y in range(0,sidelen):
-                radii = np.sqrt(
-                    (x-center)**2 + (y-center)**2
-                )
-
-                if ref_Grid[y][x] != wall_val:
-                    pos = cicle_boundary(x=x,y=y,boxlen=sidelen
-                                            ,ref_matrix=ref_Grid
-                                            ,refval=wall_val)
-
-                    dcdt = circle_dCondt(C=Grid[t],pos=pos,dx=dx,dy=dy)
-
-                    Grid[t+1][y][x] = Grid[t][y][x] + dt*D*dcdt
-                
-        if t%(int(T_tot*0.1)) == 0:
-            conc_list.append(
-                np.sum(Grid[t])
-                    )
-
-
-    plt.matshow(ref_Grid)
-    plt.matshow(Grid[T_tot-1])
-
-    plt.figure()
-    plt.plot(conc_list)
-    plt.show()
-
 
 if __name__ == "__main__":
-    #test_init_circle()
+    
     pass
