@@ -1,8 +1,9 @@
 import matplotlib.pyplot as plt
 import numpy as np
+import random
 from Circle_funcs import init_ref_circle    ,cicle_boundary ,circle_dCondt
 from Circle_funcs import init_conc  ,open_close_membrane    ,stabil_condi
-
+from Circle_funcs import Ring_sum, circle_dAfreedt, circle_dAbounddt,sum_annexin
 
 # Concentrations for Ca^2+ inside; outside cell
 c_out = 2e-3 #M Concentration outside of cell
@@ -11,7 +12,7 @@ conc_list = []
 conc_time_list = []
 
 # time and step size, and diffusion constant
-T_tot = 1000
+T_tot = 100
 len_size = 40
 dx, dy = 0.1,0.1
 D  = 0.1
@@ -20,16 +21,18 @@ c_pump = c_in
 
 # mechanisms change.
 open_hole = True
-close_time = 300
+close_time = T_tot*0.9
 
 # Anxexin constants.
-k1,k2 = 1,1
+k1,k2 = 0.1 ,0.1
 c_in_annexin = 1
+prob_free_ann = 0
+prob_bound_ann = 0
 
 #size of cell, hole in cell and the center's placement.
 holesize = 3
-R = len_size*0.5/2
-dR = 2
+R = int(len_size*0.5/2)
+dR = int(2)
 x0,y0 = int(len_size/2), int(len_size/2)
 wall_val = 100
 inside_val = 10
@@ -96,6 +99,26 @@ for t in np.arange(0,T_tot-1):
 
                 radii = np.sqrt( (x-x0)**2 + (y-y0)**2 )
 
+                if radii < R :
+                    if prob_free_ann < random.random():
+                        dAfreedt = circle_dAfreedt(
+                            A_free= Free_annexin[t]
+                            ,A_bound=Bound_annexin[t]
+                            ,C=Free_Ca[t]
+                            ,pos=pos ,dx=dx ,dy=dy ,k1=k1 ,k2=k2
+                        )
+                        Free_annexin[t+1][y][x] = Free_annexin[t][y][x] + dt*dAfreedt
+                    
+                    if prob_free_ann < random.random():
+                        dAbounddt = circle_dAbounddt(
+                            A_free= Free_annexin[t]
+                            ,A_bound=Bound_annexin[t]
+                            ,C=Free_Ca[t]
+                            ,pos=pos ,k1=k1 ,k2=k2
+                        )
+                        Bound_annexin[t+1][y][x] = Bound_annexin[t][y][x] + dt*dAbounddt
+
+
                 if radii < R and Free_Ca[t+1][y][x] > c_pump:
                     Free_Ca[t+1][y][x] += -c_pump # the pumping mechanism
                                                #, for only inside the cell
@@ -120,6 +143,52 @@ for t in np.arange(0,T_tot-1):
     #if t%(int(T_tot*0.1)) == 0:
     conc_list.append(np.sum(Free_Ca[t]))
     conc_time_list.append(t)
+
+
+data_list = Ring_sum(
+    ref_Grid=Free_Ca[T_tot-1]
+    ,offsets=[x0,y0]
+    ,Radius=R   ,dRadius=dR
+    ,num_of_rings=3
+)
+Ring_sums = data_list[0]
+Ring_radius = data_list[1]
+conc_removed_grid = data_list[2]
+visual_rings = data_list[3]
+
+sumfree,sumbound,sumtot = sum_annexin(
+    A_free=Free_annexin
+    ,A_bound=Bound_annexin
+)
+
+plt.figure()
+plt.plot(sumfree,'*',label="free")
+plt.plot(sumbound,label="bound")
+#plt.plot(sumtot,label="tot")
+plt.vlines(x=close_time,ymin=min(sumbound),ymax=max(sumbound),label=f"closure time={close_time}")
+#plt.xlim(0,60)
+plt.ylim(min(sumbound[:60]),max(sumbound[:60])*1.1)
+plt.legend()
+plt.show()
+exit()
+plt.figure()
+plt.plot(Ring_radius,Ring_sums)
+plt.title("Ring sums try, normalized by num of points")
+
+plt.matshow(conc_removed_grid)
+plt.title("concentration outside inner cell removed")
+
+plt.matshow(visual_rings)
+plt.title("Visualizing the rings")
+
+plt.matshow(Free_annexin[0])
+plt.title("free annexin start")
+plt.matshow(Free_annexin[T_tot-1])
+plt.title("free annexin end")
+
+plt.matshow(Bound_annexin[T_tot-1])
+plt.title("bound annexin")
+plt.show()
 
 
 

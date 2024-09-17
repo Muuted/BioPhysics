@@ -2,27 +2,104 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 
-def Ring_sum(boxsize:int, offsets
-             #,xstart:int,ystart:int
-             ,Radius:int,dR:int
-             ):
-    xstart = offsets[0] + Radius
-    xend = xstart - 2*Radius
-    ystart = offsets[1] - Radius
-    yend = offsets[1] + Radius
-    for x in range(xstart,xend,-1):
-        for y in range(ystart,yend):
-            pass
-
+def sum_annexin(A_free,A_bound):
+    sumAfree = []
+    sumAbound = []
+    sumtot = []
     
+    shape = np.shape(A_free) # shoulde be identical
+
+    for t in range(shape[0]):
+        sumfree = 0
+        sumbound = 0
+        totsum = 0
+        for x in range(shape[1]):
+            for y in range(shape[2]):
+                sumfree += A_free[t][y][x]
+                sumbound += A_bound[t][y][x]
+                totsum += sumfree + sumbound
+
+        sumAfree.append(sumfree)
+        sumAbound.append(sumbound)
+        sumtot.append(totsum)
+
+    return sumAfree, sumAbound, sumtot
+
+def circle_dAfreedt(A_free,A_bound,C,pos,dx,dy,k1,k2) -> float:
+    nx,x,bx,ny,y,by = pos
+
+    dA_freedxdx = (A_free[y][nx] - 2*A_free[y][x] + A_free[y][bx])/(dx**2)
+
+    dA_freedydy = (A_free[ny][x] - 2*A_free[y][x] + A_free[by][x])/(dy**2)
+   
+    a = C[y][x]
+    a = 1
+    dcdt = dA_freedxdx + dA_freedydy - k1*A_free[y][x]*a + k2*A_bound[y][x]
+    
+    return dcdt
+
+
+def circle_dAbounddt(A_free,A_bound,C,pos,k1,k2) -> float:
+    nx,x,bx,ny,y,by = pos
+    a = C[y][x]
+    a = 1
+    dAbounddt = k1*A_free[y][x]*a - k2*A_bound[y][x]
+    
+    return dAbounddt
+
+
+def Ring_sum(ref_Grid ,offsets:tuple 
+             ,Radius:int, dRadius:int
+             ,num_of_rings:int
+             )-> tuple:
+    x0,y0 = offsets[0],offsets[1]
+    Grid = np.copy(ref_Grid)
+    grid_shape = np.shape(ref_Grid)
+    Visual_Grid = np.zeros(shape=(grid_shape[0],grid_shape[1]))
+    xstart = x0 + Radius + 2*dRadius
+    xend = x0 - Radius - 2*dRadius
+    
+    Ring_radius = []
+    Ring_sums = []
+    
+    boxlen = np.shape(Grid)[0]
+    R_steps = int(2*Radius/num_of_rings) # gives 10 ringes for summing.
+
+    # first we want to prepare the matrix, so that
+    # the out side values arent summed.
+    for x in range(boxlen):
+        for y in range(boxlen):
+            r = np.sqrt( (x-x0)**2 + (y-y0)**2)
+            if r > Radius:
+                Grid[y][x] = 0
+
+    visual_sum = 0
+    for R in range(0,int(2*Radius + x0 ),R_steps):
+        sum = 0
+        visual_sum += 100
+        Z = 1 # normalizing constant
+        for x in range(xstart,xend,-1):#(xstart,xend,-1):
+            for y in range(boxlen):
+                if x < boxlen-1 and y < boxlen-1:
+                    r1 = np.sqrt((x-xstart)**2 + (y-y0)**2)
+                    r2 = np.sqrt((x-x0)**2 + (y-y0)**2)
+                    if R - R_steps < r1 <= R and r2 < Radius + dRadius/2:
+                        sum += Grid[y][x] 
+                        Z += 1
+                        Visual_Grid[y][x] = visual_sum
+        
+        Ring_sums.append(sum/Z)
+        Ring_radius.append(R)
+
+    return Ring_sums, Ring_radius, Grid,Visual_Grid
 
 def stabil_condi(dt,dx,dy,D):
     # Von Neumann stability condition
     const1 = (1/dx)**2 + (1/dy)**2
-    const2 = 1/(2*D*const1)
+    const2 = 2*D*const1
 
     for _ in range(0,20):
-        if dt > const2:
+        if dt > 1/const2:
             dt *= 0.1
         
     return dt

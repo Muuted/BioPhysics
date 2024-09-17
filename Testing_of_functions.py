@@ -50,5 +50,38 @@ def test_init_circle():
     plt.plot(conc_list)
     plt.show()
 
+
+
+def test_draw_rings():
+    len_size=40
+    Radius = int(len_size*0.5/2)
+    dR = 2
+    dRadius = int(2*Radius/10)
+    x0,y0 = int(len_size/2), int(len_size/2)
+
+    xstart = x0 + Radius + 2*dR
+    xend = x0 - Radius - 2*dR
+
+    Grid = np.zeros(shape=(len_size,len_size))
+    sum = 0
+    Z = 0
+    for R in range(0,int(2*Radius + x0 ),dRadius):
+        sum += 10    
+        Z += 1 # normalizing constant
+        for x in range(xstart,xend,-1):#(xstart,xend,-1):
+            for y in range(len_size):
+                if x < len_size-1 and y < len_size:# and x < xstart:
+                    r1 = np.sqrt((x-xstart)**2 + (y-y0)**2)
+                    r2 = np.sqrt((x-x0)**2 + (y-y0)**2)
+                    if R-dRadius < r1 <= R:# and r < Radius:
+                        if r2 < Radius:
+                            Grid[y][x] = sum
+
+        
+        print(R)
+    
+    plt.matshow(Grid)
+    plt.show()
+
 if __name__ =="__main__":
-    test_init_circle()
+    test_draw_rings()
