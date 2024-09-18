@@ -17,8 +17,10 @@ def sum_annexin(A_free,A_bound):
             for y in range(shape[2]):
                 sumfree += A_free[t][y][x]
                 sumbound += A_bound[t][y][x]
-                totsum += sumfree + sumbound
+        
+        totsum += sumfree + sumbound
 
+        
         sumAfree.append(sumfree)
         sumAbound.append(sumbound)
         sumtot.append(totsum)

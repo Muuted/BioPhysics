@@ -12,12 +12,14 @@ conc_list = []
 conc_time_list = []
 
 # time and step size, and diffusion constant
+picture_size = 83e-6 # meters
 T_tot = 100
-len_size = 40
-dx, dy = 0.1 ,0.1
-D  = 0.1
+len_size = 40 # number of grid points
+dx, dy = picture_size/len_size ,picture_size/len_size # meters
+D  = 2.7e-11 #meters^2/second
 dt = stabil_condi(dt=0.1,dx=dx,dy=dy,D=D)
-c_pump = c_in
+
+c_pump = 5e-7 # meters/second
 
 # mechanisms change.
 open_hole = True
@@ -26,8 +28,8 @@ close_time = T_tot*0.9
 # Anxexin constants.
 k1 ,k2 = 0.1 ,0.1
 c_in_annexin = c_in
-prob_free_ann = 0
-prob_bound_ann = 0
+prob_free_ann = 0.5
+prob_bound_ann = 0.5
 
 #size of cell, hole in cell and the center's placement.
 holesize = 3
@@ -79,6 +81,7 @@ ref_structure = open_close_membrane(
     ,open_wall=True
 )
 
+ref_tot_conc_Annexin = np.sum(Free_Ca[0])
 
 for t in np.arange(0,T_tot-1): 
     if t%(T_tot/10) == 0:
@@ -95,12 +98,13 @@ for t in np.arange(0,T_tot-1):
 
                 dcdt = circle_dCondt(C=Free_Ca[t],pos=pos,dx=dx,dy=dy)
 
-                Free_Ca[t+1][y][x] = Free_Ca[t][y][x] + dt*dcdt
+                Free_Ca[t+1][y][x] = Free_Ca[t][y][x] + dt*D*dcdt
 
                 radii = np.sqrt( (x-x0)**2 + (y-y0)**2 )
-
+                
                 if radii < R :
-                    if prob_free_ann < random.random():
+                    #if prob_free_ann < random.random():
+                    if Free_Ca[t][y][x]/ref_tot_conc_Annexin < random.random():
                         dAfreedt = circle_dAfreedt(
                             A_free= Free_annexin[t]
                             ,A_bound=Bound_annexin[t]
@@ -108,8 +112,9 @@ for t in np.arange(0,T_tot-1):
                             ,pos=pos ,dx=dx ,dy=dy ,k1=k1 ,k2=k2,D=D
                         )
                         Free_annexin[t+1][y][x] = Free_annexin[t][y][x] + dt*dAfreedt
+                        
                     
-                    if prob_free_ann < random.random():
+                    if Free_Ca[t][y][x]/ref_tot_conc_Annexin < random.random():
                         dAbounddt = circle_dAbounddt(
                             A_free= Free_annexin[t]
                             ,A_bound=Bound_annexin[t]
@@ -117,8 +122,8 @@ for t in np.arange(0,T_tot-1):
                             ,pos=pos ,k1=k1 ,k2=k2
                         )
                         Bound_annexin[t+1][y][x] = Bound_annexin[t][y][x] + dt*dAbounddt
-
-
+                        #print("bound annexin")
+                
                 if radii < R and Free_Ca[t+1][y][x] > c_pump:
                     Free_Ca[t+1][y][x] += -c_pump # the pumping mechanism
                                                #, for only inside the cell
@@ -163,13 +168,15 @@ sumfree,sumbound,sumtot = sum_annexin(
 
 timevec = np.linspace(0,T_tot,len(sumfree))
 
+
 fig, axs = plt.subplots(5)
 
 TT0 = 10
 i = 0
 axs[i].plot(sumfree[:TT0],'-*',label="free")
 axs[i].plot(sumbound[:TT0],label="bound")
-axs[i].set_ylim(-max(sumbound[:TT0]),max(sumbound[:TT0])*1.1)
+axs[i].plot(sumtot[:TT0],label="total")
+#axs[i].set_ylim(-max(sumbound[:TT0]),max(sumbound[:TT0])*1.1)
 #axs[i].set_ylim(min(sumfree[:TT0]),max(sumfree[:TT0])*1.1)
 axs[i].legend()
 axs[i].set_title(f"conc of free/bound Annexin"+"\n"
@@ -180,7 +187,8 @@ TT0 = 20
 i = 1
 axs[i].plot(sumfree[:TT0],'-*',label="free")
 axs[i].plot(sumbound[:TT0],label="bound")
-axs[i].set_ylim(-max(sumbound[:TT0]),max(sumbound[:TT0])*1.1)
+axs[i].plot(sumtot[:TT0],label="total")
+#axs[i].set_ylim(-max(sumbound[:TT0]),max(sumbound[:TT0])*1.1)
 #axs[i].set_ylim(min(sumfree[:TT0]),max(sumfree[:TT0])*1.1)
 axs[i].legend()
 
@@ -188,7 +196,8 @@ TT0 = 40
 i = 2
 axs[i].plot(sumfree[:TT0],'-*',label="free")
 axs[i].plot(sumbound[:TT0],label="bound")
-axs[i].set_ylim(-max(sumbound[:TT0]),max(sumbound[:TT0])*1.1)
+axs[i].plot(sumtot[:TT0],label="total")
+#axs[i].set_ylim(-max(sumbound[:TT0]),max(sumbound[:TT0])*1.1)
 #axs[i].set_ylim(min(sumfree[:TT0]),max(sumfree[:TT0])*1.1)
 axs[i].legend()
 
@@ -196,7 +205,8 @@ TT0 = 80
 i=3
 axs[i].plot(sumfree[:TT0],'-*',label="free")
 axs[i].plot(sumbound[:TT0],label="bound")
-axs[i].set_ylim(-max(sumbound[:TT0]),max(sumbound[:TT0])*1.1)
+axs[i].plot(sumtot[:TT0],label="total")
+#axs[i].set_ylim(-max(sumbound[:TT0]),max(sumbound[:TT0])*1.1)
 #axs[i].set_ylim(min(sumfree[:TT0]),max(sumfree[:TT0])*1.1)
 axs[i].legend()
 
@@ -204,10 +214,12 @@ TT0 = len(sumfree)
 i=4
 axs[i].plot(sumfree[:TT0],'-*',label="free")
 axs[i].plot(sumbound[:TT0],label="bound")
-axs[i].set_ylim(-max(sumbound[:TT0]),max(sumbound[:TT0])*1.1)
+axs[i].plot(sumtot[:TT0],label="total")
+#axs[i].set_ylim(-max(sumbound[:TT0]),max(sumbound[:TT0])*1.1)
 #axs[i].set_ylim(min(sumfree[:TT0]),max(sumfree[:TT0])*1.1)
 axs[i].legend()
 axs[i].set_xlabel("time")
+
 
 plt.show()
 exit()
@@ -231,7 +243,7 @@ plt.title("free annexin end")
 
 plt.matshow(Bound_annexin[T_tot-1])
 plt.title("bound annexin")
-plt.show()
+#plt.show()
 
 
 
