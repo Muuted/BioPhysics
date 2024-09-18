@@ -25,7 +25,7 @@ def sum_annexin(A_free,A_bound):
 
     return sumAfree, sumAbound, sumtot
 
-def circle_dAfreedt(A_free,A_bound,C,pos,dx,dy,k1,k2) -> float:
+def circle_dAfreedt(A_free,A_bound,C,pos,dx,dy,k1,k2,D) -> float:
     nx,x,bx,ny,y,by = pos
 
     dA_freedxdx = (A_free[y][nx] - 2*A_free[y][x] + A_free[y][bx])/(dx**2)
@@ -33,8 +33,8 @@ def circle_dAfreedt(A_free,A_bound,C,pos,dx,dy,k1,k2) -> float:
     dA_freedydy = (A_free[ny][x] - 2*A_free[y][x] + A_free[by][x])/(dy**2)
    
     a = C[y][x]
-    a = 1
-    dcdt = dA_freedxdx + dA_freedydy - k1*A_free[y][x]*a + k2*A_bound[y][x]
+    #a = 1
+    dcdt = D*(dA_freedxdx + dA_freedydy) - k1*A_free[y][x]*a + k2*A_bound[y][x]
     
     return dcdt
 
@@ -42,7 +42,7 @@ def circle_dAfreedt(A_free,A_bound,C,pos,dx,dy,k1,k2) -> float:
 def circle_dAbounddt(A_free,A_bound,C,pos,k1,k2) -> float:
     nx,x,bx,ny,y,by = pos
     a = C[y][x]
-    a = 1
+    #a = 1
     dAbounddt = k1*A_free[y][x]*a - k2*A_bound[y][x]
     
     return dAbounddt

@@ -14,7 +14,7 @@ conc_time_list = []
 # time and step size, and diffusion constant
 T_tot = 100
 len_size = 40
-dx, dy = 0.1,0.1
+dx, dy = 0.1 ,0.1
 D  = 0.1
 dt = stabil_condi(dt=0.1,dx=dx,dy=dy,D=D)
 c_pump = c_in
@@ -24,8 +24,8 @@ open_hole = True
 close_time = T_tot*0.9
 
 # Anxexin constants.
-k1,k2 = 0.1 ,0.1
-c_in_annexin = 1
+k1 ,k2 = 0.1 ,0.1
+c_in_annexin = c_in
 prob_free_ann = 0
 prob_bound_ann = 0
 
@@ -95,7 +95,7 @@ for t in np.arange(0,T_tot-1):
 
                 dcdt = circle_dCondt(C=Free_Ca[t],pos=pos,dx=dx,dy=dy)
 
-                Free_Ca[t+1][y][x] = Free_Ca[t][y][x] + dt*D*dcdt
+                Free_Ca[t+1][y][x] = Free_Ca[t][y][x] + dt*dcdt
 
                 radii = np.sqrt( (x-x0)**2 + (y-y0)**2 )
 
@@ -105,7 +105,7 @@ for t in np.arange(0,T_tot-1):
                             A_free= Free_annexin[t]
                             ,A_bound=Bound_annexin[t]
                             ,C=Free_Ca[t]
-                            ,pos=pos ,dx=dx ,dy=dy ,k1=k1 ,k2=k2
+                            ,pos=pos ,dx=dx ,dy=dy ,k1=k1 ,k2=k2,D=D
                         )
                         Free_annexin[t+1][y][x] = Free_annexin[t][y][x] + dt*dAfreedt
                     
@@ -161,16 +161,59 @@ sumfree,sumbound,sumtot = sum_annexin(
     ,A_bound=Bound_annexin
 )
 
-plt.figure()
-plt.plot(sumfree,'*',label="free")
-plt.plot(sumbound,label="bound")
-#plt.plot(sumtot,label="tot")
-plt.vlines(x=close_time,ymin=min(sumbound),ymax=max(sumbound),label=f"closure time={close_time}")
-#plt.xlim(0,60)
-plt.ylim(min(sumbound[:60]),max(sumbound[:60])*1.1)
-plt.legend()
+timevec = np.linspace(0,T_tot,len(sumfree))
+
+fig, axs = plt.subplots(5)
+
+TT0 = 10
+i = 0
+axs[i].plot(sumfree[:TT0],'-*',label="free")
+axs[i].plot(sumbound[:TT0],label="bound")
+axs[i].set_ylim(-max(sumbound[:TT0]),max(sumbound[:TT0])*1.1)
+#axs[i].set_ylim(min(sumfree[:TT0]),max(sumfree[:TT0])*1.1)
+axs[i].legend()
+axs[i].set_title(f"conc of free/bound Annexin"+"\n"
+                 +f"k1={k1} , k2={k2} , dt={dt} ,dx={dx}, dy={dy}, D={D}"
+                 )
+
+TT0 = 20
+i = 1
+axs[i].plot(sumfree[:TT0],'-*',label="free")
+axs[i].plot(sumbound[:TT0],label="bound")
+axs[i].set_ylim(-max(sumbound[:TT0]),max(sumbound[:TT0])*1.1)
+#axs[i].set_ylim(min(sumfree[:TT0]),max(sumfree[:TT0])*1.1)
+axs[i].legend()
+
+TT0 = 40
+i = 2
+axs[i].plot(sumfree[:TT0],'-*',label="free")
+axs[i].plot(sumbound[:TT0],label="bound")
+axs[i].set_ylim(-max(sumbound[:TT0]),max(sumbound[:TT0])*1.1)
+#axs[i].set_ylim(min(sumfree[:TT0]),max(sumfree[:TT0])*1.1)
+axs[i].legend()
+
+TT0 = 80
+i=3
+axs[i].plot(sumfree[:TT0],'-*',label="free")
+axs[i].plot(sumbound[:TT0],label="bound")
+axs[i].set_ylim(-max(sumbound[:TT0]),max(sumbound[:TT0])*1.1)
+#axs[i].set_ylim(min(sumfree[:TT0]),max(sumfree[:TT0])*1.1)
+axs[i].legend()
+
+TT0 = len(sumfree)
+i=4
+axs[i].plot(sumfree[:TT0],'-*',label="free")
+axs[i].plot(sumbound[:TT0],label="bound")
+axs[i].set_ylim(-max(sumbound[:TT0]),max(sumbound[:TT0])*1.1)
+#axs[i].set_ylim(min(sumfree[:TT0]),max(sumfree[:TT0])*1.1)
+axs[i].legend()
+axs[i].set_xlabel("time")
+
 plt.show()
 exit()
+
+
+
 plt.figure()
 plt.plot(Ring_radius,Ring_sums)
 plt.title("Ring sums try, normalized by num of points")
