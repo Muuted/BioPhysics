@@ -1,10 +1,10 @@
 import matplotlib.pyplot as plt
 import numpy as np
 import random
-from Circle_funcs import init_ref_circle    ,cicle_boundary ,circle_dCondt
-from Circle_funcs import init_conc  ,open_close_membrane    ,stabil_condi
-from Circle_funcs import Ring_sum, circle_dAfreedt, circle_dAbounddt,sum_annexin
-
+#from Circle_funcs import init_ref_circle    ,cicle_boundary ,circle_dCondt
+#from Circle_funcs import init_conc  ,open_close_membrane    ,stabil_condi
+#from Circle_funcs import Ring_sum, circle_dAfreedt, circle_dAbounddt,sum_annexin
+from Circle_funcs import *
 # Concentrations for Ca^2+ inside; outside cell
 c_out = 2e-3 #M Concentration outside of cell
 c_in = 100e-9 #M Concetration inside cell
@@ -16,7 +16,8 @@ picture_size = 83e-6 # meters
 T_tot = 100
 len_size =40 # number of grid points
 dx, dy = picture_size/len_size ,picture_size/len_size # meters
-D  = 2.7e-11 #meters^2/second
+D_Ca_cyto  = 2.7e-11 #meters^2/second
+# D_Ca_water  = 2.7e-11 #meters^2/second
 dt = stabil_condi(dt=0.1,dx=dx,dy=dy,D=D)
 
 c_pump = 5e-7 # meters/second
@@ -30,6 +31,8 @@ k1 ,k2 = 0.1 ,0.1
 c_in_annexin = c_in
 prob_free_ann = 0.5
 prob_bound_ann = 0.5
+D_Annexin_cyto  = 2.7e-11 #meters^2/second
+#D_Annexin_water  = 2.7e-11 #meters^2/second
 
 #size of cell, hole in cell and the center's placement.
 holesize = 3

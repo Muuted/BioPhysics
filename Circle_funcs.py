@@ -13,13 +13,12 @@ def sum_annexin(A_free,A_bound):
         sumfree = 0
         sumbound = 0
         totsum = 0
-        for x in range(shape[1]):
-            for y in range(shape[2]):
-                sumfree += A_free[t][y][x]
-                sumbound += A_bound[t][y][x]
+        #for x in range(shape[1]):
+         #   for y in range(shape[2]):
+        sumfree = np.sum(A_free[t])
+        sumbound = np.sum(A_bound[t])
         
         totsum += sumfree + sumbound
-
         
         sumAfree.append(sumfree)
         sumAbound.append(sumbound)
@@ -27,16 +26,16 @@ def sum_annexin(A_free,A_bound):
 
     return sumAfree, sumAbound, sumtot
 
-def circle_dAfreedt(A_free,A_bound,C,pos,dx,dy,k1,k2,D) -> float:
+def circle_dAfreedt(A_free,A_bound,C,pos,dx,dy,k1,k2,D_list) -> float:
     nx,x,bx,ny,y,by = pos
 
+    D = D_list[0]
+    
     dA_freedxdx = (A_free[y][nx] - 2*A_free[y][x] + A_free[y][bx])/(dx**2)
 
     dA_freedydy = (A_free[ny][x] - 2*A_free[y][x] + A_free[by][x])/(dy**2)
-   
-    a = C[y][x]
-    #a = 1
-    dcdt = D*(dA_freedxdx + dA_freedydy) - k1*A_free[y][x]*a + k2*A_bound[y][x]
+
+    dcdt = D*(dA_freedxdx + dA_freedydy) - k1*A_free[y][x]*C[y][x] + k2*A_bound[y][x]
     
     return dcdt
 
@@ -48,7 +47,6 @@ def circle_dAbounddt(A_free,A_bound,C,pos,k1,k2) -> float:
     dAbounddt = k1*A_free[y][x]*a - k2*A_bound[y][x]
     
     return dAbounddt
-
 
 def Ring_sum(ref_Grid ,offsets:tuple 
              ,Radius:int, dRadius:int
