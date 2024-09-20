@@ -14,7 +14,7 @@ conc_time_list = []
 # time and step size, and diffusion constant
 picture_size = 83e-6 # meters
 T_tot = 100
-len_size = 40 # number of grid points
+len_size =40 # number of grid points
 dx, dy = picture_size/len_size ,picture_size/len_size # meters
 D  = 2.7e-11 #meters^2/second
 dt = stabil_condi(dt=0.1,dx=dx,dy=dy,D=D)
@@ -45,7 +45,7 @@ open_val = 20
 
 ref_structure = init_ref_circle(
     boxlen=len_size
-    ,Radius=R,dRadius=2 ,offsets=[x0,y0]
+    ,Radius=R,dRadius=dR ,offsets=[x0,y0]
     ,inside_val=inside_val
     ,outside_val=outside_val
     ,wall_val=wall_val
@@ -71,7 +71,8 @@ Bound_annexin = np.zeros(shape=(T_tot,len_size,len_size))
 Bound_ca = np.zeros(shape=(T_tot,len_size,len_size))
 #Free_Ca[0][y0][x0] = 100   
 
-
+plt.matshow(ref_structure)
+plt.title("ref closed")
 ref_structure = open_close_membrane(
     Grid=ref_structure
     ,Radius=R, dRadius=dR
@@ -80,6 +81,10 @@ ref_structure = open_close_membrane(
     ,wall_val=wall_val
     ,open_wall=True
 )
+
+plt.matshow(ref_structure)
+plt.title("ref open")
+plt.show()
 
 ref_tot_conc_Annexin = np.sum(Free_Ca[0])
 
@@ -90,6 +95,11 @@ for t in np.arange(0,T_tot-1):
     t1, t2 = t, t+1
     for x in range(0,len_size):
         for y in range(0,len_size):
+            if ref_structure[y][x] == wall_val:
+                Free_Ca[t+1][y][x] = Free_Ca[t][y][x]
+                Free_annexin[t+1][y][x] = Free_annexin[t][y][x] 
+                Bound_annexin[t+1][y][x] = Bound_annexin[t][y][x]
+
             if ref_structure[y][x] != wall_val:
                 pos = cicle_boundary(x=x,y=y,boxlen=len_size
                                         ,ref_matrix=ref_structure
@@ -102,27 +112,29 @@ for t in np.arange(0,T_tot-1):
 
                 radii = np.sqrt( (x-x0)**2 + (y-y0)**2 )
                 
-                if radii < R :
+                #if radii < R :
                     #if prob_free_ann < random.random():
-                    if Free_Ca[t][y][x]/ref_tot_conc_Annexin < random.random():
-                        dAfreedt = circle_dAfreedt(
-                            A_free= Free_annexin[t]
-                            ,A_bound=Bound_annexin[t]
-                            ,C=Free_Ca[t]
-                            ,pos=pos ,dx=dx ,dy=dy ,k1=k1 ,k2=k2,D=D
-                        )
-                        Free_annexin[t+1][y][x] = Free_annexin[t][y][x] + dt*dAfreedt
-                        
+                #if Free_Ca[t][y][x]/ref_tot_conc_Annexin < random.random():
+
+                
+                dAfreedt = circle_dAfreedt(
+                    A_free= Free_annexin[t]
+                    ,A_bound=Bound_annexin[t]
+                    ,C=Free_Ca[t]
+                    ,pos=pos ,dx=dx ,dy=dy ,k1=k1 ,k2=k2,D=D
+                )
+                Free_annexin[t+1][y][x] = Free_annexin[t][y][x] + dt*dAfreedt
                     
-                    if Free_Ca[t][y][x]/ref_tot_conc_Annexin < random.random():
-                        dAbounddt = circle_dAbounddt(
-                            A_free= Free_annexin[t]
-                            ,A_bound=Bound_annexin[t]
-                            ,C=Free_Ca[t]
-                            ,pos=pos ,k1=k1 ,k2=k2
-                        )
-                        Bound_annexin[t+1][y][x] = Bound_annexin[t][y][x] + dt*dAbounddt
-                        #print("bound annexin")
+                
+                #if Free_Ca[t][y][x]/ref_tot_conc_Annexin < random.random():
+                dAbounddt = circle_dAbounddt(
+                    A_free= Free_annexin[t]
+                    ,A_bound=Bound_annexin[t]
+                    ,C=Free_Ca[t]
+                    ,pos=pos ,k1=k1 ,k2=k2
+                )
+                Bound_annexin[t+1][y][x] = Bound_annexin[t][y][x] + dt*dAbounddt
+                    #print("bound annexin")
                 
                 if radii < R and Free_Ca[t+1][y][x] > c_pump:
                     Free_Ca[t+1][y][x] += -c_pump # the pumping mechanism
@@ -168,6 +180,11 @@ sumfree,sumbound,sumtot = sum_annexin(
 
 timevec = np.linspace(0,T_tot,len(sumfree))
 
+
+plt.figure()
+plt.plot(sumtot)
+print(min(sumtot),max(sumtot))
+plt.show()
 
 fig, axs = plt.subplots(5)
 
@@ -221,8 +238,8 @@ axs[i].legend()
 axs[i].set_xlabel("time")
 
 
-plt.show()
-exit()
+#plt.show()
+#exit()
 
 
 
