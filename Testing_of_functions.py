@@ -1,3 +1,6 @@
+import matplotlib.pyplot as plt
+import numpy as np
+from Constants import *
 from Circle_funcs import *
 
 
@@ -51,7 +54,6 @@ def test_init_circle():
     plt.show()
 
 
-
 def test_draw_rings():
     len_size=40
     Radius = int(len_size*0.5/2)
@@ -83,5 +85,72 @@ def test_draw_rings():
     plt.matshow(Grid)
     plt.show()
 
+
+def test_annexin_diffusion():
+    k1,k2 = 0.1,0.1
+    free_Ca = np.zeros(shape=(T_tot,len_size,len_size))
+    free_annexin = np.zeros(shape=(T_tot,len_size,len_size))
+    bound_annexin = np.zeros(shape=(T_tot,len_size,len_size))
+    ref_grid = np.zeros(shape=(len_size,len_size))
+
+    free_annexin[0][int(len_size/2)][int(len_size/2)] = 100
+
+    
+    for y in range(len_size):
+            for x in range(len_size):
+                if x == 0 or y ==0 or x== len_size-1 or y == len_size-1:
+                    ref_grid[y][x] = wall_val
+
+
+    for t in range(T_tot-1):
+        for y in range(len_size):
+            for x in range(len_size):
+                if ref_grid[y][x] != wall_val:
+                    radii = np.sqrt( (x-x0)**2 + (y-y0)**2 )
+
+                    pos = cicle_boundary(x=x,y=y,boxlen=len_size
+                                        ,ref_matrix=ref_grid
+                                        ,refval=wall_val
+                                        )
+                    
+                    circle_dAdt(A_free=free_annexin
+                                ,A_bound=bound_annexin
+                                ,C=free_Ca
+                                ,pos=pos
+                                ,const=[t,dt,dx,dy,k1,k2,R,dR,radii]
+                                ,D_list=[D_Annexin_cyto,D_Annexin_water]
+                                )
+    
+    sumAfree, sumAbound, sumtot= sum_annexin(A_free=free_annexin,A_bound=bound_annexin)
+
+    plt.figure()
+    plt.plot(sumtot)
+    plt.title("total sum of Annexins")
+    print(min(sumtot),max(sumtot))
+
+    plt.figure()
+    plt.plot(sumAfree)
+    plt.title("Free Annexins")
+    print(min(sumAfree),max(sumAfree))
+
+    plt.figure()
+    plt.plot(sumAbound)
+    plt.title("bound Annexins")
+    print(min(sumAbound),max(sumAbound))
+
+    plt.show()
+    exit()
+    plt.matshow(ref_grid)
+    plt.title("reference grid")
+
+    plt.matshow(free_annexin[0])
+    plt.title("annexin at t=0")
+    plt.matshow(free_annexin[T_tot-1])
+    plt.title("Annexin at end")
+    plt.show()
+    
+
 if __name__ =="__main__":
-    test_draw_rings()
+    #test_draw_rings()
+    test_annexin_diffusion()
+    

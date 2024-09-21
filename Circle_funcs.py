@@ -26,19 +26,27 @@ def sum_annexin(A_free,A_bound):
 
     return sumAfree, sumAbound, sumtot
 
-def circle_dAfreedt(A_free,A_bound,C,pos,dx,dy,k1,k2,D_list) -> float:
+def circle_dAdt(A_free,A_bound,C,pos,const,D_list) -> float:
     nx,x,bx,ny,y,by = pos
+    t,dt,dx,dy,k1,k2,R,dR,r = const
 
-    D = D_list[0]
+    if r <= R:
+        D = D_list[0]
+    else:
+        D = D_list[1]
+
+    dA_freedxdx = (A_free[t][y][nx] - 2*A_free[t][y][x] + A_free[t][y][bx])/(dx**2)
+
+    dA_freedydy = (A_free[t][ny][x] - 2*A_free[t][y][x] + A_free[t][by][x])/(dy**2)
+
+    dA_freedt = D*(dA_freedxdx + dA_freedydy) - k1*A_free[t][y][x]*C[t][y][x] + k2*A_bound[t][y][x]
     
-    dA_freedxdx = (A_free[y][nx] - 2*A_free[y][x] + A_free[y][bx])/(dx**2)
-
-    dA_freedydy = (A_free[ny][x] - 2*A_free[y][x] + A_free[by][x])/(dy**2)
-
-    dcdt = D*(dA_freedxdx + dA_freedydy) - k1*A_free[y][x]*C[y][x] + k2*A_bound[y][x]
+    A_free[t+1][y][x] = A_free[t][y][x] + dt*dA_freedt
     
-    return dcdt
 
+    dAbounddt = k1*A_free[t][y][x]*C[t][y][x] - k2*A_bound[t][y][x]
+
+    A_bound[t+1][y][x] = A_bound[t][y][x] + dt*dAbounddt
 
 def circle_dAbounddt(A_free,A_bound,C,pos,k1,k2) -> float:
     nx,x,bx,ny,y,by = pos
@@ -156,7 +164,7 @@ def cicle_boundary(x:int,y:int,boxlen:int,ref_matrix,refval):
     if ref_matrix[by][x] == refval:
         by = y
     
-    return nx,x,bx , ny,y,by
+    return nx,x,bx ,ny,y,by  
 
 
 def init_conc(ref_grid, time:int
@@ -208,16 +216,24 @@ def init_ref_circle(boxlen:int
 
     return ref_Grit
 
-def circle_dCondt(C,pos,dx,dy) -> float:
+def circle_dCondt(C,pos,const,D_list) -> float:
     nx,x,bx,ny,y,by = pos
+    t,dt,dx,dy,R,dR,r = const
+    #D = D_list[0]
+    if r <= R:
+        D = D_list[0]
+    else:
+        D = D_list[1]
+    
+    dcdxdx = (C[t][y][nx] - 2*C[t][y][x] + C[t][y][bx])/(dx**2)
 
-    dcdxdx = (C[y][nx] - 2*C[y][x] + C[y][bx])/(dx**2)
-
-    dcdydy = (C[ny][x] - 2*C[y][x] + C[by][x])/(dy**2)
+    dcdydy = (C[t][ny][x] - 2*C[t][y][x] + C[t][by][x])/(dy**2)
    
     dcdt = dcdxdx + dcdydy 
     
-    return dcdt
+    C[t+1][y][x] = C[t][y][x] + dt*D*dcdt
+
+    
 
 
 
