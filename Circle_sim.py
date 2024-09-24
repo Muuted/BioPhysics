@@ -15,7 +15,7 @@ def main_circle_sim():
         ,outside_val=outside_val
         ,wall_val=wall_val
         )
-
+    
     Free_Ca = init_conc(
         ref_grid=ref_structure
         ,time=T_tot
@@ -38,7 +38,8 @@ def main_circle_sim():
     #plt.matshow(ref_structure)
     #plt.title("ref closed")
 
-    ref_structure = open_close_membrane(
+    #ref_structure = 
+    open_close_membrane(
         Grid=ref_structure
         ,Radius=R, dRadius=dR
         ,offsets=[x0,y0],holesize=holesize
@@ -96,7 +97,8 @@ def main_circle_sim():
                     #is allways the same the walls
 
                 if t >= close_time and open_hole==True:
-                    ref_structure = open_close_membrane(
+                    #ref_structure = 
+                    open_close_membrane(
                         Grid=ref_structure
                         ,Radius=R, dRadius=dR
                         ,offsets=[x0,y0],holesize=holesize
@@ -147,8 +149,8 @@ def main_circle_sim():
     plt.plot(sumbound)
     plt.title("bound Annexins")
     print(min(sumbound),max(sumbound))
-    plt.show()
-    exit()
+    #plt.show()
+    
 
     
     fig, axs = plt.subplots(5)
@@ -209,7 +211,8 @@ def main_circle_sim():
 
 
     plt.figure()
-    plt.plot(Ring_radius,Ring_sums)
+    plt.plot(Ring_radius,Ring_sums,'-.')
+    plt.xlabel("number of pixels from opening")
     plt.title("Ring sums try, normalized by num of points")
 
     plt.matshow(conc_removed_grid)

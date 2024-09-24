@@ -134,7 +134,8 @@ def open_close_membrane(Grid
             if open_wall == False:
                 if Grid[y][x] == open_val:
                     Grid[y][x] = wall_val
-    return Grid
+    
+    #return Grid
 
 def replenish(Grid,boxsize:int,c_out):
     for x in range(boxsize):
@@ -150,7 +151,7 @@ def replenish(Grid,boxsize:int,c_out):
         Grid[y][boxsize-1] = c_out
     
     return Grid
-def cicle_boundary(x:int,y:int,boxlen:int,ref_matrix,refval):
+def cicle_boundary(x:int,y:int,boxlen:int,ref_matrix, refval):
     nx, ny = x+1 , y+1
     bx, by = x-1 , y-1
 
@@ -214,6 +215,7 @@ def init_ref_circle(boxlen:int
                 # if statement -> Radius + dRadius < radii:
                 ref_Grit[y][x] = wall_val 
 
+    print("shape of refgrid =",np.shape(ref_Grit))
     return ref_Grit
 
 def circle_dCondt(C,pos,const,D_list) -> float:

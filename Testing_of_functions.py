@@ -88,23 +88,37 @@ def test_draw_rings():
 
 def test_annexin_diffusion():
     k1,k2 = 0.1,0.1
+    T_tot = 3000
     free_Ca = np.zeros(shape=(T_tot,len_size,len_size))
     free_annexin = np.zeros(shape=(T_tot,len_size,len_size))
     bound_annexin = np.zeros(shape=(T_tot,len_size,len_size))
     ref_grid = np.zeros(shape=(len_size,len_size))
 
-    free_annexin[0][int(len_size/2)][int(len_size/2)] = 100
+    free_annexin[0][20][31] = 100
 
-    
-    for y in range(len_size):
-            for x in range(len_size):
-                if x == 0 or y ==0 or x== len_size-1 or y == len_size-1:
-                    ref_grid[y][x] = wall_val
+    ref_grid = init_ref_circle(boxlen=len_size
+                               ,Radius=R,dRadius=dR,offsets=[x0,y0]
+                               ,inside_val=inside_val,outside_val=outside_val,wall_val=wall_val
+                               )
+    open_close_membrane(Grid=ref_grid,Radius=R,dRadius=dR,offsets=[x0,y0]
+                        ,holesize=holesize,open_val=open_val,wall_val=wall_val
+                        ,open_wall=True
+                        )
 
-
+    free_Ca = init_conc(ref_grid=ref_grid
+              ,time=T_tot,c_in=c_in,c_out=c_out
+              ,inside_val=inside_val,outside_val=outside_val
+              )
     for t in range(T_tot-1):
+        if t%(T_tot*0.1)== 0:
+            print(f"t={t} out of {T_tot}")
         for y in range(len_size):
             for x in range(len_size):
+                if ref_grid[y][x] == wall_val:
+                    free_Ca[t+1][y][x] = free_Ca[t][y][x]
+                    free_annexin[t+1][y][x] = free_annexin[t][y][x] 
+                    bound_annexin[t+1][y][x] = bound_annexin[t][y][x]
+
                 if ref_grid[y][x] != wall_val:
                     radii = np.sqrt( (x-x0)**2 + (y-y0)**2 )
 
@@ -119,6 +133,10 @@ def test_annexin_diffusion():
                                 ,pos=pos
                                 ,const=[t,dt,dx,dy,k1,k2,R,dR,radii]
                                 ,D_list=[D_Annexin_cyto,D_Annexin_water]
+                                )
+                    circle_dCondt(C=free_Ca,pos=pos
+                                    ,const=[t,dt,dx,dy,R,dR,radii]
+                                    ,D_list=[D_Ca_cyto,D_Ca_water]
                                 )
     
     sumAfree, sumAbound, sumtot= sum_annexin(A_free=free_annexin,A_bound=bound_annexin)
@@ -138,15 +156,15 @@ def test_annexin_diffusion():
     plt.title("bound Annexins")
     print(min(sumAbound),max(sumAbound))
 
-    plt.show()
-    exit()
+    #plt.show()
+    
     plt.matshow(ref_grid)
     plt.title("reference grid")
 
     plt.matshow(free_annexin[0])
     plt.title("annexin at t=0")
     plt.matshow(free_annexin[T_tot-1])
-    plt.title("Annexin at end")
+    plt.title("Annexin at end" + "\n"+"Does anything look weird on the boundaries?")
     plt.show()
     
 
