@@ -74,10 +74,11 @@ def main_circle_sim():
                                             ,refval=wall_val
                                         )
 
-                    circle_dCondt(C=Free_Ca,pos=pos
-                                        ,const=[t,dt,dx,dy,R,dR,radii]
-                                        ,D_list=[D_Ca_cyto,D_Ca_water]
-                                        )
+                    circle_dCondt(
+                        C=Free_Ca,pos=pos
+                        ,const=[t,dt,dx,dy,R,dR,radii]
+                        ,D_list=[D_Ca_cyto,D_Ca_water]
+                    )
 
                     circle_dAdt(
                         A_free= Free_annexin
