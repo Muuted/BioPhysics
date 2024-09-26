@@ -88,7 +88,12 @@ def test_draw_rings():
 
 def test_annexin_diffusion():
     k1,k2 = 0.1,0.1
-    T_tot = 3000
+    T_tot = 300
+    D = 2.7e-11
+    D_Annexin_cyto  = 5.0e-11 #meters^2/second
+    D_Annexin_water  = 7.18e-11 #meters^2/seconds
+    D_Annexin_cyto  = D#5.0e-11 #meters^2/second
+    D_Annexin_water  = D#7.18e-11 #meters^2/seconds
     free_Ca = np.zeros(shape=(T_tot,len_size,len_size))
     free_annexin = np.zeros(shape=(T_tot,len_size,len_size))
     bound_annexin = np.zeros(shape=(T_tot,len_size,len_size))
@@ -104,11 +109,12 @@ def test_annexin_diffusion():
                         ,holesize=holesize,open_val=open_val,wall_val=wall_val
                         ,open_wall=True
                         )
-
+    """
     free_Ca = init_conc(ref_grid=ref_grid
               ,time=T_tot,c_in=c_in,c_out=c_out
               ,inside_val=inside_val,outside_val=outside_val
               )
+    """
     for t in range(T_tot-1):
         if t%(T_tot*0.1)== 0:
             print(f"t={t} out of {T_tot}")
@@ -134,11 +140,12 @@ def test_annexin_diffusion():
                                 ,const=[t,dt,dx,dy,k1,k2,R,dR,radii]
                                 ,D_list=[D_Annexin_cyto,D_Annexin_water]
                                 )
+                    """
                     circle_dCondt(C=free_Ca,pos=pos
                                     ,const=[t,dt,dx,dy,R,dR,radii]
                                     ,D_list=[D_Ca_cyto,D_Ca_water]
                                 )
-    
+                    """
     sumAfree, sumAbound, sumtot= sum_annexin(A_free=free_annexin,A_bound=bound_annexin)
 
     plt.figure()

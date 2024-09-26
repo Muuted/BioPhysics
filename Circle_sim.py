@@ -5,6 +5,7 @@ from Circle_funcs import *
 
 def main_circle_sim():
     open_hole = True
+    add_Ca = True
     conc_list = []
     conc_time_list = []
     # Creation of our Grids
@@ -91,10 +92,11 @@ def main_circle_sim():
                         Free_Ca[t+1][y][x] += -c_pump # the pumping mechanism
                                                 #, for only inside the cell
 
-                if x < 3 or y < 3 or x > len_size-4 or y > len_size-4:
-                    Free_Ca[t+1][y][x] = c_out 
-                    #We assume infinite supply, i.e the value
-                    #is allways the same the walls
+                if add_Ca == True:
+                    if x < 3 or y < 3 or x > len_size-4 or y > len_size-4:
+                        Free_Ca[t+1][y][x] = c_out 
+                        #We assume infinite supply, i.e the value
+                        #is allways the same the walls
 
                 if t >= close_time and open_hole==True:
                     #ref_structure = 
@@ -150,64 +152,6 @@ def main_circle_sim():
     plt.title("bound Annexins")
     print(min(sumbound),max(sumbound))
     #plt.show()
-    
-
-    
-    fig, axs = plt.subplots(5)
-
-    TT0 = 10
-    i = 0
-    axs[i].plot(sumfree[:TT0],'-*',label="free")
-    axs[i].plot(sumbound[:TT0],label="bound")
-    axs[i].plot(sumtot[:TT0],label="total")
-    #axs[i].set_ylim(-max(sumbound[:TT0]),max(sumbound[:TT0])*1.1)
-    #axs[i].set_ylim(min(sumfree[:TT0]),max(sumfree[:TT0])*1.1)
-    axs[i].legend()
-    axs[i].set_title(f"conc of free/bound Annexin"+"\n"
-                    +f"k1={k1} , k2={k2} , dt={dt} ,dx={dx}, dy={dy}, D={D_Ca_cyto}"
-                    )
-
-    TT0 = 20
-    i = 1
-    axs[i].plot(sumfree[:TT0],'-*',label="free")
-    axs[i].plot(sumbound[:TT0],label="bound")
-    axs[i].plot(sumtot[:TT0],label="total")
-    #axs[i].set_ylim(-max(sumbound[:TT0]),max(sumbound[:TT0])*1.1)
-    #axs[i].set_ylim(min(sumfree[:TT0]),max(sumfree[:TT0])*1.1)
-    axs[i].legend()
-
-    TT0 = 40
-    i = 2
-    axs[i].plot(sumfree[:TT0],'-*',label="free")
-    axs[i].plot(sumbound[:TT0],label="bound")
-    axs[i].plot(sumtot[:TT0],label="total")
-    #axs[i].set_ylim(-max(sumbound[:TT0]),max(sumbound[:TT0])*1.1)
-    #axs[i].set_ylim(min(sumfree[:TT0]),max(sumfree[:TT0])*1.1)
-    axs[i].legend()
-
-    TT0 = 80
-    i=3
-    axs[i].plot(sumfree[:TT0],'-*',label="free")
-    axs[i].plot(sumbound[:TT0],label="bound")
-    axs[i].plot(sumtot[:TT0],label="total")
-    #axs[i].set_ylim(-max(sumbound[:TT0]),max(sumbound[:TT0])*1.1)
-    #axs[i].set_ylim(min(sumfree[:TT0]),max(sumfree[:TT0])*1.1)
-    axs[i].legend()
-
-    TT0 = len(sumfree)
-    i=4
-    axs[i].plot(sumfree[:TT0],'-*',label="free")
-    axs[i].plot(sumbound[:TT0],label="bound")
-    axs[i].plot(sumtot[:TT0],label="total")
-    #axs[i].set_ylim(-max(sumbound[:TT0]),max(sumbound[:TT0])*1.1)
-    #axs[i].set_ylim(min(sumfree[:TT0]),max(sumfree[:TT0])*1.1)
-    axs[i].legend()
-    axs[i].set_xlabel("time")
-
-
-    #plt.show()
-    #exit()
-
 
 
     plt.figure()
@@ -244,7 +188,7 @@ def main_circle_sim():
     plt.figure()
     plt.plot(conc_time_list,conc_list)
     plt.xlabel("timestep")
-    plt.title("concentration over time")
+    plt.title("Ca concentration over time")
 
 
     plt.show()

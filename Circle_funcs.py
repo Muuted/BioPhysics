@@ -101,15 +101,18 @@ def Ring_sum(ref_Grid ,offsets:tuple
 
     return Ring_sums, Ring_radius, Grid,Visual_Grid
 
-def stabil_condi(dt,dx,dy,D):
-    # Von Neumann stability condition
-    const1 = (1/dx)**2 + (1/dy)**2
-    const2 = 2*D*const1
+def stabil_condi(dt,dx,dy,D_list):
 
-    for _ in range(0,20):
-        if dt > 1/const2:
-            dt *= 0.1
-        
+    for i in range(len(D_list)):
+        print(f"i={i} and dt={dt}")
+        # Von Neumann stability condition
+        const1 = (1/dx)**2 + (1/dy)**2
+        const2 = 2*D_list[i]*const1
+
+        for _ in range(0,20):
+            if dt > 1/const2:
+                dt *= 0.9
+    print(f"final dt={dt}")
     return dt
 
 
