@@ -6,17 +6,15 @@ c_in = 100e-9 #M Concetration inside cell
 
 # time and step size, and diffusion constant
 picture_size = 83e-6 # meters
-T_tot = 100
+Real_sim_time = 30 #seconds
+
+T_tot = 1000
 len_size = 40 # number of grid points
 dx, dy = picture_size/len_size ,picture_size/len_size # meters
 D_Ca_cyto  = 2.7e-11 #meters^2/second
-D_Ca_water  = 7.93e-10 #meters^2/second
-
+D_Ca_water  =7.93e-10 #meters^2/second
 
 c_pump = 5e-7 # meters/second
-
-# mechanisms change.
-close_time = T_tot*0.9
 
 # Anxexin constants.
 k1 ,k2 = 0.1 ,0.1
@@ -32,6 +30,13 @@ dt = stabil_condi(dt=0.1,dx=dx,dy=dy
                   ,D_list=[D_Ca_cyto,D_Ca_water,D_Annexin_cyto,D_Annexin_water]
                   )
 print("dt=",dt)
+"""
+T_tot = int(Real_sim_time/dt)
+print("total number of sim steps =",T_tot)
+
+"""
+# mechanisms change.
+close_time = T_tot*0.9
 
 #size of cell, hole in cell and the center's placement.
 holesize = 3

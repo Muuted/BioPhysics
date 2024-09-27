@@ -26,7 +26,7 @@ def sum_annexin(A_free,A_bound):
 
     return sumAfree, sumAbound, sumtot
 
-def circle_dAdt(A_free,A_bound,C,pos,const,D_list) -> float:
+def circle_dAdt(A_free,A_bound,C,C_bound,pos,const,D_list):
     nx,x,bx,ny,y,by = pos
     t,dt,dx,dy,k1,k2,R,dR,r = const
 
@@ -35,18 +35,19 @@ def circle_dAdt(A_free,A_bound,C,pos,const,D_list) -> float:
     else:
         D = D_list[1]
 
-    dA_freedxdx = (A_free[t][y][nx] - 2*A_free[t][y][x] + A_free[t][y][bx])/(dx**2)
+    dA_freedxdx = D*(A_free[t][y][nx] - 2*A_free[t][y][x] + A_free[t][y][bx])/(dx**2)
+    dA_freedydy = D*(A_free[t][ny][x] - 2*A_free[t][y][x] + A_free[t][by][x])/(dy**2)
 
-    dA_freedydy = (A_free[t][ny][x] - 2*A_free[t][y][x] + A_free[t][by][x])/(dy**2)
-
-    dA_freedt = D*(dA_freedxdx + dA_freedydy) - k1*A_free[t][y][x]*C[t][y][x] + k2*A_bound[t][y][x]
+    dA_freedt = (dA_freedxdx + dA_freedydy) - k1*A_free[t][y][x]*C[t][y][x] + k2*A_bound[t][y][x]
     
     A_free[t+1][y][x] = A_free[t][y][x] + dt*dA_freedt
     
 
     dAbounddt = k1*A_free[t][y][x]*C[t][y][x] - k2*A_bound[t][y][x]
-
     A_bound[t+1][y][x] = A_bound[t][y][x] + dt*dAbounddt
+
+    C_bound[t+1][y][x] += 4*dAbounddt
+    C[t+1][y][x] += -4*dAbounddt
 
 def circle_dAbounddt(A_free,A_bound,C,pos,k1,k2) -> float:
     nx,x,bx,ny,y,by = pos
@@ -102,16 +103,15 @@ def Ring_sum(ref_Grid ,offsets:tuple
     return Ring_sums, Ring_radius, Grid,Visual_Grid
 
 def stabil_condi(dt,dx,dy,D_list):
-
-    for i in range(len(D_list)):
-        print(f"i={i} and dt={dt}")
-        # Von Neumann stability condition
-        const1 = (1/dx)**2 + (1/dy)**2
-        const2 = 2*D_list[i]*const1
-
+    # Von Neumann stability condition
+    const1 = (1/dx)**2 + (1/dy)**2
+    for D in D_list:
+        print(f"D={D} and dt={dt}")
+        const2 = 2*D*const1
         for _ in range(0,20):
             if dt > 1/const2:
                 dt *= 0.9
+            
     print(f"final dt={dt}")
     return dt
 
@@ -176,7 +176,7 @@ def init_conc(ref_grid, time:int
               ,inside_val:int ,outside_val:int
               ):
     ref_shape = np.shape(ref_grid)[0] # assuming NxN box shape.
-    Grid = np.zeros(shape=(time,ref_shape,ref_shape))
+    Grid = np.zeros(shape=(time,ref_shape,ref_shape),dtype=float)
     
     for x in range(ref_shape):
         for y in range(ref_shape):
@@ -198,7 +198,7 @@ def init_ref_circle(boxlen:int
                 ):
     
     x0,y0 = offsets
-    ref_Grit = np.zeros(shape=(boxlen,boxlen))
+    ref_Grit = np.zeros(shape=(boxlen,boxlen),dtype=float)
     
     for y in range(boxlen):
         for x in range(boxlen):

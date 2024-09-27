@@ -8,6 +8,7 @@ def main_circle_sim():
     add_Ca = True
     conc_list = []
     conc_time_list = []
+    #dt = 0.0001
     # Creation of our Grids
     ref_structure = init_ref_circle(
         boxlen=len_size
@@ -34,7 +35,7 @@ def main_circle_sim():
                             )
 
     Bound_annexin = np.zeros(shape=(T_tot,len_size,len_size))
-    Bound_ca = np.zeros(shape=(T_tot,len_size,len_size))
+    Bound_Ca = np.zeros(shape=(T_tot,len_size,len_size))
 
     #plt.matshow(ref_structure)
     #plt.title("ref closed")
@@ -62,6 +63,7 @@ def main_circle_sim():
         t1, t2 = t, t+1
         for x in range(0,len_size):
             for y in range(0,len_size):
+                Bound_Ca[t+1][y][x] += Bound_Ca[t][y][x]
                 if ref_structure[y][x] == wall_val:
                     Free_Ca[t+1][y][x] = Free_Ca[t][y][x]
                     Free_annexin[t+1][y][x] = Free_annexin[t][y][x] 
@@ -84,6 +86,7 @@ def main_circle_sim():
                         A_free= Free_annexin
                         ,A_bound=Bound_annexin
                         ,C=Free_Ca
+                        ,C_bound=Bound_Ca
                         ,pos=pos 
                         ,const=[t,dt,dx,dy,k1,k2,R,dR,radii]
                         ,D_list=[D_Annexin_cyto,D_Annexin_water]
@@ -158,7 +161,7 @@ def main_circle_sim():
     plt.figure()
     plt.plot(Ring_radius,Ring_sums,'-.')
     plt.xlabel("number of pixels from opening")
-    plt.title("Ring sums try, normalized by num of points")
+    plt.title("Ring sums try, normalized by Area")
 
     plt.matshow(conc_removed_grid)
     plt.title("concentration outside inner cell removed")
