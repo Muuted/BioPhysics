@@ -2,6 +2,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 from Constants import *
 from Circle_funcs import *
+from Data_extraction_funcs import *
 
 def main_circle_sim():
     open_hole = True
@@ -53,9 +54,9 @@ def main_circle_sim():
     #plt.matshow(ref_structure)
     #plt.title("ref open")
     #plt.show()
-
+    #T_tot = 100
     ref_tot_conc_Annexin = np.sum(Free_Ca[0])
-
+    
     for t in np.arange(0,T_tot-1): 
         if t%(T_tot/10) == 0:
             print(f"time={t} of {T_tot}")   
@@ -63,13 +64,13 @@ def main_circle_sim():
         t1, t2 = t, t+1
         for x in range(0,len_size):
             for y in range(0,len_size):
-                Bound_Ca[t+1][y][x] += Bound_Ca[t][y][x]
-                if ref_structure[y][x] == wall_val:
+                #Bound_Ca[t+1][y][x] += Bound_Ca[t][y][x]
+                if ref_structure[y][x] == wall_val or ref_structure[y][x] == outside_val:
                     Free_Ca[t+1][y][x] = Free_Ca[t][y][x]
                     Free_annexin[t+1][y][x] = Free_annexin[t][y][x] 
                     Bound_annexin[t+1][y][x] = Bound_annexin[t][y][x]
 
-                if ref_structure[y][x] != wall_val:
+                if ref_structure[y][x] == inside_val or ref_structure[y][x] == open_val:
                     radii = np.sqrt( (x-x0)**2 + (y-y0)**2 )
                     pos = cicle_boundary(x=x,y=y,boxlen=len_size
                                             ,ref_matrix=ref_structure
@@ -79,7 +80,7 @@ def main_circle_sim():
                     circle_dCondt(
                         C=Free_Ca,pos=pos
                         ,const=[t,dt,dx,dy,R,dR,radii]
-                        ,D_list=[D_Ca_cyto,D_Ca_water]
+                        ,D=D_Ca_cyto
                     )
 
                     circle_dAdt(
@@ -89,7 +90,7 @@ def main_circle_sim():
                         ,C_bound=Bound_Ca
                         ,pos=pos 
                         ,const=[t,dt,dx,dy,k1,k2,R,dR,radii]
-                        ,D_list=[D_Annexin_cyto,D_Annexin_water]
+                        ,D=D_Annexin_cyto
                     )
                     
                     if radii < R and Free_Ca[t+1][y][x] > c_pump:
@@ -135,9 +136,6 @@ def main_circle_sim():
         A_free=Free_annexin
         ,A_bound=Bound_annexin
     )
-
-    timevec = np.linspace(0,T_tot,len(sumfree))
-
 
     plt.figure()
     plt.plot(sumtot)

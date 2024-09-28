@@ -2,38 +2,21 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 
-def sum_annexin(A_free,A_bound):
-    sumAfree = []
-    sumAbound = []
-    sumtot = []
+def circle_dCondt(C,pos,const,D) -> float:
+    nx,x,bx,ny,y,by = pos
+    t,dt,dx,dy,R,dR,r = const
     
-    shape = np.shape(A_free) # shoulde be identical
+    dcdxdx = ((C[t][y][nx] - C[t][y][x]) + (-C[t][y][x]+ C[t][y][bx]))/(dx**2)
 
-    for t in range(shape[0]):
-        sumfree = 0
-        sumbound = 0
-        totsum = 0
-        #for x in range(shape[1]):
-         #   for y in range(shape[2]):
-        sumfree = np.sum(A_free[t])
-        sumbound = np.sum(A_bound[t])
-        
-        totsum += sumfree + sumbound
-        
-        sumAfree.append(sumfree)
-        sumAbound.append(sumbound)
-        sumtot.append(totsum)
+    dcdydy = (C[t][ny][x] - 2*C[t][y][x] + C[t][by][x])/(dy**2)
+   
+    dcdt = dcdxdx + dcdydy 
+    
+    C[t+1][y][x] = C[t][y][x] + dt*D*dcdt
 
-    return sumAfree, sumAbound, sumtot
-
-def circle_dAdt(A_free,A_bound,C,C_bound,pos,const,D_list):
+def circle_dAdt(A_free,A_bound,C,C_bound,pos,const,D):
     nx,x,bx,ny,y,by = pos
     t,dt,dx,dy,k1,k2,R,dR,r = const
-
-    if r <= R:
-        D = D_list[0]
-    else:
-        D = D_list[1]
 
     dA_freedxdx = D*(A_free[t][y][nx] - 2*A_free[t][y][x] + A_free[t][y][bx])/(dx**2)
     dA_freedydy = D*(A_free[t][ny][x] - 2*A_free[t][y][x] + A_free[t][by][x])/(dy**2)
@@ -46,8 +29,8 @@ def circle_dAdt(A_free,A_bound,C,C_bound,pos,const,D_list):
     dAbounddt = k1*A_free[t][y][x]*C[t][y][x] - k2*A_bound[t][y][x]
     A_bound[t+1][y][x] = A_bound[t][y][x] + dt*dAbounddt
 
-    C_bound[t+1][y][x] += 4*dAbounddt
-    C[t+1][y][x] += -4*dAbounddt
+    #C_bound[t+1][y][x] += 4*dAbounddt
+    #C[t+1][y][x] += -4*dAbounddt
 
 def circle_dAbounddt(A_free,A_bound,C,pos,k1,k2) -> float:
     nx,x,bx,ny,y,by = pos
@@ -57,64 +40,18 @@ def circle_dAbounddt(A_free,A_bound,C,pos,k1,k2) -> float:
     
     return dAbounddt
 
-def Ring_sum(ref_Grid ,offsets:tuple 
-             ,Radius:int, dRadius:int
-             ,num_of_rings:int
-             )-> tuple:
-    x0,y0 = offsets[0],offsets[1]
-    Grid = np.copy(ref_Grid)
-    grid_shape = np.shape(ref_Grid)
-    Visual_Grid = np.zeros(shape=(grid_shape[0],grid_shape[1]))
-    xstart = x0 + Radius + 2*dRadius
-    xend = x0 - Radius - 2*dRadius
-    
-    Ring_radius = []
-    Ring_sums = []
-    
-    boxlen = np.shape(Grid)[0]
-    R_steps = int(2*Radius/num_of_rings) # gives 10 ringes for summing.
-
-    # first we want to prepare the matrix, so that
-    # the out side values arent summed.
-    for x in range(boxlen):
-        for y in range(boxlen):
-            r = np.sqrt( (x-x0)**2 + (y-y0)**2)
-            if r > Radius:
-                Grid[y][x] = 0
-
-    visual_sum = 0
-    for R in range(0,int(2*Radius + x0 ),R_steps):
-        sum = 0
-        visual_sum += 100
-        Z = 1 # normalizing constant
-        for x in range(xstart,xend,-1):#(xstart,xend,-1):
-            for y in range(boxlen):
-                if x < boxlen-1 and y < boxlen-1:
-                    r1 = np.sqrt((x-xstart)**2 + (y-y0)**2)
-                    r2 = np.sqrt((x-x0)**2 + (y-y0)**2)
-                    if R - R_steps < r1 <= R and r2 < Radius + dRadius/2:
-                        sum += Grid[y][x] 
-                        Z += 1
-                        Visual_Grid[y][x] = visual_sum
-        
-        Ring_sums.append(sum/Z)
-        Ring_radius.append(R)
-
-    return Ring_sums, Ring_radius, Grid,Visual_Grid
-
 def stabil_condi(dt,dx,dy,D_list):
     # Von Neumann stability condition
     const1 = (1/dx)**2 + (1/dy)**2
     for D in D_list:
-        print(f"D={D} and dt={dt}")
         const2 = 2*D*const1
         for _ in range(0,20):
             if dt > 1/const2:
                 dt *= 0.9
-            
+        print(f"D={D} and dt={dt}")
+
     print(f"final dt={dt}")
     return dt
-
 
 def open_close_membrane(Grid
                         ,Radius:int,dRadius:int
@@ -137,8 +74,7 @@ def open_close_membrane(Grid
             if open_wall == False:
                 if Grid[y][x] == open_val:
                     Grid[y][x] = wall_val
-    
-    #return Grid
+
 
 def replenish(Grid,boxsize:int,c_out):
     for x in range(boxsize):
@@ -221,22 +157,7 @@ def init_ref_circle(boxlen:int
     print("shape of refgrid =",np.shape(ref_Grit))
     return ref_Grit
 
-def circle_dCondt(C,pos,const,D_list) -> float:
-    nx,x,bx,ny,y,by = pos
-    t,dt,dx,dy,R,dR,r = const
-    #D = D_list[0]
-    if r <= R:
-        D = D_list[0]
-    else:
-        D = D_list[1]
-    
-    dcdxdx = (C[t][y][nx] - 2*C[t][y][x] + C[t][y][bx])/(dx**2)
 
-    dcdydy = (C[t][ny][x] - 2*C[t][y][x] + C[t][by][x])/(dy**2)
-   
-    dcdt = dcdxdx + dcdydy 
-    
-    C[t+1][y][x] = C[t][y][x] + dt*D*dcdt
 
     
 
