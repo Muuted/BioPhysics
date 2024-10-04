@@ -62,11 +62,13 @@ def open_close_membrane(Grid
     
     boxlen = np.shape(Grid)[0]
     x0, y0 = offsets
-    xlowlim, xuplim  = int( x0 + Radius - holesize), int( x0 + Radius + holesize)
+    xlowlim, xuplim  = int( x0 + Radius), int( x0 + Radius + 2*dRadius)
     ylowlim, yuplim  = int( y0 - holesize)  ,int( y0 + holesize)
 
     for x in range(xlowlim ,xuplim):
         for y in range(ylowlim ,yuplim):
+            r = np.sqrt( (x-x0)**2 + (y-y0)**2 )
+            #if Radius -1 < r <= Radius + dRadius +1:
             if open_wall == True:
                 if Grid[y][x] == wall_val:
                     Grid[y][x] = open_val

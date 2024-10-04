@@ -11,14 +11,14 @@ D_Ca_cyto  = 2.7e-11 #meters^2/second
 picture_size = 83e-6 # meters
 Real_sim_time = 30 #seconds
 
-T_tot = 6000
-len_size = 40 # number of grid points
+T_tot = 600
+len_size = 50 # number of grid points
 dx, dy = picture_size/len_size ,picture_size/len_size # meters
 
 # Anxexin constants.
 k1 ,k2 = 0.1 ,0.1
 c_in_annexin = 1e-9
-bound_annexin_start = 0#k1*c_in_annexin*c_in/k2
+bound_annexin_start = k1*c_in_annexin*c_in/k2
 A_b_init = k1*c_in_annexin*c_in/k2
 
 D_Annexin_cyto  = 5.0e-11 #meters^2/second
@@ -36,14 +36,15 @@ print("total number of sim steps =",T_tot)
 
 
 # mechanisms change.
-close_time = T_tot*0.9
+close_time = T_tot*0.5
 
-c_pump = c_in*dt #5e-8*dt # meters/second
+c_pump = 5e-8*dt # meters/second
 print(f"c_pump={c_pump}")
+
 #size of cell, hole in cell and the center's placement.
 holesize = 3
 dR = int(2)
-R = int(len_size*0.5 - 3*dR)
+R = int(len_size*0.5 - 3*dR) 
 
 x0,y0 = int(len_size/2), int(len_size/2)
 wall_val = 100

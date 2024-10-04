@@ -7,7 +7,7 @@ import time as tm
 
 
 def main_circle_sim():
-    open_hole = False
+    open_hole = True
     add_Ca = True
     conc_list = []
     conc_time_list = []
@@ -155,9 +155,12 @@ def main_circle_sim():
     plt.xlabel("timestep")
     plt.title("Ca concentration over time")
 
-    plt.show()
+    #plt.show()
     
-    """ 
+    plt.matshow(ref_structure)
+    plt.title("Reference structure")
+    plt.colorbar()
+
     plt.figure()
     plt.plot(Ring_radius,Ring_sums,'-.')
     plt.xlabel("number of pixels from opening")
@@ -167,9 +170,11 @@ def main_circle_sim():
     plt.title("free annexin start")
     plt.matshow(Free_annexin[T_tot-1])
     plt.title("free annexin end")
+    plt.colorbar()
 
     plt.matshow(Bound_annexin[T_tot-1])
     plt.title("bound annexin")
+    plt.colorbar()
     #plt.show()
 
 
@@ -180,9 +185,11 @@ def main_circle_sim():
 
     plt.matshow(Free_Ca[T_tot-1])
     plt.title("free ca end")
+    plt.colorbar()
+    
 
     plt.show()
-    """
+    
 
 if __name__ == "__main__":
     main_circle_sim()
