@@ -1,5 +1,6 @@
 from Circle_funcs import stabil_condi
 
+Avogadro = 6.02214076e23 # 1/mol
 # Concentrations for Ca^2+ inside; outside cell
 c_out = 2e-3 #M Concentration outside of cell
 c_in = 100e-9 #M Concetration inside cell
@@ -16,8 +17,15 @@ len_size = 50 # number of grid points
 dx, dy = picture_size/len_size ,picture_size/len_size # meters
 
 # Anxexin constants.
+A_init_density_upper = (6e6/(dx*dy))*(0.1/100)
+A_init_density_lower = ((2e6/10)/(dx*dy))*(0.1/100) #should get 0.1% of the 3D volume concentration for all proteins
+A_init_conc_upper = A_init_density_upper/Avogadro
+A_init_conc_lower= A_init_density_lower/Avogadro
+print(f"Upper conc of Annexins in start ={A_init_conc_upper}")
+print(f"Lower conc of Annexins in start ={A_init_conc_lower}")
+
 k1 ,k2 = 0.1 ,0.1
-c_in_annexin = 1e-9
+c_in_annexin = A_init_conc_lower # 1e-9 this was our initial guess.
 bound_annexin_start = k1*c_in_annexin*c_in/k2
 A_b_init = k1*c_in_annexin*c_in/k2
 
