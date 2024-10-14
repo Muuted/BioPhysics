@@ -71,3 +71,21 @@ def Ring_sum(ref_Grid ,offsets:tuple
         Ring_radius.append(R)
 
     return Ring_sums, Ring_radius, Grid,Visual_Grid
+
+
+def sum_in_cell(ref_Grid,Matrix,inside_val:int)->list:
+    print(f"shape of Matrix = {np.shape(Matrix)}")
+    T_tot  = np.shape(Matrix)[0]
+    sidelen = np.shape(Matrix)[1]
+    conc_time = []
+
+    for t in range(T_tot):
+        totsum = 0
+        for y in range(sidelen):
+            for x in range(sidelen):
+                if ref_Grid[y][x] == inside_val:
+                    totsum += Matrix[t][y][x]
+
+        conc_time.append(totsum)
+        
+    return conc_time

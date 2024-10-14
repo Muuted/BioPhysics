@@ -3,6 +3,8 @@ import numpy as np
 from Constants import *
 from Circle_funcs import *
 from Data_extraction_funcs import *
+from Constants import constants
+
 
 def test_reference_struct():
 
@@ -400,10 +402,27 @@ def test_annexin_diff_open_hole():
     plt.show()
 
 
+def Finding_the_pump_value():
+    from Circle_sim import main_circle_sim
+    c_in,c_out,D_Ca_cyto,T_tot,len_size,dx,dy,k1,k2,c_in_annexin,bound_annexin_start,A_b_init,D_Annexin_cyto,dt,close_time,c_pump,holesize,dR,R,x0,y0,wall_val,inside_val,outside_val,open_val = constants()
+    Real_time = 80 #seconds.
+    T_tot = int(Real_time/dt) # number of time steps.
+    c_pump = c_pump
+    close_time = T_tot*0.1
+    
+    main_circle_sim(
+        c_in,c_out,D_Ca_cyto,T_tot,len_size
+        ,dx,dy,k1,k2,c_in_annexin,bound_annexin_start,A_b_init,D_Annexin_cyto
+        ,dt,close_time,c_pump,holesize,dR,R,x0,y0
+        ,wall_val,inside_val,outside_val,open_val
+                    )
+
+    
+
 if __name__ =="__main__":
-    test_reference_struct()
+    #test_reference_struct()
     #test_Ca_diff_corner_closed_hole()
     #test_Ca_diff_corner_open_hole()
     #test_annexin_diff_closed_hole()
     #test_annexin_diff_open_hole()
-    
+    Finding_the_pump_value()

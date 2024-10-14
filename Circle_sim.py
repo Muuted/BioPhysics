@@ -3,10 +3,16 @@ import numpy as np
 from Constants import *
 from Circle_funcs import *
 from Data_extraction_funcs import *
+from Constants import constants
 import time as tm
 
 
-def main_circle_sim():
+def main_circle_sim(
+        c_in,c_out,D_Ca_cyto,T_tot,len_size
+        ,dx,dy,k1,k2,c_in_annexin,bound_annexin_start,A_b_init,D_Annexin_cyto
+        ,dt,close_time,c_pump,holesize,dR,R,x0,y0
+        ,wall_val,inside_val,outside_val,open_val
+                    ):
     open_hole = True
     add_Ca = True
     conc_list = []
@@ -20,7 +26,6 @@ def main_circle_sim():
         ,outside_val=outside_val
         ,wall_val=wall_val
                                     )
-    
     Free_Ca = init_conc(
         ref_grid=ref_structure
         ,time=T_tot
@@ -95,6 +100,7 @@ def main_circle_sim():
                         ,D=D_Annexin_cyto
                                 )
                     
+
                     if Free_Ca[t+1][y][x] > c_in:
                         Free_Ca[t+1][y][x] += -c_pump # the pumping mechanism
                                                     #, for only inside the cell
@@ -188,9 +194,26 @@ def main_circle_sim():
     plt.colorbar()
     
 
+    conc_over_time = sum_in_cell(ref_Grid=ref_structure
+                                 ,Matrix=Free_Ca
+                                 ,inside_val=inside_val
+                                 )
+    
+    plt.figure()
+    plt.plot(conc_over_time/max(conc_over_time))
+    plt.title("Concentration free Ca over time inside the cell")
+
     plt.show()
     
 
 if __name__ == "__main__":
-    main_circle_sim()
+    c_in,c_out,D_Ca_cyto,T_tot,len_size,dx,dy,k1,k2,c_in_annexin,bound_annexin_start,A_b_init,D_Annexin_cyto,dt,close_time,c_pump,holesize,dR,R,x0,y0,wall_val,inside_val,outside_val,open_val = constants()
+    
+    main_circle_sim(
+        c_in,c_out,D_Ca_cyto,T_tot,len_size
+        ,dx,dy,k1,k2,c_in_annexin,bound_annexin_start,A_b_init,D_Annexin_cyto
+        ,dt,close_time,c_pump,holesize,dR,R,x0,y0
+        ,wall_val,inside_val,outside_val,open_val
+                    )
+    
     
