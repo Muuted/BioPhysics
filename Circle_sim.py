@@ -12,7 +12,7 @@ def main_circle_sim(
         ,dx,dy,k1,k2,c_in_annexin,bound_annexin_start,A_b_init,D_Annexin_cyto
         ,dt,close_time,c_pump,holesize,dR,R,x0,y0
         ,wall_val,inside_val,outside_val,open_val
-                    ):
+                    ) -> list:
     open_hole = True
     add_Ca = True
     conc_list = []
@@ -65,7 +65,7 @@ def main_circle_sim(
     i = 0 # for showing that the theory steady state concentration  
           # matches the simulated one.
     for t in np.arange(0,T_tot-1): 
-        if t%(T_tot/10) == 0:
+        if t%(int(T_tot/10)) == 0:
             print(f"time={t} of {T_tot}")   
         t1, t2 = t%2, (t+1)%2
         t1, t2 = t, t+1
@@ -100,8 +100,11 @@ def main_circle_sim(
                         ,D=D_Annexin_cyto
                                 )
                     
+                    #if Free_Ca[t+1][y][x] < c_pump:
+                     #   a = Free_Ca[t+1][y][x]
+                      #  Free_Ca[t+1][y][x] = c_pump - a
 
-                    if Free_Ca[t+1][y][x] > c_in:
+                    if Free_Ca[t+1][y][x] > c_pump:
                         Free_Ca[t+1][y][x] += -c_pump # the pumping mechanism
                                                     #, for only inside the cell
 
@@ -119,9 +122,21 @@ def main_circle_sim(
             open_hole = False
             print(f"wall closure time t={t}")
                 
-        conc_list.append(np.sum(Free_Ca[t]))
-        conc_time_list.append(t)
+    return ref_structure,Free_Ca,Free_annexin,Bound_annexin,Bound_Ca
+    
 
+if __name__ == "__main__":
+    c_in,c_out,D_Ca_cyto,T_tot,len_size,dx,dy,k1,k2,c_in_annexin,bound_annexin_start,A_b_init,D_Annexin_cyto,dt,close_time,c_pump,holesize,dR,R,x0,y0,wall_val,inside_val,outside_val,open_val = constants()
+
+    Sim_data_list = main_circle_sim(
+        c_in,c_out,D_Ca_cyto,T_tot,len_size
+        ,dx,dy,k1,k2,c_in_annexin,bound_annexin_start,A_b_init,D_Annexin_cyto
+        ,dt,close_time,c_pump,holesize,dR,R,x0,y0
+        ,wall_val,inside_val,outside_val,open_val
+                    )
+    ref_structure,Free_Ca,Free_annexin,Bound_annexin,Bound_Ca = Sim_data_list
+
+    
     data_list = Ring_sum(
         ref_Grid=Free_Ca[T_tot-1]
         ,offsets=[x0,y0]
@@ -155,13 +170,6 @@ def main_circle_sim(
     plt.plot(sumbound,'k',label="Bound Annexins")
     plt.title("bound Annexins")
     plt.legend()
-
-    plt.figure()
-    plt.plot(conc_time_list,conc_list)
-    plt.xlabel("timestep")
-    plt.title("Ca concentration over time")
-
-    #plt.show()
     
     plt.matshow(ref_structure)
     plt.title("Reference structure")
@@ -204,16 +212,5 @@ def main_circle_sim(
     plt.title("Concentration free Ca over time inside the cell")
 
     plt.show()
-    
-
-if __name__ == "__main__":
-    c_in,c_out,D_Ca_cyto,T_tot,len_size,dx,dy,k1,k2,c_in_annexin,bound_annexin_start,A_b_init,D_Annexin_cyto,dt,close_time,c_pump,holesize,dR,R,x0,y0,wall_val,inside_val,outside_val,open_val = constants()
-    
-    main_circle_sim(
-        c_in,c_out,D_Ca_cyto,T_tot,len_size
-        ,dx,dy,k1,k2,c_in_annexin,bound_annexin_start,A_b_init,D_Annexin_cyto
-        ,dt,close_time,c_pump,holesize,dR,R,x0,y0
-        ,wall_val,inside_val,outside_val,open_val
-                    )
     
     

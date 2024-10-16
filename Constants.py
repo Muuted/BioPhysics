@@ -68,3 +68,6 @@ def constants():
         ,wall_val,inside_val,outside_val,open_val
     ]
     return args_list
+
+if __name__ == "__main__":
+    constants()

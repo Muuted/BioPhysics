@@ -4,7 +4,7 @@ from Constants import *
 from Circle_funcs import *
 from Data_extraction_funcs import *
 from Constants import constants
-
+import time as tm
 
 def test_reference_struct():
 
@@ -407,16 +407,36 @@ def Finding_the_pump_value():
     c_in,c_out,D_Ca_cyto,T_tot,len_size,dx,dy,k1,k2,c_in_annexin,bound_annexin_start,A_b_init,D_Annexin_cyto,dt,close_time,c_pump,holesize,dR,R,x0,y0,wall_val,inside_val,outside_val,open_val = constants()
     Real_time = 80 #seconds.
     T_tot = int(Real_time/dt) # number of time steps.
-    c_pump = c_pump
+    c_pump = c_pump*30
     close_time = T_tot*0.1
     
-    main_circle_sim(
+    time1 = tm.time()
+    Sim_data_list = main_circle_sim(
         c_in,c_out,D_Ca_cyto,T_tot,len_size
         ,dx,dy,k1,k2,c_in_annexin,bound_annexin_start,A_b_init,D_Annexin_cyto
         ,dt,close_time,c_pump,holesize,dR,R,x0,y0
         ,wall_val,inside_val,outside_val,open_val
                     )
+    time2 = tm.time()
 
+    print(f"Sim took {(time2-time1)/60}min")
+    ref_structure = Sim_data_list[0]
+    Free_Ca = Sim_data_list[1]
+
+    conc_Ca_time = sum_in_cell(
+        ref_Grid=ref_structure
+        ,Matrix=Free_Ca
+        ,inside_val=inside_val
+                               )
+
+    real_time_vec = np.linspace(0,Real_time,T_tot)
+
+    plt.figure()
+    plt.plot(real_time_vec,conc_Ca_time/max(conc_Ca_time))
+    plt.title("conc of Ca over time, inside the cell")
+    plt.xlabel("time [s]")
+    plt.ylabel("Concentration/max(conc)")
+    plt.show()
     
 
 if __name__ =="__main__":
