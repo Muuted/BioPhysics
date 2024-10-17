@@ -143,6 +143,7 @@ if __name__ == "__main__":
         ,Radius=R   ,dRadius=dR
         ,num_of_rings=3
     )
+    
     Ring_sums = data_list[0]
     Ring_radius = data_list[1]
     conc_removed_grid = data_list[2]

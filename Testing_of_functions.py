@@ -196,6 +196,8 @@ def test_Ca_diff_corner_open_hole():
 
 
 def test_annexin_diff_closed_hole():
+    c_in,c_out,D_Ca_cyto,T_tot,len_size,dx,dy,k1,k2,c_in_annexin,bound_annexin_start,A_b_init,D_Annexin_cyto,dt,close_time,c_pump,holesize,dR,R,x0,y0,wall_val,inside_val,outside_val,open_val = constants()
+
     ref_grid = init_ref_circle(
         boxlen=len_size
         ,Radius=R,dRadius=dR
@@ -208,15 +210,24 @@ def test_annexin_diff_closed_hole():
     A_f = init_conc(
         ref_grid=ref_grid
         ,time=T_tot
-        ,c_in=c_in,c_out=c_out
+        ,c_in=c_in_annexin
+        ,c_out=0
         ,inside_val=inside_val
         ,outside_val=outside_val
                         )
-    Ca = np.zeros(shape=(T_tot,len_size,len_size))
+    Ca = init_conc(
+        ref_grid=ref_grid
+        ,time=T_tot
+        ,c_in=c_in
+        ,c_out=c_out
+        ,inside_val=inside_val
+        ,outside_val=outside_val
+                        )
+    
     Ca_b = np.zeros(shape=(T_tot,len_size,len_size))
-    A_f = np.zeros(shape=(T_tot,len_size,len_size))
+    #A_f = np.zeros(shape=(T_tot,len_size,len_size))
     A_b = np.zeros(shape=(T_tot,len_size,len_size))
-    A_f[0][int(len_size/2)][int(len_size/2)] = 100 #middle
+    #A_f[0][int(len_size/2)][int(len_size/2)] = 100 #middle
     #Ca[0][5][5] = 1 #top left corner
     #Ca[0][int(len_size-5)][5] = 1 # top right corner
     #Ca[0][5][int(len_size-5)] = 1 # bottom left corner
@@ -236,6 +247,10 @@ def test_annexin_diff_closed_hole():
     A_b_conc = []
     A_tot_conc = []
     close_time = int(T_tot*0.5)
+
+    scaling_fact  = 0
+    scaling_fact_done = False
+
     for t in np.arange(0,T_tot-1): 
         f,b = np.sum(A_f[t])    ,np.sum(A_b[t])
         A_f_conc.append(f)
@@ -277,7 +292,17 @@ def test_annexin_diff_closed_hole():
                         ,const=[t,dt,dx,dy,k1,k2,R,dR,radii]
                         ,D=D_Annexin_cyto
                     )
+                    if scaling_fact_done == False:
+                        scaling_fact += 1
+                scaling_fact_done = True
 
+
+    A_f_stability,A_b_stability = Annexin_stablilization(
+        k1=k1,k2=k2,A_fo=c_in_annexin,T_tot=T_tot,c_in=c_in
+        ,scale_factor=scaling_fact
+    )
+
+    print(f"scaling factor ={scaling_fact}")
     plt.matshow(A_f[0])
     plt.title("init Ca distribution")
 
@@ -290,6 +315,19 @@ def test_annexin_diff_closed_hole():
                ,label="close hole time")
     plt.title("A_tot concentration over time")
     plt.legend()
+
+    plt.figure()
+    plt.plot(A_f_stability,label="equation")
+    plt.plot(A_f_conc,label="simulated")
+    plt.title("Free annexin")
+    plt.legend()
+
+    plt.figure()
+    plt.plot(A_b_stability,label="equation")
+    plt.plot(A_b_conc,label="simulated")
+    plt.title("Bound annexin")
+    plt.legend()
+
     plt.show()
 
 
@@ -443,6 +481,7 @@ if __name__ =="__main__":
     #test_reference_struct()
     #test_Ca_diff_corner_closed_hole()
     #test_Ca_diff_corner_open_hole()
-    #test_annexin_diff_closed_hole()
+    test_annexin_diff_closed_hole()
     #test_annexin_diff_open_hole()
-    Finding_the_pump_value()
+    #Finding_the_pump_value()
+    pass
