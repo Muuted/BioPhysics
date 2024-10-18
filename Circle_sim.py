@@ -12,11 +12,9 @@ def main_circle_sim(
         ,dx,dy,k1,k2,c_in_annexin,bound_annexin_start,A_b_init,D_Annexin_cyto
         ,dt,close_time,c_pump,holesize,dR,R,x0,y0
         ,wall_val,inside_val,outside_val,open_val
+        ,open_hole=True
                     ) -> list:
-    open_hole = True
-    add_Ca = True
-    conc_list = []
-    conc_time_list = []
+    #open_hole = True
     
     # Creation of our Grids
     ref_structure = init_ref_circle(

@@ -4,6 +4,7 @@ from Constants import *
 from Circle_funcs import *
 from Data_extraction_funcs import *
 from Constants import constants
+from Circle_sim import main_circle_sim
 import time as tm
 
 def test_reference_struct():
@@ -197,134 +198,66 @@ def test_Ca_diff_corner_open_hole():
 
 def test_annexin_diff_closed_hole():
     c_in,c_out,D_Ca_cyto,T_tot,len_size,dx,dy,k1,k2,c_in_annexin,bound_annexin_start,A_b_init,D_Annexin_cyto,dt,close_time,c_pump,holesize,dR,R,x0,y0,wall_val,inside_val,outside_val,open_val = constants()
+    T_tot= 600
+    bound_annexin_start = 0
+    c_pump = 0
 
-    ref_grid = init_ref_circle(
-        boxlen=len_size
-        ,Radius=R,dRadius=dR
-        ,offsets=[x0,y0]
-        ,inside_val=inside_val
-        ,outside_val=outside_val
-        ,wall_val=wall_val
-        )
     
-    A_f = init_conc(
-        ref_grid=ref_grid
-        ,time=T_tot
-        ,c_in=c_in_annexin
-        ,c_out=0
-        ,inside_val=inside_val
-        ,outside_val=outside_val
-                        )
-    Ca = init_conc(
-        ref_grid=ref_grid
-        ,time=T_tot
-        ,c_in=c_in
-        ,c_out=c_out
-        ,inside_val=inside_val
-        ,outside_val=outside_val
-                        )
-    
-    Ca_b = np.zeros(shape=(T_tot,len_size,len_size))
-    #A_f = np.zeros(shape=(T_tot,len_size,len_size))
-    A_b = np.zeros(shape=(T_tot,len_size,len_size))
-    #A_f[0][int(len_size/2)][int(len_size/2)] = 100 #middle
-    #Ca[0][5][5] = 1 #top left corner
-    #Ca[0][int(len_size-5)][5] = 1 # top right corner
-    #Ca[0][5][int(len_size-5)] = 1 # bottom left corner
-    #Ca[0][int(len_size-5)][int(len_size-5)] = 1 # bottom right corner   
-    
-    open_hole = False
-    open_close_membrane(
-                        Grid=ref_grid
-                        ,Radius=R, dRadius=dR
-                        ,offsets=[x0,y0],holesize=holesize
-                        ,open_val=open_val
-                        ,wall_val=wall_val
-                        ,open_wall=open_hole
+    Sim_data_list = main_circle_sim(
+        c_in,c_out,D_Ca_cyto,T_tot,len_size
+        ,dx,dy,k1,k2,c_in_annexin,bound_annexin_start,A_b_init,D_Annexin_cyto
+        ,dt,close_time,c_pump,holesize,dR,R,x0,y0
+        ,wall_val,inside_val,outside_val,open_val
+        ,open_hole=False
                     )
-    
-    A_f_conc = []
-    A_b_conc = []
-    A_tot_conc = []
-    close_time = int(T_tot*0.5)
+    ref_structure,Free_Ca,Free_annexin,Bound_annexin,Bound_Ca = Sim_data_list
 
-    scaling_fact  = 0
-    scaling_fact_done = False
-
-    for t in np.arange(0,T_tot-1): 
-        f,b = np.sum(A_f[t])    ,np.sum(A_b[t])
-        A_f_conc.append(f)
-        A_b_conc.append(b)
-        A_tot_conc.append(f+b)
-
-        if t%(T_tot/10) == 0:
-            print(f"time={t} of {T_tot}")   
-        t1, t2 = t%2, (t+1)%2
-        t1, t2 = t, t+1
-        for x in range(0,len_size):
-            for y in range(0,len_size):
-                #Bound_Ca[t+1][y][x] += Bound_Ca[t][y][x]
-                if ref_grid[y][x] == wall_val or ref_grid[y][x] == outside_val:
-                    Ca[t+1][y][x] = Ca[t][y][x]
-                    A_f[t+1][y][x] = A_f[t][y][x]
-                    A_b[t+1][y][x] = A_b[t][y][x]
-
-
-                if ref_grid[y][x] == inside_val or ref_grid[y][x] == open_val:
-                    radii = np.sqrt( (x-x0)**2 + (y-y0)**2 )
-                    pos = cicle_boundary(x=x,y=y,boxlen=len_size
-                                            ,ref_matrix=ref_grid
-                                            ,refval=wall_val
-                                        )
-
-                    circle_dCondt(
-                        C=Ca,pos=pos
-                        ,const=[t,dt,dx,dy,R,dR,radii]
-                        ,D=D_Ca_cyto
-                    )
-
-                    circle_dAdt(
-                        A_free= A_f
-                        ,A_bound=A_b
-                        ,C=Ca
-                        ,C_bound=Ca_b
-                        ,pos=pos 
-                        ,const=[t,dt,dx,dy,k1,k2,R,dR,radii]
-                        ,D=D_Annexin_cyto
-                    )
-                    if scaling_fact_done == False:
-                        scaling_fact += 1
-                scaling_fact_done = True
-
-
-    A_f_stability,A_b_stability = Annexin_stablilization(
-        k1=k1,k2=k2,A_fo=c_in_annexin,T_tot=T_tot,c_in=c_in
-        ,scale_factor=scaling_fact
+    A_sumfree,A_sumbound,A_sumtot = sum_annexin(
+        A_free=Free_annexin
+        ,A_bound=Bound_annexin
     )
 
-    print(f"scaling factor ={scaling_fact}")
-    plt.matshow(A_f[0])
-    plt.title("init Ca distribution")
+    print(f"maximum free annexin ={max(A_sumfree)}")
+    A_f_stability,A_b_stability = Annexin_stablilization(
+        k1=k1,k2=k2
+        ,A_fo=c_in_annexin
+        ,T_tot=int(T_tot*dt)
+        ,c_in=c_in
+    )
+    """
+    plt.matshow(Free_annexin[0])
+    plt.title("init Free annexin distribution")
 
-    plt.matshow(A_f[T_tot-1])
-    plt.title("final Ca distribution")
+    plt.matshow(Free_annexin[T_tot-1])
+    plt.title("final Free annexin distribution")
 
+    """
     plt.figure()
-    plt.plot(A_tot_conc,'r',label="[Ca]")
-    plt.vlines(x=close_time,ymin=min(A_tot_conc),ymax=max(A_tot_conc)
-               ,label="close hole time")
+    plt.plot(A_sumtot,'r',label="[Annexin]")
+    plt.vlines(
+        x=close_time,ymin=min(A_sumtot),ymax=max(A_sumtot)
+        ,label="close hole time"
+               )
     plt.title("A_tot concentration over time")
     plt.legend()
 
+    print("max afstab=",max(A_f_stability))
+    time_vec = np.linspace(start=0,stop=T_tot,num=len(A_f_stability))
+
+    A_f_stability = [i/max(A_f_stability) for i in A_f_stability]
+    A_sumfree = [i/max(A_sumfree) for i in A_sumfree]
     plt.figure()
-    plt.plot(A_f_stability,label="equation")
-    plt.plot(A_f_conc,label="simulated")
+    plt.plot(time_vec,A_f_stability,label="equation")
+    plt.plot(A_sumfree,label="simulated")
     plt.title("Free annexin")
     plt.legend()
 
+    print("max abstab=",max(A_b_stability))
+    A_b_stability = [i/max(A_b_stability) for i in A_b_stability]
+    A_sumbound = [i/max(A_sumbound) for i in A_sumbound]
     plt.figure()
-    plt.plot(A_b_stability,label="equation")
-    plt.plot(A_b_conc,label="simulated")
+    plt.plot(time_vec,A_b_stability,label="equation")
+    plt.plot(A_sumbound,label="simulated")
     plt.title("Bound annexin")
     plt.legend()
 

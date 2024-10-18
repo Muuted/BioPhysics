@@ -165,18 +165,20 @@ def Annexin_stablilization(
         k1:float,k2:float
         ,A_fo:float,c_in:float
         ,T_tot:int
-        ,scale_factor:int
         )->list:
     
+    C = k1*c_in*A_fo/k2 
+    b = k1*c_in + k2
+
     A_f = []
     A_b = []
 
     for t in range(T_tot):
         A_f.append(
-            (k1*c_in*A_fo/k2 + A_fo*(1- c_in*k1/k2)*np.e**(-(k1*c_in+k2)*t))*scale_factor
+            A_fo - C  + C*np.exp(-b*t)
             )
         A_b.append(
-            ((k1*c_in*A_fo/k2)*(1-np.e**(-(k1*c_in+k2)*t)))*scale_factor
+            C*( 1   -  np.exp(-b*t) )
             )
 
     return A_f, A_b

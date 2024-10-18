@@ -1,30 +1,50 @@
 import matplotlib.pyplot as plt
 import numpy as np
+import scipy.io as spio
+import h5py
 from Constants import constants
-data_path = "C:\\Users\\AdamSkovbjergKnudsen\\Desktop\\ISA Biophys\\data eksperimenter\\GCaMP6s-CAAX (PM anchor)"
 
 
-if __name__ == "__main__":
-    c_in,c_out,D_Ca_cyto,T_tot,len_size,dx,dy,k1,k2,c_in_annexin,bound_annexin_start,A_b_init,D_Annexin_cyto,dt,close_time,c_pump,holesize,dR,R,x0,y0,wall_val,inside_val,outside_val,open_val = constants()
+def extract_data_mean_intensity(data_path,datafilename,filenum:str):
+    
+    file = data_path + datafilename + "\\" + filenum + ".fig" 
+    #print(spio.whosmat(file2))
+    Timeseries2 = spio.loadmat(file)
+    Mean_intensity_T2 = Timeseries2["__function_workspace__"]
 
-    c = 0 #k2*k1*c_in-k1*c_in
-    b= -k1*c_in-k2
-    print(f"b={b}")
-    a = 1
+    plt.figure()
+    plt.plot(Mean_intensity_T2[0])
+    plt.show()
 
-    d = (b)**2 -4*1*(c)
+def extract_data_Radial_mena_intensity(data_path,datafilename):
 
-    print(f"the auxiliary eq  d={d} \n finding the 2 roots")
+    file = data_path + datafilename
+    #print(spio.whosmat(file))
+    data = h5py.File(file,mode="r")
+    keywords = ['#refs#', 'Frame', 'ICAGFP'
+                , 'IMaskCAGFP', 'IMaskMeanCAGFP'
+                , 'MeanRadialIntensitiesCAGFP'
+                , 'Radius', 'Time'
+                ]
+    
+    #with h5py.File(file,mode="r") as f:
+     #   print(f.keys())
 
-    root1 = (-b + np.sqrt(d))/(2*a)
-
-    root2 = (-b - np.sqrt(d))/(2*a)
-
-    print(f" root1 ={root1}")
-    print(f" root2 ={root2}")
-
+    dd = data[keywords[0]]
+    print(dd)
+    
+    
     
 
-
-
-
+if __name__ == "__main__":
+    data_path = "C:\\Users\\AdamSkovbjergKnudsen\\Desktop\\ISA Biophys\\data eksperimenter\\GCaMP6s-CAAX (PM anchor)"
+    
+    #extract_data_mean_intensity(
+     #   data_path=data_path
+      #  ,datafilename="\\Mean_Cell_Intensity_vs_Time_Series"
+       # )
+    
+    extract_data_Radial_mena_intensity(
+        data_path=data_path
+        ,datafilename="\\MeanRadialIntensities_I_IMaskMean_Radius_Time_Frame_Series_2_CAGFP.mat"
+    )
