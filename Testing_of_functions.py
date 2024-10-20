@@ -414,7 +414,7 @@ if __name__ =="__main__":
     #test_reference_struct()
     #test_Ca_diff_corner_closed_hole()
     #test_Ca_diff_corner_open_hole()
-    test_annexin_diff_closed_hole()
+    test_annexin_diff_closed_hole() # also tests the analytical sol for dA_f and dA_b
     #test_annexin_diff_open_hole()
     #Finding_the_pump_value()
     pass
