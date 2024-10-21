@@ -246,22 +246,22 @@ def test_annexin_diff_closed_hole():
     print("max afstab=",max(A_f_stability))
     time_vec = np.linspace(start=0,stop=T_tot,num=len(A_f_stability))
 
-    A_f_stability = [i/max(A_f_stability) for i in A_f_stability]
-    A_sumfree = [i/max(A_sumfree) for i in A_sumfree]
+    #A_f_stability = [i/max(A_f_stability) for i in A_f_stability]
+    #A_sumfree = [i/max(A_sumfree) for i in A_sumfree]
     plt.figure()
     plt.plot(time_vec,A_f_stability,label="equation")
-    plt.plot(A_sumfree,label="simulated")
+    #plt.plot(A_sumfree,label="simulated")
     plt.xlabel("time steps")
     plt.ylabel(r" $ \frac{A_f(t)}{max(A_f)} $ ")
     plt.title(r"Free annexin  $ c_{pump} $ =0")
     plt.legend()
 
     print("max abstab=",max(A_b_stability))
-    A_b_stability = [i/max(A_b_stability) for i in A_b_stability]
-    A_sumbound = [i/max(A_sumbound) for i in A_sumbound]
+    #A_b_stability = [i/max(A_b_stability) for i in A_b_stability]
+    #A_sumbound = [i/max(A_sumbound) for i in A_sumbound]
     plt.figure()
     plt.plot(time_vec,A_b_stability,label="equation")
-    plt.plot(A_sumbound,label="simulated")
+    #plt.plot(A_sumbound,label="simulated")
     plt.ylabel(r"$ \frac{ A_b (t) }{max( A_f )} $")
     plt.xlabel(r"time steps $ c_{pump} $ =0")
     plt.title("Bound annexin")
@@ -410,7 +410,7 @@ def Finding_the_pump_value():
 
     plt.figure()
     plt.plot(real_time_vec,conc_Ca_time/max(conc_Ca_time))
-    plt.title("conc of Ca over time, inside the cell")
+    plt.title(f"[Ca] in cell, " + r"$ c_{pump} $" +f"={c_pump}")
     plt.xlabel("time [s]")
     plt.ylabel("Concentration/max(conc)")
     plt.show()
@@ -420,7 +420,7 @@ if __name__ =="__main__":
     #test_reference_struct()
     #test_Ca_diff_corner_closed_hole()
     #test_Ca_diff_corner_open_hole()
-    #test_annexin_diff_closed_hole() # also tests the analytical sol for dA_f and dA_b
+    test_annexin_diff_closed_hole() # also tests the analytical sol for dA_f and dA_b
     #test_annexin_diff_open_hole()
-    Finding_the_pump_value()
+    #Finding_the_pump_value()
     pass

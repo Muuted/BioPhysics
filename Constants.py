@@ -4,7 +4,7 @@ def constants():
     Avogadro = 6.02214076e23 # 1/mol
     # Concentrations for Ca^2+ inside; outside cell
     c_out = 2e-3 #M Concentration outside of cell
-    c_in = 100e-9 #M Concetration inside cell
+    c_in = 1e-5#100e-9 #M Concetration inside cell
     D_Ca_cyto  = 2.7e-11 #meters^2/second
     #D_Ca_water  = 7.93e-10 #meters^2/second
 
