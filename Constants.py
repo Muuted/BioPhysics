@@ -18,7 +18,7 @@ def constants():
     dx, dy = picture_size/len_size ,picture_size/len_size # meters
 
     # Anxexin constants.
-    A_init_density_upper = (6e6/(dx*dy))*(0.1/100)
+    A_init_density_upper = (4e6/(dx*dy))*(0.1/100)
     A_init_density_lower = ((2e6/10)/(dx*dy))*(0.1/100) #should get 0.1% of the 3D volume concentration for all proteins
     A_init_conc_upper = A_init_density_upper/Avogadro
     A_init_conc_lower= A_init_density_lower/Avogadro
@@ -47,7 +47,7 @@ def constants():
     # mechanisms change.
     close_time = T_tot*0.5
 
-    c_pump = 5e-8*dt # meters/second
+    c_pump = dt*30*(5e-8) # meters/second
     print(f"c_pump={c_pump}")
 
     #size of cell, hole in cell and the center's placement.
@@ -63,7 +63,11 @@ def constants():
 
     args_list = [
         c_in,c_out,D_Ca_cyto,T_tot,len_size
-        ,dx,dy,k1,k2,c_in_annexin,bound_annexin_start,A_b_init,D_Annexin_cyto
+        ,dx,dy,k1,k2
+        ,c_in_annexin
+        ,bound_annexin_start
+        ,A_b_init
+        ,D_Annexin_cyto
         ,dt,close_time,c_pump,holesize,dR,R,x0,y0
         ,wall_val,inside_val,outside_val,open_val
     ]

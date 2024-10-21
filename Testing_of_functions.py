@@ -198,7 +198,7 @@ def test_Ca_diff_corner_open_hole():
 
 def test_annexin_diff_closed_hole():
     c_in,c_out,D_Ca_cyto,T_tot,len_size,dx,dy,k1,k2,c_in_annexin,bound_annexin_start,A_b_init,D_Annexin_cyto,dt,close_time,c_pump,holesize,dR,R,x0,y0,wall_val,inside_val,outside_val,open_val = constants()
-    T_tot= 600
+    T_tot= 1200
     bound_annexin_start = 0
     c_pump = 0
 
@@ -238,7 +238,9 @@ def test_annexin_diff_closed_hole():
         x=close_time,ymin=min(A_sumtot),ymax=max(A_sumtot)
         ,label="close hole time"
                )
-    plt.title("A_tot concentration over time")
+    plt.xlabel("time steps")
+    plt.ylabel(r" $ A_f + A_b $ ")
+    plt.title(r" $ A_{tot} $ and  $ c_{pump} $ =0")
     plt.legend()
 
     print("max afstab=",max(A_f_stability))
@@ -249,7 +251,9 @@ def test_annexin_diff_closed_hole():
     plt.figure()
     plt.plot(time_vec,A_f_stability,label="equation")
     plt.plot(A_sumfree,label="simulated")
-    plt.title("Free annexin")
+    plt.xlabel("time steps")
+    plt.ylabel(r" $ \frac{A_f(t)}{max(A_f)} $ ")
+    plt.title(r"Free annexin  $ c_{pump} $ =0")
     plt.legend()
 
     print("max abstab=",max(A_b_stability))
@@ -258,6 +262,8 @@ def test_annexin_diff_closed_hole():
     plt.figure()
     plt.plot(time_vec,A_b_stability,label="equation")
     plt.plot(A_sumbound,label="simulated")
+    plt.ylabel(r"$ \frac{ A_b (t) }{max( A_f )} $")
+    plt.xlabel(r"time steps $ c_{pump} $ =0")
     plt.title("Bound annexin")
     plt.legend()
 
@@ -378,7 +384,7 @@ def Finding_the_pump_value():
     c_in,c_out,D_Ca_cyto,T_tot,len_size,dx,dy,k1,k2,c_in_annexin,bound_annexin_start,A_b_init,D_Annexin_cyto,dt,close_time,c_pump,holesize,dR,R,x0,y0,wall_val,inside_val,outside_val,open_val = constants()
     Real_time = 80 #seconds.
     T_tot = int(Real_time/dt) # number of time steps.
-    c_pump = c_pump*30
+    #c_pump = c_pump*30
     close_time = T_tot*0.1
     
     time1 = tm.time()
@@ -414,7 +420,7 @@ if __name__ =="__main__":
     #test_reference_struct()
     #test_Ca_diff_corner_closed_hole()
     #test_Ca_diff_corner_open_hole()
-    test_annexin_diff_closed_hole() # also tests the analytical sol for dA_f and dA_b
+    #test_annexin_diff_closed_hole() # also tests the analytical sol for dA_f and dA_b
     #test_annexin_diff_open_hole()
-    #Finding_the_pump_value()
+    Finding_the_pump_value()
     pass
