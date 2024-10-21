@@ -243,25 +243,27 @@ def test_annexin_diff_closed_hole():
     plt.title(r" $ A_{tot} $ and  $ c_{pump} $ =0")
     plt.legend()
 
+    point_count = points_inside_cell(refgrid=ref_structure,inside_val=inside_val)
+
     print("max afstab=",max(A_f_stability))
     time_vec = np.linspace(start=0,stop=T_tot,num=len(A_f_stability))
 
-    #A_f_stability = [i/max(A_f_stability) for i in A_f_stability]
-    #A_sumfree = [i/max(A_sumfree) for i in A_sumfree]
+    #A_f_stability = [i*point_count for i in A_f_stability]
+    A_sumfree = [i/point_count for i in A_sumfree]
     plt.figure()
     plt.plot(time_vec,A_f_stability,label="equation")
-    #plt.plot(A_sumfree,label="simulated")
+    plt.plot(A_sumfree,label="simulated")
     plt.xlabel("time steps")
     plt.ylabel(r" $ \frac{A_f(t)}{max(A_f)} $ ")
     plt.title(r"Free annexin  $ c_{pump} $ =0")
     plt.legend()
 
     print("max abstab=",max(A_b_stability))
-    #A_b_stability = [i/max(A_b_stability) for i in A_b_stability]
-    #A_sumbound = [i/max(A_sumbound) for i in A_sumbound]
+    #A_b_stability = [i*point_count for i in A_b_stability]
+    A_sumbound = [i/point_count for i in A_sumbound]
     plt.figure()
     plt.plot(time_vec,A_b_stability,label="equation")
-    #plt.plot(A_sumbound,label="simulated")
+    plt.plot(A_sumbound,label="simulated")
     plt.ylabel(r"$ \frac{ A_b (t) }{max( A_f )} $")
     plt.xlabel(r"time steps $ c_{pump} $ =0")
     plt.title("Bound annexin")

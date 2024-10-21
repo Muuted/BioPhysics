@@ -167,7 +167,8 @@ def Annexin_stablilization(
         ,T_tot:int
         )->list:
     
-    C = k1*c_in*A_fo/k2 
+    K = k1*c_in/k2
+    C = A_fo/(1+K)
     b = k1*c_in + k2
 
     A_f = []
@@ -175,7 +176,7 @@ def Annexin_stablilization(
 
     for t in range(T_tot):
         A_f.append(
-            A_fo - C  + C*np.exp(-b*t)
+            C*( 1 + np.exp(-b*t) )
             )
         A_b.append(
             C*( 1   -  np.exp(-b*t) )
@@ -183,7 +184,17 @@ def Annexin_stablilization(
 
     return A_f, A_b
 
+def points_inside_cell(refgrid,inside_val):
 
+    ylen,xlen = np.shape(refgrid)
+    point_count = 0
+    for x in range(xlen):
+        for y in range(ylen):
+           if refgrid[y][x] == inside_val:
+               point_count += 1
+    
+    return point_count
+            
 
 
 if __name__ == "__main__":
