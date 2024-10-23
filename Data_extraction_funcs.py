@@ -12,17 +12,13 @@ def sum_annexin(A_free,A_bound):
     for t in range(shape[0]):
         sumfree = 0
         sumbound = 0
-        totsum = 0
-        #for x in range(shape[1]):
-         #   for y in range(shape[2]):
+
         sumfree = np.sum(A_free[t])
         sumbound = np.sum(A_bound[t])
         
-        totsum += sumfree + sumbound
-        
         sumAfree.append(sumfree)
         sumAbound.append(sumbound)
-        sumtot.append(totsum)
+        sumtot.append(sumfree + sumbound)
 
     return sumAfree, sumAbound, sumtot
 

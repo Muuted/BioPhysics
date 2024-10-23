@@ -6,6 +6,8 @@ from Data_extraction_funcs import *
 from Constants import constants
 from Circle_sim import main_circle_sim
 import time as tm
+import plotly.graph_objects as go
+import pandas as pd
 
 def test_reference_struct():
 
@@ -198,7 +200,7 @@ def test_Ca_diff_corner_open_hole():
 
 def test_annexin_diff_closed_hole():
     c_in,c_out,D_Ca_cyto,T_tot,len_size,dx,dy,k1,k2,c_in_annexin,bound_annexin_start,A_b_init,D_Annexin_cyto,dt,close_time,c_pump,holesize,dR,R,x0,y0,wall_val,inside_val,outside_val,open_val = constants()
-    T_tot= 1200
+    T_tot= 500
     bound_annexin_start = 0
     c_pump = 0
 
@@ -218,20 +220,18 @@ def test_annexin_diff_closed_hole():
     )
 
     print(f"maximum free annexin ={max(A_sumfree)}")
-    A_f_stability,A_b_stability = Annexin_stablilization(
-        k1=k1,k2=k2
-        ,A_fo=c_in_annexin
-        ,T_tot=int(T_tot*dt)
-        ,c_in=c_in
-    )
+
+
     """
     plt.matshow(Free_annexin[0])
     plt.title("init Free annexin distribution")
 
     plt.matshow(Free_annexin[T_tot-1])
     plt.title("final Free annexin distribution")
-
     """
+    
+
+    
     plt.figure()
     plt.plot(A_sumtot,'r',label="[Annexin]")
     plt.vlines(
@@ -243,35 +243,15 @@ def test_annexin_diff_closed_hole():
     plt.title(r" $ A_{tot} $ and  $ c_{pump} $ =0")
     plt.legend()
 
-    point_count = points_inside_cell(refgrid=ref_structure,inside_val=inside_val)
-
-    print("max afstab=",max(A_f_stability))
-    time_vec = np.linspace(start=0,stop=T_tot,num=len(A_f_stability))
-
-    #A_f_stability = [i*point_count for i in A_f_stability]
-    A_sumfree = [i/point_count for i in A_sumfree]
     plt.figure()
-    plt.plot(time_vec,A_f_stability,label="equation")
-    plt.plot(A_sumfree,label="simulated")
-    plt.xlabel("time steps")
-    plt.ylabel(r" $ \frac{A_f(t)}{max(A_f)} $ ")
-    plt.title(r"Free annexin  $ c_{pump} $ =0")
-    plt.legend()
-
-    print("max abstab=",max(A_b_stability))
-    #A_b_stability = [i*point_count for i in A_b_stability]
-    A_sumbound = [i/point_count for i in A_sumbound]
-    plt.figure()
-    plt.plot(time_vec,A_b_stability,label="equation")
     plt.plot(A_sumbound,label="simulated")
     plt.ylabel(r"$ \frac{ A_b (t) }{max( A_f )} $")
     plt.xlabel(r"time steps $ c_{pump} $ =0")
     plt.title("Bound annexin")
     plt.legend()
-
     plt.show()
 
-
+    
 def test_annexin_diff_open_hole():
     ref_grid = init_ref_circle(
         boxlen=len_size
@@ -418,11 +398,155 @@ def Finding_the_pump_value():
     plt.show()
     
 
+def test_analytical_vs_sim_dAf_dAb():
+    c_in,c_out,D_Ca_cyto,T_tot,len_size,dx,dy,k1,k2,c_in_annexin,bound_annexin_start,A_b_init,D_Annexin_cyto,dt,close_time,c_pump,holesize,dR,R,x0,y0,wall_val,inside_val,outside_val,open_val = constants()
+    T_tot= 500
+    bound_annexin_start = 0
+    c_pump = 0
+
+    
+    Sim_data_list = main_circle_sim(
+        c_in,c_out,D_Ca_cyto,T_tot,len_size
+        ,dx,dy,k1,k2,c_in_annexin,bound_annexin_start,A_b_init,D_Annexin_cyto
+        ,dt,close_time,c_pump,holesize,dR,R,x0,y0
+        ,wall_val,inside_val,outside_val,open_val
+        ,open_hole=False
+                    )
+    ref_structure,Free_Ca,Free_annexin,Bound_annexin,Bound_Ca = Sim_data_list
+
+    A_sumfree,A_sumbound,A_sumtot = sum_annexin(
+        A_free=Free_annexin
+        ,A_bound=Bound_annexin
+    )
+
+    print(f"maximum free annexin ={max(A_sumfree)}")
+    A_f_stability,A_b_stability = Annexin_stablilization(
+        k1=k1,k2=k2
+        ,A_fo=c_in_annexin
+        ,realtime=int(T_tot*dt)
+        ,c_in=c_in
+        ,dt=dt
+    )
+    point_count = points_inside_cell(refgrid=ref_structure,inside_val=inside_val)
+    point_count = point_count*dx*dy
+    time_vec = np.linspace(start=0,stop=T_tot,num=len(A_f_stability))
+    #A_f_stability = [i/max(A_f_stability) for i in A_f_stability]
+    A_sumfree = [i/point_count for i in A_sumfree]
+    #A_b_stability = [i/max(A_b_stability) for i in A_b_stability]
+    A_sumbound = [i/point_count for i in A_sumbound]
+    
+    fig1 = go.Figure()
+    fig1.add_trace(
+        go.Scatter(
+            x=time_vec
+            ,y=A_sumfree#[i/max(A_sumfree) for i in A_sumfree]
+            ,mode="lines + markers"
+            ,name="simulated"
+        )
+    )
+    fig1.update_xaxes(title_text="timesteps")
+    fig1.update_yaxes(title_text="[A_free]")
+    fig1.update_yaxes(
+        exponentformat="SI"
+    )
+    fig1.show()
+
+    fig2 = go.Figure()
+    fig2.add_trace(
+        go.Scatter(
+            x=time_vec
+            ,y=A_f_stability#[i/max(A_f_stability) for i in A_f_stability]
+            ,mode="lines + markers"
+            ,name="Analytical sol"
+        )
+    )
+    fig2.update_xaxes(title_text="timesteps")
+    fig2.update_yaxes(title_text="[A_free]")
+    fig2.show()
+
+    fig3 = go.Figure()
+    fig3.add_trace(
+        go.Scatter(
+            x=time_vec
+            ,y=A_sumtot
+            ,name="total sum"
+        )
+    )
+    fig3.show()
+
+    plt.figure()
+    plt.plot(A_sumtot,'r',label="[Annexin]")
+    plt.vlines(
+        x=close_time,ymin=min(A_sumtot),ymax=max(A_sumtot)
+        ,label="close hole time"
+               )
+    plt.xlabel("time steps")
+    plt.ylabel(r" $ A_f + A_b $ ")
+    plt.title(r" $ A_{tot} $ and  $ c_{pump} $ =0")
+    plt.legend()
+
+    
+    print(f"area of cell ={point_count}")
+
+    plt.figure()
+    plt.plot(time_vec,A_f_stability,label="equation")
+    #plt.plot(A_sumfree,label="simulated")
+    plt.xlabel("time steps")
+    plt.ylabel(r" $ \frac{A_f(t)}{max(A_f)} $ ")
+    plt.title(r"Free annexin  $ c_{pump} $ =0")
+    plt.legend()
+
+    plt.figure()
+    #plt.plot(time_vec,A_f_stability,label="equation")
+    plt.plot(A_sumfree,label="simulated")
+    plt.xlabel("time steps")
+    plt.ylabel(r" $ \frac{A_f(t)}{max(A_f)} $ ")
+    plt.title(r"Free annexin  $ c_{pump} $ =0")
+    plt.legend()
+
+    print("max abstab=",max(A_b_stability))
+    
+    plt.figure()
+    plt.plot(time_vec,A_b_stability,label="equation")
+    #plt.plot(A_sumbound,label="simulated")
+    plt.ylabel(r"$ \frac{ A_b (t) }{max( A_f )} $")
+    plt.xlabel(r"time steps $ c_{pump} $ =0")
+    plt.title("Bound annexin")
+    plt.legend()
+    
+    plt.figure()
+    #plt.plot(time_vec,A_b_stability,label="equation")
+    plt.plot(A_sumbound,label="simulated")
+    plt.ylabel(r"$ \frac{ A_b (t) }{max( A_f )} $")
+    plt.xlabel(r"time steps $ c_{pump} $ =0")
+    plt.title("Bound annexin")
+    plt.legend()
+
+    point_sum_Af = []
+
+    for t in range(T_tot):
+        point_sum_Af.append(
+            Free_annexin[t][int(len_size/2)][int(len_size/2)]*dx*dy
+        )
+    a = abs(point_sum_Af[len(point_sum_Af)-1] - A_f_stability[len(A_f_stability)-1])
+    print(f"A_sumtot : max-min sim ={max(A_sumtot)-min(A_sumtot)}")
+    print(f"diff at end of pointsumAf and afstabi = {a}")
+
+    plt.figure()
+    plt.plot(point_sum_Af,'*',label="point sum sim")
+    plt.plot(time_vec,A_f_stability,label="analytical sol")
+    plt.title(f"point sum Free annexin x,y={int(len_size/2)}")
+    plt.legend()
+
+    plt.show()
+
+
 if __name__ =="__main__":
     #test_reference_struct()
     #test_Ca_diff_corner_closed_hole()
     #test_Ca_diff_corner_open_hole()
-    test_annexin_diff_closed_hole() # also tests the analytical sol for dA_f and dA_b
+    #test_annexin_diff_closed_hole() # also tests the analytical sol for dA_f and dA_b
     #test_annexin_diff_open_hole()
     #Finding_the_pump_value()
+    test_analytical_vs_sim_dAf_dAb()
     pass
