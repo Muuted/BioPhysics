@@ -1,16 +1,16 @@
 from Circle_funcs import stabil_condi
 
 def constants():
-    Avogadro = 6.02214076e23 # 1/mol
+    Avogadro = 6.02214076*10**(23) # 1/mol
     # Concentrations for Ca^2+ inside; outside cell
-    c_out = 2e-3 #M Concentration outside of cell
-    c_in = 100e-9 #M Concetration inside cell
-    D_Ca_cyto  = 2.7e-11 #meters^2/second
+    c_out =2e-3# 2*10**(-3)#e-3 #M Concentration outside of cell
+    c_in = 100e-9#*10*(-9)#e-9 #M Concetration inside cell
+    D_Ca_cyto  = 2.7e-11#*10**(-11)#e-11 #meters^2/second
     #D_Ca_water  = 7.93e-10 #meters^2/second
 
 
     # time and step size, and diffusion constant
-    picture_size = 83e-6 # meters
+    picture_size = 83e-6#*10**(-6)#e-6 # meters
     Real_sim_time = 30 #seconds
 
     T_tot = 600
@@ -18,10 +18,16 @@ def constants():
     dx, dy = picture_size/len_size ,picture_size/len_size # meters
 
     # Anxexin constants.
-    A_init_density_upper = (4e6/(dx*dy))*(0.1/100)
-    A_init_density_lower = ((2e6/10)/(dx*dy))*(0.1/100) #should get 0.1% of the 3D volume concentration for all proteins
-    A_init_conc_upper = A_init_density_upper/Avogadro
-    A_init_conc_lower= A_init_density_lower/Avogadro
+        # older numbers
+    #A_init_density_upper = (4*10**(6))/(10**(-18)) #number/meter^3 from article directly
+    #A_init_density_lower = ((2/10)*10**(6))/(10**(-18)) #number/meter^3 from article directly
+
+    A_init_density_upper = (4*10**(6))/(10**(-18)) #number/meter^3 from article directly
+    A_init_density_lower = ((2/10)*10**(6))/(10**(-18)) #number/meter^3 from article directly
+    A_init_density_upper = (4e6)/(1e-18) #number/meter^3 from article directly
+    A_init_density_lower = ((2e6/10))/(1e-18) #number/meter^3 from article directly
+    A_init_conc_upper = (A_init_density_upper/Avogadro)*(0.1/100)#should get 0.1% of the 3D volume concentration for all proteins
+    A_init_conc_lower= (A_init_density_lower/Avogadro)*(0.1/100)#should get 0.1% of the 3D volume concentration for all proteins
     print(f"Upper conc of Annexins in start ={A_init_conc_upper}")
     print(f"Lower conc of Annexins in start ={A_init_conc_lower}")
 
@@ -30,7 +36,7 @@ def constants():
     bound_annexin_start = k1*c_in_annexin*c_in/k2
     A_b_init = k1*c_in_annexin*c_in/k2
 
-    D_Annexin_cyto  = 5.0e-11 #meters^2/second
+    D_Annexin_cyto  = 5.0*10**(-11)#e-11 #meters^2/second
     #D_Annexin_water  = 7.18e-11 #meters^2/seconds
 
 

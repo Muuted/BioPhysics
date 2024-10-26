@@ -20,7 +20,7 @@ def circle_dAdt(A_free,A_bound,C,C_bound,pos,const,D):
 
     dA_freedxdx = D*(A_free[t][y][nx] - 2*A_free[t][y][x] + A_free[t][y][bx])/(dx**2)
     dA_freedydy = D*(A_free[t][ny][x] - 2*A_free[t][y][x] + A_free[t][by][x])/(dy**2)
-
+    
     dA_freedt = (dA_freedxdx + dA_freedydy) - k1*A_free[t][y][x]*C[t][y][x] + k2*A_bound[t][y][x]
     
     A_free[t+1][y][x] = A_free[t][y][x] + dt*dA_freedt
@@ -182,7 +182,7 @@ def Annexin_stablilization(
             C + (A_fo - C)*np.exp(-b*t)
         )
         A_b.append(
-            ((k1*c_in*A_fo)/b)*( 1   -  np.exp(-b*t) )
+            ((k1*c_in*A_fo)/b)*( 1 - np.exp(-b*t) )
             )
 
     return A_f, A_b
@@ -201,5 +201,4 @@ def points_inside_cell(refgrid,inside_val):
 
 
 if __name__ == "__main__":
-    
     pass
