@@ -162,7 +162,7 @@ if __name__ == "__main__":
     plt.plot(sumfree,'k',label="free annnexins")
     plt.title("Free Annexins")
     plt.legend()
-
+    i = 1
     plt.figure()
     plt.hlines(y=sumbound[len(sumbound)-1],xmin=0,xmax=len(sumbound),label=f"A_b_eval={sumbound[len(sumbound)-1]}")
     plt.hlines(y=A_b_init*i,xmin=0,xmax=len(sumbound),label=f"A_b_init={A_b_init*i}")

@@ -10,7 +10,7 @@ import plotly.graph_objects as go
 import pandas as pd
 
 def test_reference_struct():
-
+    c_in,c_out,D_Ca_cyto,T_tot,len_size,dx,dy,k1,k2,c_in_annexin,bound_annexin_start,A_b_init,D_Annexin_cyto,dt,close_time,c_pump,holesize,dR,R,x0,y0,wall_val,inside_val,outside_val,open_val = constants()
     ref_grid = init_ref_circle(
         boxlen=len_size
         ,Radius=R,dRadius=dR
@@ -44,144 +44,59 @@ def test_reference_struct():
 
 
 def test_Ca_diff_corner_closed_hole():
-    ref_grid = init_ref_circle(
-        boxlen=len_size
-        ,Radius=R,dRadius=dR
-        ,offsets=[x0,y0]
-        ,inside_val=inside_val
-        ,outside_val=outside_val
-        ,wall_val=wall_val
-        )
-    
-    Ca = init_conc(
-        ref_grid=ref_grid
-        ,time=T_tot
-        ,c_in=c_in,c_out=c_out
-        ,inside_val=inside_val
-        ,outside_val=outside_val
-                        )
-    
-    #Ca = np.zeros(shape=(T_tot,len_size,len_size))
-    #Ca[0][int(len_size/2)][int(len_size/2)] = 100 #middle
-    #Ca[0][5][5] = 1 #top left corner
-    #Ca[0][int(len_size-5)][5] = 1 # top right corner
-    #Ca[0][5][int(len_size-5)] = 1 # bottom left corner
-    #Ca[0][int(len_size-5)][int(len_size-5)] = 1 # bottom right corner   
-    
-    open_hole = True
-    Ca_concentration = []
-    for t in np.arange(0,T_tot-1): 
-        Ca_concentration.append(np.sum(Ca[t]))
-        if t%(T_tot/10) == 0:
-            print(f"time={t} of {T_tot}")   
-        t1, t2 = t%2, (t+1)%2
-        t1, t2 = t, t+1
-        for x in range(0,len_size):
-            for y in range(0,len_size):
-                #Bound_Ca[t+1][y][x] += Bound_Ca[t][y][x]
-                if ref_grid[y][x] == wall_val or ref_grid[y][x] == outside_val:
-                    Ca[t+1][y][x] = Ca[t][y][x]
-
-                if ref_grid[y][x] == inside_val or ref_grid[y][x] == open_val:
-                    radii = np.sqrt( (x-x0)**2 + (y-y0)**2 )
-                    pos = cicle_boundary(x=x,y=y,boxlen=len_size
-                                            ,ref_matrix=ref_grid
-                                            ,refval=wall_val
-                                        )
-
-                    circle_dCondt(
-                        C=Ca,pos=pos
-                        ,const=[t,dt,dx,dy,R,dR,radii]
-                        ,D=D_Ca_cyto
+    c_in,c_out,D_Ca_cyto,T_tot,len_size,dx,dy,k1,k2,c_in_annexin,bound_annexin_start,A_b_init,D_Annexin_cyto,dt,close_time,c_pump,holesize,dR,R,x0,y0,wall_val,inside_val,outside_val,open_val = constants()
+    c_pump = 0
+    T_tot = 500
+    c_in_annexin = 0
+    bound_annexin_start = 0
+    Sim_data_list = main_circle_sim(
+        c_in,c_out,D_Ca_cyto,T_tot,len_size
+        ,dx,dy,k1,k2,c_in_annexin,bound_annexin_start,A_b_init,D_Annexin_cyto
+        ,dt,close_time,c_pump,holesize,dR,R,x0,y0
+        ,wall_val,inside_val,outside_val,open_val
+        ,open_hole=False
                     )
+    ref_structure,Free_Ca,Free_annexin,Bound_annexin,Bound_Ca = Sim_data_list
 
+    Ca_sumfree,Ca_sumbound,Ca_sumtot = sum_annexin(
+        A_free=Free_Ca
+        ,A_bound=Bound_Ca
+    )
 
-    plt.matshow(Ca[0])
-    plt.title("init Ca distribution")
+    plt.matshow(Free_Ca[0])
+    plt.title(r"init $ [ Ca_{tot} ] $ distribution")
 
-    plt.matshow(Ca[T_tot-1])
-    plt.title("final Ca distribution")
+    plt.matshow(Free_Ca[T_tot-1])
+    plt.title(r"final $ [ Ca_{tot} ] $distribution")
 
     plt.figure()
-    plt.plot(Ca_concentration)
-    plt.title("Ca total concentration over time")
+    plt.plot(Ca_sumfree)
+    plt.title(r"$ [ Ca_{tot} ] $ over time, for closed hole")
 
     plt.show()
     
 
 def test_Ca_diff_corner_open_hole():
-    ref_grid = init_ref_circle(
-        boxlen=len_size
-        ,Radius=R,dRadius=dR
-        ,offsets=[x0,y0]
-        ,inside_val=inside_val
-        ,outside_val=outside_val
-        ,wall_val=wall_val
-        )
-    
-    Ca = init_conc(
-        ref_grid=ref_grid
-        ,time=T_tot
-        ,c_in=c_in,c_out=c_out
-        ,inside_val=inside_val
-        ,outside_val=outside_val
-                        )
-    
-    #Ca = np.zeros(shape=(T_tot,len_size,len_size))
-    #Ca[0][int(len_size/2)][int(len_size/2)] = 100 #middle
-    #Ca[0][5][5] = 1 #top left corner
-    #Ca[0][int(len_size-5)][5] = 1 # top right corner
-    #Ca[0][5][int(len_size-5)] = 1 # bottom left corner
-    #Ca[0][int(len_size-5)][int(len_size-5)] = 1 # bottom right corner   
-    
-    open_hole = True
-    open_close_membrane(
-                        Grid=ref_grid
-                        ,Radius=R, dRadius=dR
-                        ,offsets=[x0,y0],holesize=holesize
-                        ,open_val=open_val
-                        ,wall_val=wall_val
-                        ,open_wall=open_hole
-                    )
-    
-    Ca_concentration = []
-    close_time = int(T_tot*0.5)
-    for t in np.arange(0,T_tot-1): 
-        Ca_concentration.append(np.sum(Ca[t]))
-        if t%(T_tot/10) == 0:
-            print(f"time={t} of {T_tot}")   
-        t1, t2 = t%2, (t+1)%2
-        t1, t2 = t, t+1
-        for x in range(0,len_size):
-            for y in range(0,len_size):
-                #Bound_Ca[t+1][y][x] += Bound_Ca[t][y][x]
-                if ref_grid[y][x] == wall_val or ref_grid[y][x] == outside_val:
-                    Ca[t+1][y][x] = Ca[t][y][x]
+    c_in,c_out,D_Ca_cyto,T_tot,len_size,dx,dy,k1,k2,c_in_annexin,bound_annexin_start,A_b_init,D_Annexin_cyto,dt,close_time,c_pump,holesize,dR,R,x0,y0,wall_val,inside_val,outside_val,open_val = constants()
+    #c_pump = 0
+    T_tot = 1500
+    T_tot = int(30/dt)
+    c_in_annexin = 0
+    bound_annexin_start = 0
 
-                if ref_grid[y][x] == inside_val or ref_grid[y][x] == open_val:
-                    radii = np.sqrt( (x-x0)**2 + (y-y0)**2 )
-                    pos = cicle_boundary(x=x,y=y,boxlen=len_size
-                                            ,ref_matrix=ref_grid
-                                            ,refval=wall_val
-                                        )
+    Sim_data_list = main_circle_sim(
+        c_in,c_out,D_Ca_cyto,T_tot,len_size
+        ,dx,dy,k1,k2,c_in_annexin,bound_annexin_start,A_b_init,D_Annexin_cyto
+        ,dt,close_time,c_pump,holesize,dR,R,x0,y0
+        ,wall_val,inside_val,outside_val,open_val
+        ,open_hole=True
+                    )
+    ref_structure,Ca,Free_annexin,Bound_annexin,Bound_Ca = Sim_data_list
 
-                    circle_dCondt(
-                        C=Ca,pos=pos
-                        ,const=[t,dt,dx,dy,R,dR,radii]
-                        ,D=D_Ca_cyto
-                    )
-        if t >= close_time and open_hole==True:
-                    #ref_structure = 
-                    open_close_membrane(
-                        Grid=ref_grid
-                        ,Radius=R, dRadius=dR
-                        ,offsets=[x0,y0],holesize=holesize
-                        ,open_val=open_val
-                        ,wall_val=wall_val
-                        ,open_wall=False
-                    )
-                    open_hole = False
-                    print(f"wall closure time t={t}")
+    Ca_sumfree,Ca_sumbound,Ca_sumtot = sum_annexin(
+        A_free=Ca
+        ,A_bound=Bound_Ca
+    )
 
     plt.matshow(Ca[0])
     plt.title("init Ca distribution")
@@ -190,20 +105,21 @@ def test_Ca_diff_corner_open_hole():
     plt.title("final Ca distribution")
 
     plt.figure()
-    plt.plot(Ca_concentration,'r',label="[Ca]")
-    plt.vlines(x=close_time,ymin=min(Ca_concentration),ymax=max(Ca_concentration)
-               ,label="close hole time")
-    plt.title("Ca total concentration over time")
+    plt.plot(Ca_sumfree,'r',label="[Ca]")
+    plt.vlines(x=close_time,ymin=min(Ca_sumfree),ymax=max(Ca_sumfree),label=f"close hole time={close_time}")
+    plt.title(r"$ [ Ca_{tot} ] $ over time, openhole, and $ C_{pump} = $" +f"{c_pump}"
+              + "\n"+ f"holeclosed at t={close_time}steps and realtime={int(T_tot*dt)}s")
+    
     plt.legend()
     plt.show()
 
 
 def test_annexin_diff_closed_hole():
     c_in,c_out,D_Ca_cyto,T_tot,len_size,dx,dy,k1,k2,c_in_annexin,bound_annexin_start,A_b_init,D_Annexin_cyto,dt,close_time,c_pump,holesize,dR,R,x0,y0,wall_val,inside_val,outside_val,open_val = constants()
-    T_tot= 500
+    T_tot= 1500
     bound_annexin_start = 0
     c_pump = 0
-
+    close_time = 0
     
     Sim_data_list = main_circle_sim(
         c_in,c_out,D_Ca_cyto,T_tot,len_size
@@ -220,23 +136,12 @@ def test_annexin_diff_closed_hole():
     )
 
     print(f"maximum free annexin ={max(A_sumfree)}")
-
-
-    """
-    plt.matshow(Free_annexin[0])
-    plt.title("init Free annexin distribution")
-
-    plt.matshow(Free_annexin[T_tot-1])
-    plt.title("final Free annexin distribution")
-    """
-    
-
     
     plt.figure()
     plt.plot(A_sumtot,'r',label="[Annexin]")
     plt.vlines(
         x=close_time,ymin=min(A_sumtot),ymax=max(A_sumtot)
-        ,label="close hole time"
+        ,label=f"close hole time={close_time}"
                )
     plt.xlabel("time steps")
     plt.ylabel(r" $ A_f + A_b $ ")
@@ -245,116 +150,51 @@ def test_annexin_diff_closed_hole():
 
     plt.figure()
     plt.plot(A_sumbound,label="simulated")
-    plt.ylabel(r"$ \frac{ A_b (t) }{max( A_f )} $")
+    plt.ylabel(r"$ A_b (t)  $")
     plt.xlabel(r"time steps $ c_{pump} $ =0")
     plt.title("Bound annexin")
     plt.legend()
+
+    plt.figure()
+    plt.plot(A_sumfree,label="simulated")
+    plt.ylabel(r"$ A_f (t) $")
+    plt.xlabel(r"time steps $ c_{pump} $ =0")
+    plt.title("Free annexin")
+    plt.legend()
+
+
     plt.show()
 
     
 def test_annexin_diff_open_hole():
-    ref_grid = init_ref_circle(
-        boxlen=len_size
-        ,Radius=R,dRadius=dR
-        ,offsets=[x0,y0]
-        ,inside_val=inside_val
-        ,outside_val=outside_val
-        ,wall_val=wall_val
-        )
+    c_in,c_out,D_Ca_cyto,T_tot,len_size,dx,dy,k1,k2,c_in_annexin,bound_annexin_start,A_b_init,D_Annexin_cyto,dt,close_time,c_pump,holesize,dR,R,x0,y0,wall_val,inside_val,outside_val,open_val = constants()
+    T_tot= 1500
+    bound_annexin_start = 0
+    c_pump = 0
     
-    A_f = init_conc(
-        ref_grid=ref_grid
-        ,time=T_tot
-        ,c_in=c_in,c_out=c_out
-        ,inside_val=inside_val
-        ,outside_val=outside_val
-                        )
-    Ca = np.zeros(shape=(T_tot,len_size,len_size))
-    Ca_b = np.zeros(shape=(T_tot,len_size,len_size))
-    A_f = np.zeros(shape=(T_tot,len_size,len_size))
-    A_b = np.zeros(shape=(T_tot,len_size,len_size))
-    A_f[0][int(len_size/2)][int(len_size/2)] = 100 #middle
-    A_f[0][5][5] = 1 #top left corner
-    A_f[0][int(len_size-5)][5] = 1 # top right corner
-    A_f[0][5][int(len_size-5)] = 1 # bottom left corner
-    A_f[0][int(len_size-5)][int(len_size-5)] = 1 # bottom right corner   
-    
-    open_hole = True
-    open_close_membrane(
-                        Grid=ref_grid
-                        ,Radius=R, dRadius=dR
-                        ,offsets=[x0,y0],holesize=holesize
-                        ,open_val=open_val
-                        ,wall_val=wall_val
-                        ,open_wall=open_hole
+    Sim_data_list = main_circle_sim(
+        c_in,c_out,D_Ca_cyto,T_tot,len_size
+        ,dx,dy,k1,k2,c_in_annexin,bound_annexin_start,A_b_init,D_Annexin_cyto
+        ,dt,close_time,c_pump,holesize,dR,R,x0,y0
+        ,wall_val,inside_val,outside_val,open_val
+        ,open_hole=True
                     )
-    
-    A_f_conc = []
-    A_b_conc = []
-    A_tot_conc = []
-    close_time = int(T_tot*0.5)
-    for t in np.arange(0,T_tot-1): 
-        f,b = np.sum(A_f[t])    ,np.sum(A_b[t])
-        A_f_conc.append(f)
-        A_b_conc.append(b)
-        A_tot_conc.append(f+b)
+    ref_structure,Free_Ca,Free_annexin,Bound_annexin,Bound_Ca = Sim_data_list
 
-        if t%(T_tot/10) == 0:
-            print(f"time={t} of {T_tot}")   
-        t1, t2 = t%2, (t+1)%2
-        t1, t2 = t, t+1
-        for x in range(0,len_size):
-            for y in range(0,len_size):
-                #Bound_Ca[t+1][y][x] += Bound_Ca[t][y][x]
-                if ref_grid[y][x] == wall_val or ref_grid[y][x] == outside_val:
-                    Ca[t+1][y][x] = Ca[t][y][x]
-                    A_f[t+1][y][x] = A_f[t][y][x]
-                    A_b[t+1][y][x] = A_b[t][y][x]
+    A_sumfree,A_sumbound,A_sumtot = sum_annexin(
+        A_free=Free_annexin
+        ,A_bound=Bound_annexin
+    )
 
+    plt.matshow(Free_annexin[0])
+    plt.title("init Annexin distribution")
 
-                if ref_grid[y][x] == inside_val or ref_grid[y][x] == open_val:
-                    radii = np.sqrt( (x-x0)**2 + (y-y0)**2 )
-                    pos = cicle_boundary(x=x,y=y,boxlen=len_size
-                                            ,ref_matrix=ref_grid
-                                            ,refval=wall_val
-                                        )
-
-                    circle_dCondt(
-                        C=Ca,pos=pos
-                        ,const=[t,dt,dx,dy,R,dR,radii]
-                        ,D=D_Ca_cyto
-                    )
-
-                    circle_dAdt(
-                        A_free= A_f
-                        ,A_bound=A_b
-                        ,C=Ca
-                        ,C_bound=Ca_b
-                        ,pos=pos 
-                        ,const=[t,dt,dx,dy,k1,k2,R,dR,radii]
-                        ,D=D_Annexin_cyto
-                    )
-        if t >= close_time and open_hole==True:
-            open_close_membrane(
-                Grid=ref_grid
-                ,Radius=R, dRadius=dR
-                ,offsets=[x0,y0],holesize=holesize
-                ,open_val=open_val
-                ,wall_val=wall_val
-                ,open_wall=False
-            )
-            open_hole = False
-            print(f"wall closure time t={t}")
-
-    plt.matshow(A_f[0])
-    plt.title("init Ca distribution")
-
-    plt.matshow(A_f[T_tot-1])
-    plt.title("final Ca distribution")
+    plt.matshow(Free_annexin[T_tot-1])
+    plt.title("final Annexin distribution")
 
     plt.figure()
-    plt.plot(A_tot_conc,'r',label="[Ca]")
-    plt.vlines(x=close_time,ymin=min(A_tot_conc),ymax=max(A_tot_conc)
+    plt.plot(A_sumtot,'r',label="[Ca]")
+    plt.vlines(x=close_time,ymin=min(A_sumtot),ymax=max(A_sumtot)
                ,label="close hole time")
     plt.title("A_tot concentration over time")
     plt.legend()
@@ -460,13 +300,6 @@ def test_analytical_vs_sim_dAf_dAb():
     plt.title(r"Free annexin  $ c_{pump} $ =0")
     plt.legend()
 
-    """plt.figure()
-    #plt.plot(time_vec,A_f_stability,label="equation")
-    plt.plot(A_sumfree,label="simulated")
-    plt.xlabel("time steps")
-    plt.ylabel(r" $ \frac{A_f(t)}{max(A_f)} $ ")
-    plt.title(r"Free annexin  $ c_{pump} $ =0")
-    plt.legend()"""
 
     print("max abstab=",max(A_b_stability))
     
@@ -478,20 +311,14 @@ def test_analytical_vs_sim_dAf_dAb():
     plt.title("Bound annexin")
     plt.legend()
     
-    """plt.figure()
-    #plt.plot(time_vec,A_b_stability,label="equation")
-    plt.plot(A_sumbound,label="simulated")
-    plt.ylabel(r"$ \frac{ A_b (t) }{max( A_f )} $")
-    plt.xlabel(r"time steps $ c_{pump} $ =0")
-    plt.title("Bound annexin")
-    plt.legend()"""
 
     point_sum_Af = []
 
     for t in range(T_tot):
         point_sum_Af.append(
-            Free_annexin[t][int(len_size/2)][int(len_size/2)]*dx*dy
+            Free_annexin[t][int(len_size/2)][int(len_size/2)]#*dx*dy
         )
+
     a = abs(point_sum_Af[len(point_sum_Af)-1] - A_f_stability[len(A_f_stability)-1])
     print(f"A_sumtot : max-min sim ={max(A_sumtot)-min(A_sumtot)}")
     print(f"diff at end of pointsumAf and afstabi = {a}")
@@ -513,9 +340,11 @@ def test_analytical_vs_sim_dAf_dAb():
 
     plt.figure()
     plt.plot(diff_Af)
+    plt.title(r"$ A_{f,equation} - A_{f,sim} $")
 
     plt.figure()
     plt.plot(diff_Ab)
+    plt.title(r"$ A_{b,equation} - A_{b,sim} $")
     
     plt.show()
 
@@ -524,8 +353,8 @@ if __name__ =="__main__":
     #test_reference_struct()
     #test_Ca_diff_corner_closed_hole()
     #test_Ca_diff_corner_open_hole()
-    #test_annexin_diff_closed_hole() # also tests the analytical sol for dA_f and dA_b
+    #test_annexin_diff_closed_hole()
     #test_annexin_diff_open_hole()
     #Finding_the_pump_value()
     test_analytical_vs_sim_dAf_dAb()
-    pass
+    
