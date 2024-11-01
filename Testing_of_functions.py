@@ -44,9 +44,10 @@ def test_reference_struct():
 
 
 def test_Ca_diff_corner_closed_hole():
+    print("Testing diffusion of Calcium, with closed cell")
     c_in,c_out,D_Ca_cyto,T_tot,len_size,dx,dy,k1,k2,c_in_annexin,bound_annexin_start,A_b_init,D_Annexin_cyto,dt,close_time,c_pump,holesize,dR,R,x0,y0,wall_val,inside_val,outside_val,open_val = constants()
     c_pump = 0
-    T_tot = 500
+    #T_tot = 500
     c_in_annexin = 0
     bound_annexin_start = 0
     Sim_data_list = main_circle_sim(
@@ -77,10 +78,11 @@ def test_Ca_diff_corner_closed_hole():
     
 
 def test_Ca_diff_corner_open_hole():
+    print("Testing calcium diffusive with open cell")
     c_in,c_out,D_Ca_cyto,T_tot,len_size,dx,dy,k1,k2,c_in_annexin,bound_annexin_start,A_b_init,D_Annexin_cyto,dt,close_time,c_pump,holesize,dR,R,x0,y0,wall_val,inside_val,outside_val,open_val = constants()
     #c_pump = 0
-    T_tot = 1500
-    T_tot = int(30/dt)
+    #T_tot = 1500
+    #T_tot = int(30/dt)
     c_in_annexin = 0
     bound_annexin_start = 0
 
@@ -115,12 +117,14 @@ def test_Ca_diff_corner_open_hole():
 
 
 def test_annexin_diff_closed_hole():
+    print("Testing Annexin diffusion, closed cell")
     c_in,c_out,D_Ca_cyto,T_tot,len_size,dx,dy,k1,k2,c_in_annexin,bound_annexin_start,A_b_init,D_Annexin_cyto,dt,close_time,c_pump,holesize,dR,R,x0,y0,wall_val,inside_val,outside_val,open_val = constants()
-    T_tot= 1500
+    #T_tot= 1500
     bound_annexin_start = 0
     c_pump = 0
     close_time = 0
-    
+    c_in = c_out
+    T_tot = 1600
     Sim_data_list = main_circle_sim(
         c_in,c_out,D_Ca_cyto,T_tot,len_size
         ,dx,dy,k1,k2,c_in_annexin,bound_annexin_start,A_b_init,D_Annexin_cyto
@@ -167,8 +171,9 @@ def test_annexin_diff_closed_hole():
 
     
 def test_annexin_diff_open_hole():
+    print("Testing Annexin diffusion, open cell")
     c_in,c_out,D_Ca_cyto,T_tot,len_size,dx,dy,k1,k2,c_in_annexin,bound_annexin_start,A_b_init,D_Annexin_cyto,dt,close_time,c_pump,holesize,dR,R,x0,y0,wall_val,inside_val,outside_val,open_val = constants()
-    T_tot= 1500
+    #T_tot= 1500
     bound_annexin_start = 0
     c_pump = 0
     
@@ -202,6 +207,7 @@ def test_annexin_diff_open_hole():
 
 
 def Finding_the_pump_value():
+    print(r"Finding the value for the $ c_{pump} $ term")
     from Circle_sim import main_circle_sim
     c_in,c_out,D_Ca_cyto,T_tot,len_size,dx,dy,k1,k2,c_in_annexin,bound_annexin_start,A_b_init,D_Annexin_cyto,dt,close_time,c_pump,holesize,dR,R,x0,y0,wall_val,inside_val,outside_val,open_val = constants()
     Real_time = 80 #seconds.
@@ -239,10 +245,13 @@ def Finding_the_pump_value():
     
 
 def test_analytical_vs_sim_dAf_dAb():
+    print(r"Testing the analytical vs simulated evolution of $ A_f (t) $ and $ A_b (t) $")
     c_in,c_out,D_Ca_cyto,T_tot,len_size,dx,dy,k1,k2,c_in_annexin,bound_annexin_start,A_b_init,D_Annexin_cyto,dt,close_time,c_pump,holesize,dR,R,x0,y0,wall_val,inside_val,outside_val,open_val = constants()
-    T_tot= 1500
+    T_tot= 10000
     bound_annexin_start = 0
     c_pump = 0
+    close_time = 0
+
 
     Sim_data_list = main_circle_sim(
         c_in,c_out,D_Ca_cyto,T_tot,len_size

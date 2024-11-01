@@ -18,7 +18,7 @@ def constants():
     D_Annexin_cyto  = 5.0*10**(-11)#e-11 #meters^2/second
     #D_Annexin_water  = 7.18e-11 #meters^2/seconds
     dt = stabil_condi(dt=0.1,dx=dx,dy=dy
-                    ,D_list=[D_Ca_cyto,D_Annexin_cyto]
+                    ,D_list=[ D_Ca_cyto , D_Annexin_cyto ]
                     )
     print("dt=",dt)
     c_pump = dt*30*(5e-8) # meters/second
@@ -30,25 +30,31 @@ def constants():
     #A_init_density_upper = (4*10**(6))/(10**(-18)) #number/meter^3 from article directly
     #A_init_density_lower = ((2/10)*10**(6))/(10**(-18)) #number/meter^3 from article directly
 
-    A_init_density_upper = (4*10**(6))/(10**(-18)) #number/meter^3 from article directly
-    A_init_density_lower = ((2/10)*10**(6))/(10**(-18)) #number/meter^3 from article directly
-    A_init_density_upper = (4e6)/(1e-18) #number/meter^3 from article directly
+#    A_init_density_upper = (4*10**(6))/(10**(-18)) #number/meter^3 from article directly
+ #   A_init_density_lower = ((2/10)*10**(6))/(10**(-18)) #number/meter^3 from article directly
+  #  A_init_density_upper = (4e6)/(1e-18) #number/meter^3 from article directly
     A_init_density_lower = ((2e6/10))/(1e-18) #number/meter^3 from article directly
-    A_init_conc_upper = (A_init_density_upper/Avogadro)*(0.1/100)#should get 0.1% of the 3D volume concentration for all proteins
+   # A_init_conc_upper = (A_init_density_upper/Avogadro)*(0.1/100)#should get 0.1% of the 3D volume concentration for all proteins
     A_init_conc_lower= (A_init_density_lower/Avogadro)*(0.1/100)#should get 0.1% of the 3D volume concentration for all proteins
-    print(f"Upper conc of Annexins in start ={A_init_conc_upper}")
+    #print(f"Upper conc of Annexins in start ={A_init_conc_upper}")
     print(f"Lower conc of Annexins in start ={A_init_conc_lower}")
 
 
-    k2 = c_pump
-    k1 = k2*(c_in + c_out)/(2*c_in*c_out)
-    print(f"k1 ={k1}")
+    #k2 = c_pump
+
+    #K_low = k2/c_out
+    #K_up = k2/c_in
+    k1 = 30e3 # 1/(Ms)
+    k2 = 1e-3 #1/s
+    #print(f" k2/c_out={K_low} << k1 << k2/c_in={K_up}")
+    #k1 = k2*(c_in + c_out)/(2*c_in*c_out)
+    print(f"k1 ={k1} \n and k2={k2}")
     c_in_annexin = A_init_conc_lower # 1e-9 this was our initial guess.
     bound_annexin_start = k1*c_in_annexin*c_in/k2
     A_b_init = k1*c_in_annexin*c_in/k2
-
     #T_tot = int(Real_sim_time/dt)
     print("total number of sim steps =",T_tot)
+    
 
     # mechanisms change.
     close_time = T_tot*0.5
