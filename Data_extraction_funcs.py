@@ -8,10 +8,9 @@ def sum_annexin(A_free,A_bound):
     sumtot = []
     
     shape = np.shape(A_free) # shoulde be identical
-
+    sumfree = 0
+    sumbound = 0
     for t in range(shape[0]):
-        sumfree = 0
-        sumbound = 0
 
         sumfree = np.sum(A_free[t])
         sumbound = np.sum(A_bound[t])
@@ -69,10 +68,10 @@ def Ring_sum(ref_Grid ,offsets:tuple
     return Ring_sums, Ring_radius, Grid,Visual_Grid
 
 
-def sum_in_cell(ref_Grid,Matrix,inside_val:int)->list:
-    print(f"shape of Matrix = {np.shape(Matrix)}")
-    T_tot  = np.shape(Matrix)[0]
-    sidelen = np.shape(Matrix)[1]
+def sum_in_cell(ref_Grid,Matrix_Free,Matrix_Bound,inside_val:int)->list:
+    print(f"shape of Matrix = {np.shape(Matrix_Free)}")
+    T_tot  = np.shape(Matrix_Free)[0]
+    sidelen = np.shape(Matrix_Free)[1]
     conc_time = []
 
     for t in range(T_tot):
@@ -80,8 +79,23 @@ def sum_in_cell(ref_Grid,Matrix,inside_val:int)->list:
         for y in range(sidelen):
             for x in range(sidelen):
                 if ref_Grid[y][x] == inside_val:
-                    totsum += Matrix[t][y][x]
+                    totsum += Matrix_Free[t][y][x]
+                    totsum += Matrix_Bound[t][y][x]
 
         conc_time.append(totsum)
         
     return conc_time
+
+def remove_conc_outside(ref_grid,grid,inside_val):
+
+    Y_size,X_size = np.shape(ref_grid)
+
+    for y in range(Y_size):
+        for x in range(X_size):
+            if ref_grid[y][x] != inside_val:
+                grid[y][x] = 0
+    
+
+
+if __name__ == "__main__":
+    pass

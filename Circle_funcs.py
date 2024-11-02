@@ -1,7 +1,6 @@
 import numpy as np
 import matplotlib.pyplot as plt
 
-
 def circle_dCondt(C,pos,const,D) -> float:
     nx,x,bx,ny,y,by = pos
     t,dt,dx,dy,R,dR,r = const
@@ -29,8 +28,8 @@ def circle_dAdt(A_free,A_bound,C,C_bound,pos,const,D):
     dAbounddt = k1*A_free[t][y][x]*C[t][y][x] - k2*A_bound[t][y][x]
     A_bound[t+1][y][x] = A_bound[t][y][x] + dt*dAbounddt
 
-    #C_bound[t+1][y][x] += 4*dAbounddt
-    #C[t+1][y][x] += -4*dAbounddt
+    C_bound[t+1][y][x] += 4*dAbounddt
+    C[t+1][y][x] += -4*dAbounddt
 
 def circle_dAbounddt(A_free,A_bound,C,pos,k1,k2) -> float:
     nx,x,bx,ny,y,by = pos
@@ -41,16 +40,19 @@ def circle_dAbounddt(A_free,A_bound,C,pos,k1,k2) -> float:
     return dAbounddt
 
 def stabil_condi(dt,dx,dy,D_list):
-    # Von Neumann stability condition
-    const1 = (1/dx)**2 + (1/dy)**2
+    # Von Neumann stability condition    
+    N = 3000
     for D in D_list:
-        const2 = 2*D*const1
-        for _ in range(0,20):
-            if dt > 1/const2:
-                dt *= 0.9
-        print(f"D={D} and dt={dt}")
-
-    print(f"final dt={dt}")
+        for _ in range(0,N):
+            if dt > (dx*dx)/(4*D):
+                dt *= 0.99
+            if dt < (dx*dx)/(4*D):
+                break
+            if _ == N-1:
+                print("Not enough iterations for dt")
+    
+    dt *= 0.99
+    #print(f"final dt={dt}")
     return dt
 
 def open_close_membrane(Grid

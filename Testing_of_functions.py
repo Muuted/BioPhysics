@@ -247,9 +247,9 @@ def Finding_the_pump_value():
 def test_analytical_vs_sim_dAf_dAb():
     print(r"Testing the analytical vs simulated evolution of $ A_f (t) $ and $ A_b (t) $")
     c_in,c_out,D_Ca_cyto,T_tot,len_size,dx,dy,k1,k2,c_in_annexin,bound_annexin_start,A_b_init,D_Annexin_cyto,dt,close_time,c_pump,holesize,dR,R,x0,y0,wall_val,inside_val,outside_val,open_val = constants()
-    T_tot= 10000
-    bound_annexin_start = 0
-    c_pump = 0
+    T_tot= 500
+    #bound_annexin_start = 0
+    #c_pump = 0
     close_time = 0
 
 

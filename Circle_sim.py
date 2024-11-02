@@ -97,14 +97,13 @@ def main_circle_sim(
                         ,const=[t,dt,dx,dy,k1,k2,R,dR,radii]
                         ,D=D_Annexin_cyto
                                 )
-                    
-                    #if Free_Ca[t+1][y][x] < c_pump:
-                     #   a = Free_Ca[t+1][y][x]
-                      #  Free_Ca[t+1][y][x] = c_pump - a
 
-                    if Free_Ca[t+1][y][x] > c_pump:
+                    if c_in < Free_Ca[t+1][y][x] <= c_pump + c_in:
+                        Free_Ca[t+1][y][x] += c_in
+                    if Free_Ca[t+1][y][x] >= c_pump + c_in:
                         Free_Ca[t+1][y][x] += -c_pump # the pumping mechanism
-                                                    #, for only inside the cell
+                                                #, for only inside the cell
+
 
                     if t == 0:
                         i += 1 #count points in cell.
@@ -125,16 +124,18 @@ def main_circle_sim(
 
 if __name__ == "__main__":
     c_in,c_out,D_Ca_cyto,T_tot,len_size,dx,dy,k1,k2,c_in_annexin,bound_annexin_start,A_b_init,D_Annexin_cyto,dt,close_time,c_pump,holesize,dR,R,x0,y0,wall_val,inside_val,outside_val,open_val = constants()
-
+    
+    T_tot = 600
+    c_in = c_out
     Sim_data_list = main_circle_sim(
         c_in,c_out,D_Ca_cyto,T_tot,len_size
         ,dx,dy,k1,k2,c_in_annexin,bound_annexin_start,A_b_init,D_Annexin_cyto
         ,dt,close_time,c_pump,holesize,dR,R,x0,y0
         ,wall_val,inside_val,outside_val,open_val
+        ,open_hole=False    
                     )
     ref_structure,Free_Ca,Free_annexin,Bound_annexin,Bound_Ca = Sim_data_list
 
-    
     data_list = Ring_sum(
         ref_Grid=Free_Ca[T_tot-1]
         ,offsets=[x0,y0]
@@ -154,33 +155,36 @@ if __name__ == "__main__":
 
     plt.figure()
     plt.plot(sumtot,label="Total annexins")
-    plt.title("total sum of Annexins")
-    print(min(sumtot),max(sumtot))
-
+    plt.vlines(x=np.ceil(close_time),ymin=min(sumtot),ymax=max(sumtot),colors='k',label=f"holeclose t={close_time}")
+    plt.legend()
+    plt.title(f"total sum of Annexins \n dt = {dt}")
+    #plt.ticklabel_format(useOffset=False)
+    #plt.show()
+    #exit()
     plt.figure()
-    plt.hlines(y=sumfree[len(sumfree)-1],xmin=0,xmax=len(sumfree),label=f"{sumfree[len(sumfree)-1]}")
+    #plt.hlines(y=sumfree[len(sumfree)-1],xmin=0,xmax=len(sumfree),label=f"{sumfree[len(sumfree)-1]}")
     plt.plot(sumfree,'k',label="free annnexins")
-    plt.title("Free Annexins")
+    plt.title(f"Free Annexins, holeclosed={close_time}")
     plt.legend()
     i = 1
     plt.figure()
-    plt.hlines(y=sumbound[len(sumbound)-1],xmin=0,xmax=len(sumbound),label=f"A_b_eval={sumbound[len(sumbound)-1]}")
-    plt.hlines(y=A_b_init*i,xmin=0,xmax=len(sumbound),label=f"A_b_init={A_b_init*i}")
+    #plt.hlines(y=sumbound[len(sumbound)-1],xmin=0,xmax=len(sumbound),label=f"A_b_eval={sumbound[len(sumbound)-1]}")
+    #plt.hlines(y=A_b_init*i,xmin=0,xmax=len(sumbound),label=f"A_b_init={A_b_init*i}")
     plt.plot(sumbound,'k',label="Bound Annexins")
-    plt.title("bound Annexins")
+    plt.title(f"bound Annexins, holeclosed={close_time}")
     plt.legend()
     
     plt.matshow(ref_structure)
     plt.title("Reference structure")
     plt.colorbar()
 
+    """ 
     plt.figure()
     plt.plot(Ring_radius,Ring_sums,'-.')
     plt.xlabel("number of pixels from opening")
     plt.title("Ring sums try, normalized by Area")
+    """
 
-    plt.matshow(Free_annexin[0])
-    plt.title("free annexin start")
     plt.matshow(Free_annexin[T_tot-1])
     plt.title("free annexin end")
     plt.colorbar()
@@ -188,28 +192,31 @@ if __name__ == "__main__":
     plt.matshow(Bound_annexin[T_tot-1])
     plt.title("bound annexin")
     plt.colorbar()
-    #plt.show()
 
 
-
-    #plt.figure()
-    #plt.plot(Free_Ca[90][y0][:],label="t=90,y=y0")
-    #plt.legend()
+    remove_conc_outside(
+        ref_grid=ref_structure
+        ,grid=Free_Ca[T_tot-1]
+        ,inside_val=inside_val
+        )
 
     plt.matshow(Free_Ca[T_tot-1])
     plt.title("free ca end")
     plt.colorbar()
     
 
-    conc_over_time = sum_in_cell(ref_Grid=ref_structure
-                                 ,Matrix=Free_Ca
+    conc_over_time_Free_Ca = sum_in_cell(ref_Grid=ref_structure
+                                 ,Matrix_Free=Free_Ca
+                                 ,Matrix_Bound=Bound_Ca
                                  ,inside_val=inside_val
                                  )
     
     plt.figure()
-    plt.plot(conc_over_time/max(conc_over_time))
+    plt.plot(conc_over_time_Free_Ca/max(conc_over_time_Free_Ca))
     plt.title("Concentration free Ca over time inside the cell")
 
+    plt.matshow(Bound_Ca[T_tot-1])
+    
     plt.show()
     
     
