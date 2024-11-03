@@ -36,15 +36,83 @@ def extract_data_Radial_mena_intensity(data_path,datafilename):
     
     
 
-if __name__ == "__main__":
-    data_path = "C:\\Users\\AdamSkovbjergKnudsen\\Desktop\\ISA Biophys\\data eksperimenter\\GCaMP6s-CAAX (PM anchor)"
+data_path = "C:\\Users\\AdamSkovbjergKnudsen\\Desktop\\ISA Biophys\\data eksperimenter\\20191203-Calcium-sensors-ANXA-RFP for Python\\"
+
+Calcium_data= "Ca_time_images_filenum4.dat"
+Annexin_data = "Annexin_time_images_filenum4.dat"
+
+
+
+
+import pandas as pd
+
+file_path = data_path + Calcium_data
+df = pd.read_csv(file_path)
+
+
+#print(df.loc[0][0]) # this is how you get pixel data
+#print(df.loc[1][1]) # this is how you get pixel data
+Ysize,Xsize = df.shape
+sum = 0
+i = 0
+for y in range(Ysize):
+    for x in range(Xsize):
+        
+        sum += df.loc[0][0] #df.loc[0][1]
+        i +=1
+avg_val = sum/i
+print(f"average val =")
+print(avg_val)
+exit()
+
+df_yshape, df_xshape = df.shape
+
+def sum_small_circle(x0,y0,xpos,ypos,matrix,circ_radius):
+
+    sum = 0
+    lattice_points = 0
+    for y in range(ypos-circ_radius,ypos+circ_radius):
+        for x in range(xpos-circ_radius,xpos+circ_radius):
+
+            r = np.sqrt((x-x0)**2 + (y-y0)**2)
+
+            if r < circ_radius:
+                sum += matrix.loc[y][x]
+                lattice_points += 1
+
+    return sum,lattice_points
+
+def average_val(matrix):
+
+    Ysize,Xsize = matrix.shape
+    sum = 0
+    i = 0
+    for y in range(Ysize):
+        for x in range(Xsize):
+            sum += matrix.loc[y][x]
+            i +=1
     
-    #extract_data_mean_intensity(
-     #   data_path=data_path
-      #  ,datafilename="\\Mean_Cell_Intensity_vs_Time_Series"
-       # )
-    
-    extract_data_Radial_mena_intensity(
-        data_path=data_path
-        ,datafilename="\\MeanRadialIntensities_I_IMaskMean_Radius_Time_Frame_Series_2_CAGFP.mat"
-    )
+    return sum/i
+
+Ysize,Xsize = df.shape
+sum = 0
+i = 0
+for y in range(Ysize):
+    for x in range(Xsize):
+        
+        sum += df.loc[0][0] #df.loc[0][1]
+        i +=1
+avg_val = sum/i
+
+#avg_val.type()
+#print(f"average val ={avg_val}")
+
+exit()
+
+for y in range(df_yshape):
+    for x in range(df_xshape):
+
+            df.loc[y][x]
+
+
+
