@@ -38,5 +38,26 @@ def extract_data_Radial_mena_intensity(data_path,datafilename):
 
 data_path = "C:\\Users\\AdamSkovbjergKnudsen\\Desktop\\ISA Biophys\\data eksperimenter\\20191203-Calcium-sensors-ANXA-RFP for Python\\"
 
-Calcium_data= "Ca_time_images_filenum4.dat"
+Calcium_data= "Ca_time_images_filenum4.txt"
 Annexin_data = "Annexin_time_images_filenum4.dat"
+
+
+import pandas as pd
+
+ca_data = pd.read_csv(data_path+Calcium_data)
+
+print(ca_data.shape)
+
+print(ca_data.loc[0][0])
+
+Y0,X0 = ca_data.shape
+
+sum = 0
+i = 0
+for y in range(Y0-1):
+    for x in range(X0-1):
+        sum += ca_data.loc[y][x]
+        i += 1
+
+print(f"the sum/i=")
+print(sum/i)
