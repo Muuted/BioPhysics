@@ -13,17 +13,27 @@ def main_circle_sim(
         ,dt,close_time,c_pump,holesize,dR,R,x0,y0
         ,wall_val,inside_val,outside_val,open_val
         ,open_hole=True
+        ,ref_bakteria = ""
+        ,data_path=""
                     ) -> list:
     #open_hole = True
     
     # Creation of our Grids
-    ref_structure = init_ref_circle(
-        boxlen=len_size
-        ,Radius=R,dRadius=dR ,offsets=[x0,y0]
-        ,inside_val=inside_val
-        ,outside_val=outside_val
-        ,wall_val=wall_val
-                                    )
+    if ref_bakteria == "":
+        ref_structure = init_ref_circle(
+            boxlen=len_size
+            ,Radius=R,dRadius=dR ,offsets=[x0,y0]
+            ,inside_val=inside_val
+            ,outside_val=outside_val
+            ,wall_val=wall_val
+                                        )
+    else:
+        py_ref_struct,outside_val,inside_val,wall_vall,xoffset,yoffset = make_ref_structure(
+            path=data_path
+            ,ref_name=ref_bakteria
+        )
+
+
     Free_Ca = init_conc(
         ref_grid=ref_structure
         ,time=T_tot
@@ -125,8 +135,11 @@ def main_circle_sim(
 if __name__ == "__main__":
     c_in,c_out,D_Ca_cyto,T_tot,len_size,dx,dy,k1,k2,c_in_annexin,bound_annexin_start,A_b_init,D_Annexin_cyto,dt,close_time,c_pump,holesize,dR,R,x0,y0,wall_val,inside_val,outside_val,open_val = constants()
     
+    data_path = "C:\\Users\\AdamSkovbjergKnudsen\\Desktop\\ISA Biophys\\data eksperimenter\\20191203-Calcium-sensors-ANXA-RFP for Python\\"
+    ref_struct_name = "ref_struct__filenum4.txt"
+
     T_tot = 600
-    c_in = c_out
+    
     Sim_data_list = main_circle_sim(
         c_in,c_out,D_Ca_cyto,T_tot,len_size
         ,dx,dy,k1,k2,c_in_annexin,bound_annexin_start,A_b_init,D_Annexin_cyto

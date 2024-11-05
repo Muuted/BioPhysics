@@ -1,6 +1,6 @@
 from Circle_funcs import stabil_condi
 
-def constants():
+def constants(path,ref_name):
     Avogadro = 6.02214076e23 # 1/mol
     # time and step size, and diffusion constant
     picture_size = 83e-6#*10**(-6)#e-6 # meters

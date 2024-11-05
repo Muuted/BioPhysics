@@ -1,5 +1,47 @@
 import numpy as np
 import matplotlib.pyplot as plt
+import pandas as pd
+
+def make_ref_structure(path,ref_name):
+    ref_string = "\\" + "\\"
+    for i in range(3):
+        if path[len(path)-2:len(path)-1] != ref_string:
+            if ref_name[0:2] != path[len(path)-2]:
+                ref_name = "\\" + ref_name #just making sure the name is do able
+    #ref_struct_name = "ref_struct__filenum4.txt"
+
+    ref_structure = pd.read_csv(path + ref_name,delimiter=',',header=None)
+
+    y0,x0= ref_structure.shape
+    val_list = []
+    for y in range(y0):
+        for x in range(x0):
+            a = ref_structure.loc[y][x]
+            if a not in val_list:
+                val_list.append(a)
+    val_list.sort()
+    if len(val_list) > 3:
+        print(f"val list to finde inside,outside and wall vals are to big \n its len(val_list)={len(val_list)}")
+        exit()
+    outside_val = val_list[0]
+    inside_val = val_list[1]
+    wall_vall = val_list[2]
+
+    py_ref_struct = np.zeros(shape=(y0,x0))
+    for y in range(y0):
+        for x in range(x0):
+            py_ref_struct[y][x] =ref_structure.loc[y][x]
+
+    #plt.matshow(py_ref_struct)
+    #plt.show()
+    #xoffset = input("Choose the x value for the hole")
+    xoffset = 70
+    for y in range(y0):
+        a = py_ref_struct[y][int(xoffset)]
+        if a == wall_vall:
+            yoffset = y
+            break
+    return py_ref_struct,outside_val,inside_val,wall_vall,xoffset,yoffset
 
 
 def sum_annexin(A_free,A_bound):

@@ -102,3 +102,16 @@ plt.matshow(ref_struct)
 plt.show()
 #print(f"the sum/i=")
 #print(sum/i)
+
+
+
+def compress_img(path,img_name):
+
+    data = pd.read_csv(path + img_name)
+
+
+if __name__=="__main__":
+    name = "Adam"
+    print(name)
+
+    

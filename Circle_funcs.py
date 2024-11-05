@@ -79,6 +79,27 @@ def open_close_membrane(Grid
                 if Grid[y][x] == open_val:
                     Grid[y][x] = wall_val
 
+def open_close_membrane2(
+        Grid
+        ,offsets
+        ,holesize:int
+        ,open_val:int ,wall_val:int
+        ,open_wall_bool:bool
+                        ):
+    x0,y0 = offsets
+    xlow,xhigh= int(x0 - holesize) , int(x0 + holesize)
+    ylow,yhigh = int(y0 - holesize) , int(y0 + holesize)
+    
+    for y in range(ylow,yhigh):
+        for x in range(xlow,xhigh):
+            if open_wall_bool == True:
+                if Grid[y][x] == wall_val:
+                    Grid[y][x] = open_val
+            if open_wall_bool == False:
+                if Grid[y][x] == open_val:
+                    Grid[y][x] = wall_val
+
+    
 
 def replenish(Grid,boxsize:int,c_out):
     for x in range(boxsize):
@@ -115,11 +136,11 @@ def init_conc(ref_grid, time:int
               ,c_in:float ,c_out:float
               ,inside_val:int ,outside_val:int
               ):
-    ref_shape = np.shape(ref_grid)[0] # assuming NxN box shape.
-    Grid = np.zeros(shape=(time,ref_shape,ref_shape),dtype=float)
+    ref_shapey,ref_shapex = np.shape(ref_grid) # assuming NxN box shape.
+    Grid = np.zeros(shape=(time,ref_shapey,ref_shapex),dtype=float)
     
-    for x in range(ref_shape):
-        for y in range(ref_shape):
+    for x in range(ref_shapex):
+        for y in range(ref_shapey):
 
             if ref_grid[y][x] == inside_val:
                 Grid[0][y][x] = c_in
