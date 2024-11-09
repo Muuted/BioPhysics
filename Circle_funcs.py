@@ -28,8 +28,8 @@ def circle_dAdt(A_free,A_bound,C,C_bound,pos,const,D):
     dAbounddt = k1*A_free[t][y][x]*C[t][y][x] - k2*A_bound[t][y][x]
     A_bound[t+1][y][x] = A_bound[t][y][x] + dt*dAbounddt
 
-    C_bound[t+1][y][x] += 4*dAbounddt
-    C[t+1][y][x] += -4*dAbounddt
+    #C_bound[t+1][y][x] += 4*dAbounddt
+    #C[t+1][y][x] += -4*dAbounddt
 
 def circle_dAbounddt(A_free,A_bound,C,pos,k1,k2) -> float:
     nx,x,bx,ny,y,by = pos
@@ -92,6 +92,7 @@ def open_close_membrane2(
     
     for y in range(ylow,yhigh):
         for x in range(xlow,xhigh):
+            
             if open_wall_bool == True:
                 if Grid[y][x] == wall_val:
                     Grid[y][x] = open_val
@@ -200,7 +201,6 @@ def Annexin_stablilization(
     A_b = []
 
     for t in np.arange(0,realtime,dt):
-        #A_f.append( C*( 1 + np.exp(-b*t) ))
         A_f.append(
             C + (A_fo - C)*np.exp(-b*t)
         )

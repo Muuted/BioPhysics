@@ -138,14 +138,15 @@ if __name__ == "__main__":
     data_path = "C:\\Users\\AdamSkovbjergKnudsen\\Desktop\\ISA Biophys\\data eksperimenter\\20191203-Calcium-sensors-ANXA-RFP for Python\\"
     ref_struct_name = "ref_struct__filenum4.txt"
 
-    T_tot = 600
     
+    bound_annexin_start = 0
+
     Sim_data_list = main_circle_sim(
         c_in,c_out,D_Ca_cyto,T_tot,len_size
         ,dx,dy,k1,k2,c_in_annexin,bound_annexin_start,A_b_init,D_Annexin_cyto
         ,dt,close_time,c_pump,holesize,dR,R,x0,y0
         ,wall_val,inside_val,outside_val,open_val
-        ,open_hole=False    
+        ,open_hole=False
                     )
     ref_structure,Free_Ca,Free_annexin,Bound_annexin,Bound_Ca = Sim_data_list
 
@@ -165,6 +166,13 @@ if __name__ == "__main__":
         A_free=Free_annexin
         ,A_bound=Bound_annexin
     )
+    A_f, A_b = Annexin_stablilization(
+        k1=k1,k2 = k2
+        ,A_fo = c_in_annexin
+        ,c_in= c_in
+        ,realtime= 30
+        ,dt = dt
+        )
 
     plt.figure()
     plt.plot(sumtot,label="Total annexins")
@@ -177,6 +185,7 @@ if __name__ == "__main__":
     plt.figure()
     #plt.hlines(y=sumfree[len(sumfree)-1],xmin=0,xmax=len(sumfree),label=f"{sumfree[len(sumfree)-1]}")
     plt.plot(sumfree,'k',label="free annnexins")
+    plt.plot(A_f,label="equation")
     plt.title(f"Free Annexins, holeclosed={close_time}")
     plt.legend()
     i = 1
@@ -184,6 +193,7 @@ if __name__ == "__main__":
     #plt.hlines(y=sumbound[len(sumbound)-1],xmin=0,xmax=len(sumbound),label=f"A_b_eval={sumbound[len(sumbound)-1]}")
     #plt.hlines(y=A_b_init*i,xmin=0,xmax=len(sumbound),label=f"A_b_init={A_b_init*i}")
     plt.plot(sumbound,'k',label="Bound Annexins")
+    plt.plot(A_b,label="equation")
     plt.title(f"bound Annexins, holeclosed={close_time}")
     plt.legend()
     
@@ -229,6 +239,9 @@ if __name__ == "__main__":
     plt.title("Concentration free Ca over time inside the cell")
 
     plt.matshow(Bound_Ca[T_tot-1])
+    plt.title("bound Ca end")
+
+    
     
     plt.show()
     

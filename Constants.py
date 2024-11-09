@@ -1,6 +1,7 @@
 from Circle_funcs import stabil_condi
-
-def constants(path,ref_name):
+import matplotlib.pyplot as plt
+from Circle_funcs import Annexin_stablilization
+def constants():
     Avogadro = 6.02214076e23 # 1/mol
     # time and step size, and diffusion constant
     picture_size = 83e-6#*10**(-6)#e-6 # meters
@@ -52,10 +53,9 @@ def constants(path,ref_name):
     #print(f" k2/c_out={K_low} << k1 << k2/c_in={K_up}")
     #k1 = k2*(c_in + c_out)/(2*c_in*c_out)
     print(f"k1 ={k1} 1/Ms \n and k2={k2} 1/s")
-    c_in_annexin = 1e-6 #A_init_conc_lower # 1e-9 this was our initial guess.
+    c_in_annexin = A_init_conc_lower # 1e-9 this was our initial guess.
     bound_annexin_start = k1*c_in_annexin*c_in/k2
     A_b_init = k1*c_in_annexin*c_in/k2
-    #T_tot = int(Real_sim_time/dt)
     print("total number of sim steps =",T_tot)
     
 
@@ -73,6 +73,7 @@ def constants(path,ref_name):
     outside_val = -5
     open_val = 20
 
+    print(f"sim equil time={1/(k1*c_in_annexin + k2)}")
     
     args_list = [
         c_in,c_out,D_Ca_cyto,T_tot,len_size
@@ -87,4 +88,26 @@ def constants(path,ref_name):
     return args_list
 
 if __name__ == "__main__":
-    constants()
+    c_in,c_out,D_Ca_cyto,T_tot,len_size,dx,dy,k1,k2,c_in_annexin,bound_annexin_start,A_b_init,D_Annexin_cyto,dt,close_time,c_pump,holesize,dR,R,x0,y0,wall_val,inside_val,outside_val,open_val = constants()
+
+    A_f, A_b = Annexin_stablilization(
+        k1=k1,k2 = k2
+        ,A_fo = c_in_annexin
+        ,c_in= c_in
+        ,realtime= 3000
+        ,dt = dt
+        )
+    
+    print(c_in_annexin)
+    print(A_b_init)
+    plt.figure()
+    plt.plot(A_f)
+    plt.title("A_f")
+
+    plt.figure()
+    plt.plot(A_b)
+    plt.title("A_b")
+
+    plt.show()
+
+
