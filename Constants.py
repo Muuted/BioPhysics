@@ -24,11 +24,12 @@ def constants():
     dt = stabil_condi(dt=0.1,dx=dx,dy=dy
                     ,D_list=[ D_Ca_cyto , D_Annexin_cyto ]
                     )
-    
+    dt*= 0.95
+    dt*= 0.95
     print(f"dt={dt:e} s")
 
     T_tot = int(Real_sim_time/dt)
-    
+
     pump_multiplyer = 30 # found from sim testing.
     c_pump = dt*(5e-8)*pump_multiplyer # meters/second
     print(f"c_pump={c_pump} M/s")

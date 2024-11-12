@@ -5,7 +5,7 @@ from Circle_funcs import *
 from Data_extraction_funcs import *
 from Constants import constants
 import time as tm
-
+import os
 
 def main_circle_sim(
         c_in,c_out,D_Ca_cyto,T_tot,len_size
@@ -144,8 +144,6 @@ if __name__ == "__main__":
     data_path = "C:\\Users\\AdamSkovbjergKnudsen\\Desktop\\ISA Biophys\\data eksperimenter\\20191203-Calcium-sensors-ANXA-RFP for Python\\"
     ref_struct_name = "ref_struct__filenum4.txt"
 
-    #T_tot = 100
-
     Sim_data_list = main_circle_sim(
         c_in,c_out,D_Ca_cyto,T_tot,len_size
         ,dx,dy,k1,k2,c_in_annexin,bound_annexin_start,D_Annexin_cyto
@@ -172,35 +170,51 @@ if __name__ == "__main__":
         ,A_bound=Bound_annexin
     )
 
-
+    time_vec = np.linspace(0,Real_sim_time,len(sumfree))
     
+    print(f"len(sumfree)={len(sumfree)}")
+    print(f"len(sumbound)={len(sumbound)}")
+    print(f"len(sumtot)={len(sumtot)}")
+    
+    fig_save_path = "C:\\Users\\AdamSkovbjergKnudsen\\Desktop\\ISA Biophys\\data eksperimenter\\20191203-Calcium-sensors-ANXA-RFP for Python\\Python_simulation_data\\"
+
     cmap_type = "hot"
-    cmap_type = "viridis"
+    #cmap_type = "viridis"
+    cmap_type = "RdBu"
 
-    fig, ax = plt.subplots(3,1)
-    
-    ax[0].plot(sumtot,label="Total annexins")
-    if len(sumtot) >= close_time:
-        ax[0].vlines(x=np.ceil(close_time),ymin=min(sumtot),ymax=max(sumtot),colors='k',label=f"holeclose t={close_time}")
+    fig_ann_time, ax = plt.subplots(3,1)
+    fig_ann_time.canvas.manager.window.showMaximized()
+
+    real_time_close_time = int(close_time*dt) 
+    ax[0].plot(time_vec,sumtot,label="Total annexins")
+    if len(sumtot) >= real_time_close_time:
+        ax[0].vlines(x=np.ceil(real_time_close_time),ymin=min(sumtot),ymax=max(sumtot),colors='k',label=f"holeclose t={close_time}")
     ax[0].legend()
     ax[0].set_title(f"total sum of Annexins \n dt = {dt}")
     
     
     #ax[1].hlines(y=sumfree[len(sumfree)-1],xmin=0,xmax=len(sumfree),label=f"{sumfree[len(sumfree)-1]}")
-    ax[1].plot(sumfree,'k',label="free annnexins")
+    ax[1].plot(time_vec,sumfree,'k',label="free annnexins")
     ax[1].set_title(f"Free Annexins, holeclosed={close_time}")
     ax[1].legend()
     
     
     #ax[2].hlines(y=sumbound[len(sumbound)-1],xmin=0,xmax=len(sumbound),label=f"A_b_eval={sumbound[len(sumbound)-1]}")
     #ax[2].hlines(y=A_b_init*i,xmin=0,xmax=len(sumbound),label=f"A_b_init={A_b_init*i}")
-    ax[2].plot(sumbound,'k',label="Bound Annexins")
+    ax[2].plot(time_vec,sumbound,'k',label="Bound Annexins")
     ax[2].set_title(f"bound Annexins, holeclosed={close_time}")
     ax[2].legend()
     
-    plt.matshow(ref_structure,cmap=cmap_type)
-    plt.title("Reference structure")
-    plt.colorbar()
+    
+    
+    
+
+    fig_ref_structure,axs = plt.subplots()
+
+    fig_ref_structure.canvas.manager.window.showMaximized()
+    pos = axs.matshow(ref_structure,cmap=cmap_type)
+    axs.set_title("Reference structure")
+    fig_ref_structure.colorbar(pos,ax=axs,shrink=0.7)
 
     """ 
     plt.figure()
@@ -209,15 +223,17 @@ if __name__ == "__main__":
     plt.title("Ring sums try, normalized by Area")
     """
 
-    fig, ax = plt.subplots(1,2)
+    fig_mat_ann, ax = plt.subplots(1,2)
+    fig_mat_ann.canvas.manager.window.showMaximized()
+
     pos0 = ax[0].matshow(Free_annexin[T_tot-1],cmap=cmap_type)
     ax[0].set_title("free annexin end")
-    #fig.colorbar(pos0,ax=ax[0])
+    fig_mat_ann.colorbar(pos0,ax=ax[0],shrink=0.7)
 
     pos1 = ax[1].matshow(Bound_annexin[T_tot-1], cmap =cmap_type)
     ax[1].set_title("bound annexin")
-    #fig.colorbar(pos1, ax=ax[1])
-
+    fig_mat_ann.colorbar(pos1, ax=ax[1],shrink=0.7)
+    
 
     removed_conc_free_Ca = remove_conc_outside(
         ref_grid=ref_structure
@@ -225,16 +241,19 @@ if __name__ == "__main__":
         ,outside_val=outside_val
         )
 
-    fig, ax = plt.subplots(1,2)
-    
+
+    fig_mat_Ca, ax = plt.subplots(1,2)
+
+    fig_mat_Ca.canvas.manager.window.showMaximized()
     pos3 = ax[0].matshow(Free_Ca[T_tot-1],cmap=cmap_type)
     ax[0].set_title("free ca end")
-    #fig.colorbar(pos3,ax=ax[0])
+    fig_mat_Ca.colorbar(pos3,ax=ax[0],shrink=0.7)
     
     pos4 = ax[1].matshow(Bound_Ca[T_tot-1],cmap=cmap_type)
     ax[1].set_title("bound Ca end")
-    #fig.colorbar(pos4,ax=ax[1])
-
+    fig_mat_Ca.colorbar(pos4,ax=ax[1],shrink=0.7)
+    
+    
 
 
     conc_over_time_Free_Ca = sum_in_cell(ref_Grid=ref_structure
@@ -243,14 +262,37 @@ if __name__ == "__main__":
                                  ,inside_val=inside_val
                                  )
     
-    plt.figure()
-    plt.plot(conc_over_time_Free_Ca/max(conc_over_time_Free_Ca))
+    fig_conc_Ca_time = plt.figure()
+    fig_conc_Ca_time.canvas.manager.window.showMaximized()
+    plt.plot(time_vec,conc_over_time_Free_Ca/max(conc_over_time_Free_Ca))
     plt.title("Concentration free Ca over time inside the cell")
-
-    
-
+    plt.xlabel("time [seconds]")
+    plt.ylabel("[Ca]")  
     
     
     plt.show()
     
     
+    """
+    plt.show(block=False)
+    plt.pause(10)
+    fig_folder_path =  fig_save_path + f"simtime={Real_sim_time}\\"
+    if not os.path.exists(fig_folder_path):
+        os.makedirs(fig_folder_path)
+    
+    fig_name = f"Annexins over time Realsimtime={Real_sim_time}s"
+    fig_ann_time.savefig(fig_folder_path + fig_name)
+
+    fig_name = f"ref_structure Realsimtime={Real_sim_time}s"
+    fig_ref_structure.savefig(fig_folder_path + fig_name)
+
+    fig_name = f"mat Annexin Realsimtime={Real_sim_time}s"
+    fig_mat_ann.savefig(fig_folder_path + fig_name)
+
+    fig_name = f"Mat Ca Realsimtime={Real_sim_time}s"
+    fig_mat_Ca.savefig(fig_folder_path + fig_name)
+    
+    fig_name = f"[Ca] over time Realsimtime={Real_sim_time}s"
+    fig_conc_Ca_time.savefig(fig_folder_path + fig_name)
+
+    plt.close("all")"""

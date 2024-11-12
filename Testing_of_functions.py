@@ -386,60 +386,49 @@ def test_eqaution_solution():
     print(c_in_annexin)
     print(bound_annexin_start)
 
-    fig,ax = plt.subplots(2,2)
-    ax[0,0].plot(real_time_vec,A_f,color='k',label="A_f")
-    ax[0,0].hlines(y=c_in_annexin
+    fig,ax = plt.subplots(1,3)
+    fig.canvas.manager.window.showMaximized()
+    ax[0].plot(real_time_vec,A_f,color='k',label="A_f")
+    ax[0].hlines(y=c_in_annexin
                ,xmin=real_time_vec[0],xmax=real_time_vec[len(real_time_vec)-1]
-               ,label="A_f end val"
+               ,label="A_f equilibrium"
                )
-    ax[0,0].set_title(f"A_f and k1={k1} , k2={k2}")
-    ax[0,0].set_xlabel("Seconds (real world)")
-    ax[0,0].legend()
+    ax[0].set_title(f"A_f and k1={k1} , k2={k2}")
+    ax[0].set_xlabel("Seconds (real world)")
+    ax[0].set_ylim(min(A_f)*0.95,max(A_f)*1.1)
+    ax[0].legend()
 
     
-    ax[0,1].plot(real_time_vec,A_b, color='k',label="A_b")
-    ax[0,1].hlines(y=bound_annexin_start
+    ax[1].plot(real_time_vec,A_b, color='k',label="A_b")
+    ax[1].hlines(y=bound_annexin_start
                ,xmin=real_time_vec[0],xmax=real_time_vec[len(real_time_vec)-1]
-               ,label="A_b end val"
+               ,label="A_b equilibrium"
+               #,linestyles="*"
                )
-    ax[0,1].set_title(f"A_b and k1={k1} , k2={k2}")
-    ax[0,1].set_xlabel("Seconds (real world)")
-    ax[0,1].legend()
-
-
-
-    ax[1,0].plot(real_time_vec,A_f,color='k',label="A_f")
-    ax[1,0].hlines(y=c_in_annexin
-               ,xmin=real_time_vec[0],xmax=real_time_vec[len(real_time_vec)-1]
-               ,label="A_f end val"
-               )
-    ax[1,0].set_title(f"A_f end difference look")
-    ax[1,0].set_xlabel("Seconds (real world)")
-    ax[1,0].set_ylim((c_in_annexin)*0.9, A_f[len(A_f)-1]*1.1)
-
-    ax[1,0].legend()
-
-    ax[1,1].plot(real_time_vec,A_b, color='k',label="A_b")
-    ax[1,1].hlines(y=bound_annexin_start
-               ,xmin=real_time_vec[0],xmax=real_time_vec[len(real_time_vec)-1]
-               ,label="A_b end val"
-               )
-    ax[1,1].set_ylim(A_b[len(A_b)-1]*0.9,bound_annexin_start*1.1)
-    ax[1,1].set_title(f"A_b end difference look")
-    ax[1,1].set_xlabel("Seconds (real world)")
-    ax[1,1].legend()
+    ax[1].set_title(f"A_b and k1={k1} , k2={k2}")
+    ax[1].set_xlabel("Seconds (real world)")
+    ax[1].set_ylim(min(A_b)*0.95,max(A_b)*1.1)
+    ax[1].legend()
 
     A_tot =[]
     for i in range(len(A_f)):
         A_tot.append(A_f[i] + A_b[i])
 
-    plt.figure()
-    plt.plot(real_time_vec,A_tot,label="A_tot")
-    plt.title("A_tot")
-    plt.xlabel("Seconds (real world)")
-    plt.legend()
+    
+    ax[2].plot(real_time_vec,A_tot,label="A_tot")
+    ax[2].set_title("Total Annexins")
+    ax[2].set_xlabel("Seconds (real world)")
+    ax[2].legend()
 
     plt.show()
+    #plt.show(block=False)
+    #plt.pause(10)
+
+    fig_save_path = "C:\\Users\\AdamSkovbjergKnudsen\\Desktop\\ISA Biophys\\data eksperimenter\\20191203-Calcium-sensors-ANXA-RFP for Python\\Python_simulation_data\\"
+    fig_name = "Annexins analytical equilibrium graph"
+    fig.savefig(fig_save_path + fig_name)
+
+    #plt.close("all")
 
 
 
@@ -451,6 +440,6 @@ if __name__ =="__main__":
     #test_annexin_diff_closed_hole()
     #test_annexin_diff_open_hole()
     #Finding_the_pump_value()
-    test_analytical_vs_sim_dAf_dAb()
-    #test_eqaution_solution()
+    #test_analytical_vs_sim_dAf_dAb()
+    test_eqaution_solution()
     

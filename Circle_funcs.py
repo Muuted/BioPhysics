@@ -28,8 +28,8 @@ def circle_dAdt(A_free,A_bound,C,C_bound,pos,const,D):
     dAbounddt = k1*A_free[t][y][x]*C[t][y][x] - k2*A_bound[t][y][x]
     A_bound[t+1][y][x] = A_bound[t][y][x] + dt*dAbounddt
 
-    #C_bound[t+1][y][x] += 4*dAbounddt
-    #C[t+1][y][x] += -4*dAbounddt
+    C_bound[t+1][y][x] += 4*dAbounddt
+    C[t+1][y][x] += -4*dAbounddt
 
 def circle_dAbounddt(A_free,A_bound,C,pos,k1,k2) -> float:
     nx,x,bx,ny,y,by = pos
