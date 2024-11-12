@@ -45,13 +45,13 @@ def stabil_condi(dt,dx,dy,D_list):
     for D in D_list:
         for _ in range(0,N):
             if dt > (dx*dx)/(4*D):
-                dt *= 0.99
+                dt *= 9.5e-1
             if dt < (dx*dx)/(4*D):
                 break
             if _ == N-1:
                 print("Not enough iterations for dt")
     
-    dt *= 0.99
+    dt *= 9.5e-1
     #print(f"final dt={dt}")
     return dt
 

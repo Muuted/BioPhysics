@@ -128,16 +128,18 @@ def sum_in_cell(ref_Grid,Matrix_Free,Matrix_Bound,inside_val:int)->list:
         
     return conc_time
 
-def remove_conc_outside(ref_grid,grid,inside_val):
+def remove_conc_outside(ref_grid,grid,outside_val):
 
     Y_size,X_size = np.shape(ref_grid)
+    removed_conc_grid = np.zeros(shape=(Y_size,X_size))
 
     for y in range(Y_size):
         for x in range(X_size):
-            if ref_grid[y][x] != inside_val:
-                grid[y][x] = 0
-    
-
+            if ref_grid[y][x] == outside_val:
+                removed_conc_grid[y][x] = 0
+            else:
+                removed_conc_grid[y][x] = grid[y][x]
+    return removed_conc_grid    
 
 if __name__ == "__main__":
     pass

@@ -10,7 +10,7 @@ import plotly.graph_objects as go
 import pandas as pd
 
 def test_reference_struct():
-    c_in,c_out,D_Ca_cyto,T_tot,len_size,dx,dy,k1,k2,c_in_annexin,bound_annexin_start,A_b_init,D_Annexin_cyto,dt,close_time,c_pump,holesize,dR,R,x0,y0,wall_val,inside_val,outside_val,open_val = constants()
+    c_in,c_out,D_Ca_cyto,T_tot,len_size,dx,dy,k1,k2,c_in_annexin,bound_annexin_start,D_Annexin_cyto,dt,close_time,c_pump,holesize,dR,R,x0,y0,wall_val,inside_val,outside_val,open_val,Real_sim_time, real_close_time = constants()
     ref_grid = init_ref_circle(
         boxlen=len_size
         ,Radius=R,dRadius=dR
@@ -45,14 +45,16 @@ def test_reference_struct():
 
 def test_Ca_diff_corner_closed_hole():
     print("Testing diffusion of Calcium, with closed cell")
-    c_in,c_out,D_Ca_cyto,T_tot,len_size,dx,dy,k1,k2,c_in_annexin,bound_annexin_start,A_b_init,D_Annexin_cyto,dt,close_time,c_pump,holesize,dR,R,x0,y0,wall_val,inside_val,outside_val,open_val = constants()
+    c_in,c_out,D_Ca_cyto,T_tot,len_size,dx,dy,k1,k2,c_in_annexin,bound_annexin_start,D_Annexin_cyto,dt,close_time,c_pump,holesize,dR,R,x0,y0,wall_val,inside_val,outside_val,open_val,Real_sim_time, real_close_time = constants()
+    
+    T_tot = 1200
     c_pump = 0
-    #T_tot = 500
     c_in_annexin = 0
     bound_annexin_start = 0
+
     Sim_data_list = main_circle_sim(
         c_in,c_out,D_Ca_cyto,T_tot,len_size
-        ,dx,dy,k1,k2,c_in_annexin,bound_annexin_start,A_b_init,D_Annexin_cyto
+        ,dx,dy,k1,k2,c_in_annexin,bound_annexin_start,D_Annexin_cyto
         ,dt,close_time,c_pump,holesize,dR,R,x0,y0
         ,wall_val,inside_val,outside_val,open_val
         ,open_hole=False
@@ -79,16 +81,15 @@ def test_Ca_diff_corner_closed_hole():
 
 def test_Ca_diff_corner_open_hole():
     print("Testing calcium diffusive with open cell")
-    c_in,c_out,D_Ca_cyto,T_tot,len_size,dx,dy,k1,k2,c_in_annexin,bound_annexin_start,A_b_init,D_Annexin_cyto,dt,close_time,c_pump,holesize,dR,R,x0,y0,wall_val,inside_val,outside_val,open_val = constants()
+    c_in,c_out,D_Ca_cyto,T_tot,len_size,dx,dy,k1,k2,c_in_annexin,bound_annexin_start,D_Annexin_cyto,dt,close_time,c_pump,holesize,dR,R,x0,y0,wall_val,inside_val,outside_val,open_val,Real_sim_time, real_close_time = constants()
     #c_pump = 0
-    #T_tot = 1500
-    #T_tot = int(30/dt)
+    T_tot = 1200
     c_in_annexin = 0
     bound_annexin_start = 0
 
     Sim_data_list = main_circle_sim(
         c_in,c_out,D_Ca_cyto,T_tot,len_size
-        ,dx,dy,k1,k2,c_in_annexin,bound_annexin_start,A_b_init,D_Annexin_cyto
+        ,dx,dy,k1,k2,c_in_annexin,bound_annexin_start,D_Annexin_cyto
         ,dt,close_time,c_pump,holesize,dR,R,x0,y0
         ,wall_val,inside_val,outside_val,open_val
         ,open_hole=True
@@ -106,28 +107,33 @@ def test_Ca_diff_corner_open_hole():
     plt.matshow(Ca[T_tot-1])
     plt.title("final Ca distribution")
 
+    removed_conc = remove_conc_outside(
+        ref_grid=ref_structure
+        ,grid=Ca[T_tot-1]
+        ,outside_val=outside_val
+                                       )
+    
+    print(f"shape of removed conc = {np.shape(removed_conc)}")
+    plt.matshow(removed_conc)
+    plt.title("Calcium only shows concentration inside the cell")
+
     plt.figure()
     plt.plot(Ca_sumfree,'r',label="[Ca]")
     plt.vlines(x=close_time,ymin=min(Ca_sumfree),ymax=max(Ca_sumfree),label=f"close hole time={close_time}")
     plt.title(r"$ [ Ca_{tot} ] $ over time, openhole, and $ C_{pump} = $" +f"{c_pump}"
               + "\n"+ f"holeclosed at t={close_time}steps and realtime={int(T_tot*dt)}s")
-    
     plt.legend()
     plt.show()
 
 
 def test_annexin_diff_closed_hole():
     print("Testing Annexin diffusion, closed cell")
-    c_in,c_out,D_Ca_cyto,T_tot,len_size,dx,dy,k1,k2,c_in_annexin,bound_annexin_start,A_b_init,D_Annexin_cyto,dt,close_time,c_pump,holesize,dR,R,x0,y0,wall_val,inside_val,outside_val,open_val = constants()
-    #T_tot= 1500
-    bound_annexin_start = 0
-    c_pump = 0
-    close_time = 0
-    c_in = c_out
-    T_tot = 1600
+    c_in,c_out,D_Ca_cyto,T_tot,len_size,dx,dy,k1,k2,c_in_annexin,bound_annexin_start,D_Annexin_cyto,dt,close_time,c_pump,holesize,dR,R,x0,y0,wall_val,inside_val,outside_val,open_val,Real_sim_time, real_close_time = constants()
+
+    T_tot = 1200
     Sim_data_list = main_circle_sim(
         c_in,c_out,D_Ca_cyto,T_tot,len_size
-        ,dx,dy,k1,k2,c_in_annexin,bound_annexin_start,A_b_init,D_Annexin_cyto
+        ,dx,dy,k1,k2,c_in_annexin,bound_annexin_start,D_Annexin_cyto
         ,dt,close_time,c_pump,holesize,dR,R,x0,y0
         ,wall_val,inside_val,outside_val,open_val
         ,open_hole=False
@@ -172,14 +178,14 @@ def test_annexin_diff_closed_hole():
     
 def test_annexin_diff_open_hole():
     print("Testing Annexin diffusion, open cell")
-    c_in,c_out,D_Ca_cyto,T_tot,len_size,dx,dy,k1,k2,c_in_annexin,bound_annexin_start,A_b_init,D_Annexin_cyto,dt,close_time,c_pump,holesize,dR,R,x0,y0,wall_val,inside_val,outside_val,open_val = constants()
-    #T_tot= 1500
-    bound_annexin_start = 0
-    c_pump = 0
+    c_in,c_out,D_Ca_cyto,T_tot,len_size,dx,dy,k1,k2,c_in_annexin,bound_annexin_start,D_Annexin_cyto,dt,close_time,c_pump,holesize,dR,R,x0,y0,wall_val,inside_val,outside_val,open_val,Real_sim_time, real_close_time = constants()
     
+    T_tot= 300 #1500
+    close_time = 100 # int(T_tot*0.5)
+       
     Sim_data_list = main_circle_sim(
         c_in,c_out,D_Ca_cyto,T_tot,len_size
-        ,dx,dy,k1,k2,c_in_annexin,bound_annexin_start,A_b_init,D_Annexin_cyto
+        ,dx,dy,k1,k2,c_in_annexin,bound_annexin_start,D_Annexin_cyto
         ,dt,close_time,c_pump,holesize,dR,R,x0,y0
         ,wall_val,inside_val,outside_val,open_val
         ,open_hole=True
@@ -199,7 +205,7 @@ def test_annexin_diff_open_hole():
 
     plt.figure()
     plt.plot(A_sumtot,'r',label="[Ca]")
-    plt.vlines(x=close_time,ymin=min(A_sumtot),ymax=max(A_sumtot)
+    plt.vlines(x=close_time + 1 ,ymin=min(A_sumtot),ymax=max(A_sumtot)
                ,label="close hole time")
     plt.title("A_tot concentration over time")
     plt.legend()
@@ -209,28 +215,31 @@ def test_annexin_diff_open_hole():
 def Finding_the_pump_value():
     print(r"Finding the value for the $ c_{pump} $ term")
     from Circle_sim import main_circle_sim
-    c_in,c_out,D_Ca_cyto,T_tot,len_size,dx,dy,k1,k2,c_in_annexin,bound_annexin_start,A_b_init,D_Annexin_cyto,dt,close_time,c_pump,holesize,dR,R,x0,y0,wall_val,inside_val,outside_val,open_val = constants()
+    c_in,c_out,D_Ca_cyto,T_tot,len_size,dx,dy,k1,k2,c_in_annexin,bound_annexin_start,D_Annexin_cyto,dt,close_time,c_pump,holesize,dR,R,x0,y0,wall_val,inside_val,outside_val,open_val,Real_sim_time, real_close_time = constants()
     Real_time = 80 #seconds.
     T_tot = int(Real_time/dt) # number of time steps.
-    #c_pump = c_pump*30
+
     close_time = T_tot*0.1
     
     time1 = tm.time()
+
     Sim_data_list = main_circle_sim(
         c_in,c_out,D_Ca_cyto,T_tot,len_size
-        ,dx,dy,k1,k2,c_in_annexin,bound_annexin_start,A_b_init,D_Annexin_cyto
+        ,dx,dy,k1,k2,c_in_annexin,bound_annexin_start,D_Annexin_cyto
         ,dt,close_time,c_pump,holesize,dR,R,x0,y0
         ,wall_val,inside_val,outside_val,open_val
                     )
     time2 = tm.time()
 
     print(f"Sim took {(time2-time1)/60}min")
+
     ref_structure = Sim_data_list[0]
     Free_Ca = Sim_data_list[1]
 
     conc_Ca_time = sum_in_cell(
         ref_Grid=ref_structure
-        ,Matrix=Free_Ca
+        ,Matrix_Free=Free_Ca
+        ,Matrix_Bound= np.zeros(shape=(T_tot,len_size,len_size))
         ,inside_val=inside_val
                                )
 
@@ -246,16 +255,16 @@ def Finding_the_pump_value():
 
 def test_analytical_vs_sim_dAf_dAb():
     print(r"Testing the analytical vs simulated evolution of $ A_f (t) $ and $ A_b (t) $")
-    c_in,c_out,D_Ca_cyto,T_tot,len_size,dx,dy,k1,k2,c_in_annexin,bound_annexin_start,A_b_init,D_Annexin_cyto,dt,close_time,c_pump,holesize,dR,R,x0,y0,wall_val,inside_val,outside_val,open_val = constants()
+    c_in,c_out,D_Ca_cyto,T_tot,len_size,dx,dy,k1,k2,c_in_annexin,bound_annexin_start,D_Annexin_cyto,dt,close_time,c_pump,holesize,dR,R,x0,y0,wall_val,inside_val,outside_val,open_val,Real_sim_time, real_close_time = constants()
+    
     T_tot= 500
-    #bound_annexin_start = 0
-    #c_pump = 0
+    bound_annexin_start = 0
     close_time = 0
 
 
     Sim_data_list = main_circle_sim(
         c_in,c_out,D_Ca_cyto,T_tot,len_size
-        ,dx,dy,k1,k2,c_in_annexin,bound_annexin_start,A_b_init,D_Annexin_cyto
+        ,dx,dy,k1,k2,c_in_annexin,bound_annexin_start,D_Annexin_cyto
         ,dt,close_time,c_pump,holesize,dR,R,x0,y0
         ,wall_val,inside_val,outside_val,open_val
         ,open_hole=False
@@ -271,7 +280,7 @@ def test_analytical_vs_sim_dAf_dAb():
     print(f"maximum free annexin ={max(A_sumfree)}")
     A_f_stability,A_b_stability = Annexin_stablilization(
         k1=k1,k2=k2
-        ,A_fo=c_in_annexin
+        ,A_fo=c_in_annexin + bound_annexin_start
         ,realtime=int(T_tot*dt)
         ,c_in=c_in
         ,dt=dt
@@ -358,6 +367,83 @@ def test_analytical_vs_sim_dAf_dAb():
     plt.show()
 
 
+def test_eqaution_solution():
+
+    c_in,c_out,D_Ca_cyto,T_tot,len_size,dx,dy,k1,k2,c_in_annexin,bound_annexin_start,D_Annexin_cyto,dt,close_time,c_pump,holesize,dR,R,x0,y0,wall_val,inside_val,outside_val,open_val,Real_sim_time, real_close_time = constants()
+
+    init_tot_ann = c_in_annexin + bound_annexin_start
+    Real_sim_time = 3000
+    A_f, A_b = Annexin_stablilization(
+        k1=k1,k2 = k2
+        ,A_fo = init_tot_ann
+        ,c_in= c_in
+        ,realtime= Real_sim_time
+        ,dt = dt
+        )
+    
+    real_time_vec = np.linspace(start=0,stop=Real_sim_time,num=len(A_f))
+    
+    print(c_in_annexin)
+    print(bound_annexin_start)
+
+    fig,ax = plt.subplots(2,2)
+    ax[0,0].plot(real_time_vec,A_f,color='k',label="A_f")
+    ax[0,0].hlines(y=c_in_annexin
+               ,xmin=real_time_vec[0],xmax=real_time_vec[len(real_time_vec)-1]
+               ,label="A_f end val"
+               )
+    ax[0,0].set_title(f"A_f and k1={k1} , k2={k2}")
+    ax[0,0].set_xlabel("Seconds (real world)")
+    ax[0,0].legend()
+
+    
+    ax[0,1].plot(real_time_vec,A_b, color='k',label="A_b")
+    ax[0,1].hlines(y=bound_annexin_start
+               ,xmin=real_time_vec[0],xmax=real_time_vec[len(real_time_vec)-1]
+               ,label="A_b end val"
+               )
+    ax[0,1].set_title(f"A_b and k1={k1} , k2={k2}")
+    ax[0,1].set_xlabel("Seconds (real world)")
+    ax[0,1].legend()
+
+
+
+    ax[1,0].plot(real_time_vec,A_f,color='k',label="A_f")
+    ax[1,0].hlines(y=c_in_annexin
+               ,xmin=real_time_vec[0],xmax=real_time_vec[len(real_time_vec)-1]
+               ,label="A_f end val"
+               )
+    ax[1,0].set_title(f"A_f end difference look")
+    ax[1,0].set_xlabel("Seconds (real world)")
+    ax[1,0].set_ylim((c_in_annexin)*0.9, A_f[len(A_f)-1]*1.1)
+
+    ax[1,0].legend()
+
+    ax[1,1].plot(real_time_vec,A_b, color='k',label="A_b")
+    ax[1,1].hlines(y=bound_annexin_start
+               ,xmin=real_time_vec[0],xmax=real_time_vec[len(real_time_vec)-1]
+               ,label="A_b end val"
+               )
+    ax[1,1].set_ylim(A_b[len(A_b)-1]*0.9,bound_annexin_start*1.1)
+    ax[1,1].set_title(f"A_b end difference look")
+    ax[1,1].set_xlabel("Seconds (real world)")
+    ax[1,1].legend()
+
+    A_tot =[]
+    for i in range(len(A_f)):
+        A_tot.append(A_f[i] + A_b[i])
+
+    plt.figure()
+    plt.plot(real_time_vec,A_tot,label="A_tot")
+    plt.title("A_tot")
+    plt.xlabel("Seconds (real world)")
+    plt.legend()
+
+    plt.show()
+
+
+
+
 if __name__ =="__main__":
     #test_reference_struct()
     #test_Ca_diff_corner_closed_hole()
@@ -366,4 +452,5 @@ if __name__ =="__main__":
     #test_annexin_diff_open_hole()
     #Finding_the_pump_value()
     test_analytical_vs_sim_dAf_dAb()
+    #test_eqaution_solution()
     
