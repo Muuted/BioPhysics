@@ -16,7 +16,6 @@ def main_circle_sim(
         ,ref_bakteria = ""
         ,data_path=""
                     ) -> list:
-    #open_hole = True
     
     # Creation of our Grids
     if ref_bakteria == "":
@@ -76,7 +75,7 @@ def main_circle_sim(
         if t%(int(T_tot/10)) == 0:
             print(f"time={t} of {T_tot}")   
         t1, t2 = t%2, (t+1)%2
-        t1, t2 = t, t+1
+        
         for x in range(0,len_size):
             for y in range(0,len_size):
                 #Bound_Ca[t+1][y][x] += Bound_Ca[t][y][x]

@@ -23,21 +23,20 @@ def circle_dAdt(A_free,A_bound,C,C_bound,pos,const,D):
     dA_freedt = (dA_freedxdx + dA_freedydy) - k1*A_free[t][y][x]*C[t][y][x] + k2*A_bound[t][y][x]
     
     A_free[t+1][y][x] = A_free[t][y][x] + dt*dA_freedt
-    
 
     dAbounddt = k1*A_free[t][y][x]*C[t][y][x] - k2*A_bound[t][y][x]
     A_bound[t+1][y][x] = A_bound[t][y][x] + dt*dAbounddt
 
-    C_bound[t+1][y][x] += 4*dAbounddt
-    C[t+1][y][x] += -4*dAbounddt
+    #C_bound[t+1][y][x] += 4*dAbounddt
+    #C[t+1][y][x] += -4*dAbounddt
 
-def circle_dAbounddt(A_free,A_bound,C,pos,k1,k2) -> float:
+"""def circle_dAbounddt(A_free,A_bound,C,pos,k1,k2) -> float:
     nx,x,bx,ny,y,by = pos
     a = C[y][x]
     #a = 1
     dAbounddt = k1*A_free[y][x]*a - k2*A_bound[y][x]
     
-    return dAbounddt
+    return dAbounddt"""
 
 def stabil_condi(dt,dx,dy,D_list):
     # Von Neumann stability condition    
