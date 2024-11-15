@@ -6,6 +6,7 @@ from Data_extraction_funcs import *
 from Constants import constants
 import time as tm
 import os
+import pandas as pd
 
 def main_circle_sim(
         c_in,c_out,D_Ca_cyto,T_tot,len_size
@@ -143,6 +144,8 @@ if __name__ == "__main__":
     data_path = "C:\\Users\\AdamSkovbjergKnudsen\\Desktop\\ISA Biophys\\data eksperimenter\\20191203-Calcium-sensors-ANXA-RFP for Python\\"
     ref_struct_name = "ref_struct__filenum4.txt"
 
+    save_data = True
+
     Sim_data_list = main_circle_sim(
         c_in,c_out,D_Ca_cyto,T_tot,len_size
         ,dx,dy,k1,k2,c_in_annexin,bound_annexin_start,D_Annexin_cyto
@@ -269,29 +272,48 @@ if __name__ == "__main__":
     plt.ylabel("[Ca]")  
     
     
-    plt.show()
+    #plt.show()
     
-    
-    """
-    plt.show(block=False)
-    plt.pause(10)
-    fig_folder_path =  fig_save_path + f"simtime={Real_sim_time}\\"
-    if not os.path.exists(fig_folder_path):
-        os.makedirs(fig_folder_path)
-    
-    fig_name = f"Annexins over time Realsimtime={Real_sim_time}s"
-    fig_ann_time.savefig(fig_folder_path + fig_name)
+    if save_data == True:
+        df = pd.DataFrame({
+            'Free Calcium': [Free_Ca],
+            'Bound Calcium': [Bound_Ca],
+            'Free Annexins': [Free_annexin],
+            'Bound Annexins': [Bound_annexin],
+            'Sim time (s)': Real_sim_time,
+            'time steps': T_tot,
+            'k1': k1,
+            'k2' :k2,
+            'dt': dt
+                        })
 
-    fig_name = f"ref_structure Realsimtime={Real_sim_time}s"
-    fig_ref_structure.savefig(fig_folder_path + fig_name)
+        print(df.info())
 
-    fig_name = f"mat Annexin Realsimtime={Real_sim_time}s"
-    fig_mat_ann.savefig(fig_folder_path + fig_name)
+        fig_folder_path =  fig_save_path + f"simtime={Real_sim_time}\\"
+        if not os.path.exists(fig_folder_path):
+            os.makedirs(fig_folder_path)
 
-    fig_name = f"Mat Ca Realsimtime={Real_sim_time}s"
-    fig_mat_Ca.savefig(fig_folder_path + fig_name)
-    
-    fig_name = f"[Ca] over time Realsimtime={Real_sim_time}s"
-    fig_conc_Ca_time.savefig(fig_folder_path + fig_name)
+        fig_name = f"Simulation_data_simtime={Real_sim_time}.pkl"
+        df.to_pickle(fig_folder_path + fig_name)
 
-    plt.close("all")"""
+
+        plt.show(block=False)
+        plt.pause(10)
+
+
+        fig_name = f"Annexins over time Realsimtime={Real_sim_time}s"
+        fig_ann_time.savefig(fig_folder_path + fig_name)
+
+        fig_name = f"ref_structure Realsimtime={Real_sim_time}s"
+        fig_ref_structure.savefig(fig_folder_path + fig_name)
+
+        fig_name = f"mat Annexin Realsimtime={Real_sim_time}s"
+        fig_mat_ann.savefig(fig_folder_path + fig_name)
+
+        fig_name = f"Mat Ca Realsimtime={Real_sim_time}s"
+        fig_mat_Ca.savefig(fig_folder_path + fig_name)
+
+        fig_name = f"[Ca] over time Realsimtime={Real_sim_time}s"
+        fig_conc_Ca_time.savefig(fig_folder_path + fig_name)
+
+        plt.close("all")
