@@ -74,7 +74,8 @@ def main_circle_sim(
           # matches the simulated one.
     for t in np.arange(0,T_tot-1): 
         if t%(int(T_tot/10)) == 0:
-            print(f"time={t} of {T_tot}")   
+            #print(f"time={t} of {T_tot}")
+            print(f"Progress :  {(t/T_tot)*100}%")   
         t1, t2 = t%2, (t+1)%2
         
         for x in range(0,len_size):
@@ -131,8 +132,6 @@ def main_circle_sim(
                 
     return ref_structure,Free_Ca,Free_annexin,Bound_annexin,Bound_Ca
     
-
-
 
 
 
@@ -280,6 +279,7 @@ if __name__ == "__main__":
             'Bound Calcium': [Bound_Ca],
             'Free Annexins': [Free_annexin],
             'Bound Annexins': [Bound_annexin],
+            'Reference Matrix': [ref_structure],
             'Sim time (s)': Real_sim_time,
             'time steps': T_tot,
             'k1': k1,
