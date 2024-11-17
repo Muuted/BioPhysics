@@ -75,7 +75,7 @@ def main_circle_sim(
     for t in np.arange(0,T_tot-1): 
         if t%(int(T_tot/10)) == 0:
             #print(f"time={t} of {T_tot}")
-            print(f"Progress :  {(t/T_tot)*100}%")   
+            print(f"Progress :  {int((t/T_tot)*100)} %")   
         t1, t2 = t%2, (t+1)%2
         
         for x in range(0,len_size):
@@ -271,8 +271,6 @@ if __name__ == "__main__":
     plt.ylabel("[Ca]")  
     
     
-    #plt.show()
-    
     if save_data == True:
         df = pd.DataFrame({
             'Free Calcium': [Free_Ca],
@@ -284,7 +282,17 @@ if __name__ == "__main__":
             'time steps': T_tot,
             'k1': k1,
             'k2' :k2,
-            'dt': dt
+            'dt': dt,
+            'free annexin start': c_in_annexin,
+            'bound annexin start': bound_annexin_start,
+            'D_Ca': D_Ca_cyto,
+            'D_annexin': D_Annexin_cyto,
+            'hole closure time': close_time,
+            'c_pump': c_pump,
+            'hole size': holesize,
+            'dx':dx,
+            'dy':dy,
+            'side length':len_size
                         })
 
         print(df.info())
