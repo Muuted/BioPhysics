@@ -119,16 +119,20 @@ def main_circle_sim(
                     if t == 0:
                         i += 1 #count points in cell.
         if t >= close_time and open_hole==True:
-            open_close_membrane(
-                Grid=ref_structure
-                ,Radius=R, dRadius=dR
-                ,offsets=[x0,y0],holesize=holesize
-                ,open_val=open_val
-                ,wall_val=wall_val
-                ,open_wall=False
-                                )
-            open_hole = False
-            print(f"wall closure time t={t}")
+            if ref_bakteria == "":
+                open_close_membrane(
+                    Grid=ref_structure
+                    ,Radius=R, dRadius=dR
+                    ,offsets=[x0,y0],holesize=holesize
+                    ,open_val=open_val
+                    ,wall_val=wall_val
+                    ,open_wall=False
+                                    )
+                open_hole = False
+                print(f"wall closure time t={t}")
+            else:
+                print(" \n \n \n Need to code the other ref structure -- closing program \n \n \n")
+                exit()
                 
     return ref_structure,Free_Ca,Free_annexin,Bound_annexin,Bound_Ca
     

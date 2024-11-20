@@ -108,18 +108,47 @@ for i in range(6):
     plt.matshow(ref_structure)
     plt.show()"""
 
+N = 2
+matrix = np.zeros(shape=(N,N))
 
 df = pd.DataFrame({
-     'A': [0, 1, 2, 3, 4],
-    'B': [5, 6, 7, 8, 9],
-    'C': ['a', 'b', 'c', 'd', 'e']
+     'A': [matrix],
+    'B': 10,
+    'C': 5
     })
 
-#print(df.info())
-print(df)
+df2 = pd.DataFrame({
+     'A':[matrix],
+     'D':5
+})
 
-df.replace({'A': {0: 100, 4: 400}})
+df = df.append(df2,ignore_index=True)
+#print(df.info())
+print(df.info())
+
+matrix2 = np.zeros(shape=(N,N))
+for i in range(2):
+     for j in range(2):
+          matrix2[i][j] = 10
+
+
+
+if 'A' in df.columns:
+    df = df.drop(columns=['A'])
+    print("hello")
+else:
+     print("not there")
+
+print(df.info())
+
+
+df2 = pd.DataFrame({
+     'A':[matrix2],
+     'D':5
+})
+
+df = df.append(df2,ignore_index=True)
 
 print(" new ")
-print(df)
+print(df.info())
 

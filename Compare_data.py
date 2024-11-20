@@ -14,14 +14,9 @@ def main_compare():
     fig_folder_path =  fig_save_path + f"simtime={Real_sim_time}\\"
     fig_name = f"Simulation_data_simtime={Real_sim_time}.pkl"
 
-    df = pd.read_pickle(fig_folder_path+fig_name)
+    df_sim = pd.read_pickle(fig_folder_path+fig_name)
 
-    try:
-        print(f"k1={df['k1'][0]}")
-    except NameError:
-        print("doesnt exsist")
-
-    print(df.info())
+    
 
 
 if __name__ == "__main__":
