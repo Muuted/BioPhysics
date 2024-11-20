@@ -64,50 +64,66 @@ def sum_annexin(A_free,A_bound):
     return sumAfree, sumAbound, sumtot
 
 
-def Ring_sum(ref_Grid ,offsets:tuple 
-             ,Radius:int, dRadius:int
-             ,num_of_rings:int
-             )-> tuple:
-    x0,y0 = offsets[0],offsets[1]
-    Grid = np.copy(ref_Grid)
-    grid_shape = np.shape(ref_Grid)
-    Visual_Grid = np.zeros(shape=(grid_shape[0],grid_shape[1]))
-    xstart = x0 + Radius + 2*dRadius
-    xend = x0 - Radius - 2*dRadius
+def Ring_sum(
+        ref_grid
+        ,sim_grid_free_Ca,sim_grid_bound_Ca
+        ,sim_grid_free_Annexin,sim_grid_bound_Annexin
+        ,hole_pos:tuple
+        ,num_of_rings:int  
+        ,inside_val:int
+            )-> tuple:
     
-    Ring_radius = []
-    Ring_sums = []
+    Tsize, Ysize, Xsize = np.shape(sim_grid_free_Ca)
+    x0,y0 = hole_pos #position of the hole in the membrane
+
+    Radius_vec = np.linspace(start=0,stop=Ysize,num=num_of_rings)
+
+    Ring_sum_list_Ca = np.zeros(shape=(Tsize,len(Radius_vec)))
+    Ring_sum_list_Annexins = np.zeros(shape=(Tsize,len(Radius_vec)))
+
+    Visual_grid = np.zeros(shape=(Ysize,Xsize))
     
-    boxlen = np.shape(Grid)[0]
-    R_steps = int(2*Radius/num_of_rings) # gives 10 ringes for summing.
+    Vis_val = 10
+    dVis_val = 10
 
-    # first we want to prepare the matrix, so that
-    # the out side values arent summed.
-    for x in range(boxlen):
-        for y in range(boxlen):
-            r = np.sqrt( (x-x0)**2 + (y-y0)**2)
-            if r > Radius:
-                Grid[y][x] = 0
+    for t in range(Tsize):
+        if t%(int(Tsize/10)) == 0:
+            #print(f"time={t} of {T_tot}")
+            print(f" Ring summing Progress :  {int((t/Tsize)*100)} %")   
+        for R in range(0,len(Radius_vec)-1):
 
-    visual_sum = 0
-    for R in range(0,int(2*Radius + x0 ),R_steps):
-        sum = 0
-        visual_sum += 100
-        Z = 1 # normalizing constant
-        for x in range(xstart,xend,-1):#(xstart,xend,-1):
-            for y in range(boxlen):
-                if x < boxlen-1 and y < boxlen-1:
-                    r1 = np.sqrt((x-xstart)**2 + (y-y0)**2)
-                    r2 = np.sqrt((x-x0)**2 + (y-y0)**2)
-                    if R - R_steps < r1 <= R and r2 < Radius + dRadius/2:
-                        sum += Grid[y][x] 
-                        Z += 1
-                        Visual_Grid[y][x] = visual_sum
+            R1 = int(Radius_vec[R+1])
+            R2 = int(Radius_vec[R])
+            sum_Ca = 0
+            sum_Annexin = 0
+
+            for y in range(Ysize):
+                for x in range(Xsize):
+
+                    if 0 <= x < Xsize and 0 <= y < Ysize:
+                        if ref_grid[y][x] == inside_val:
+                            r = np.sqrt( (x - x0)**2 + (y - y0)**2 )
+
+                            if R2 <= r <= R1 :
+                                sum_Ca += sim_grid_free_Ca[t][y][x] + sim_grid_bound_Ca[t][y][x]
+                                sum_Annexin += sim_grid_free_Annexin[t][y][x] + sim_grid_bound_Annexin[t][y][x]
+                                if t == 0:
+                                    Visual_grid[y][x] = Vis_val
+
+            Vis_val += dVis_val
+            Ring_sum_list_Ca[t][R] = sum_Ca
+            Ring_sum_list_Annexins[t][R] = sum_Annexin
+
+        if t == 0:
+            plt.matshow(Visual_grid)
+            plt.title("Visual Grid, does this look correct? \n if yes, just close figure and sum will continue")
+            plt.show()
         
-        Ring_sums.append(sum/Z)
-        Ring_radius.append(R)
+        
 
-    return Ring_sums, Ring_radius, Grid,Visual_Grid
+    return Ring_sum_list_Ca, Ring_sum_list_Annexins 
+
+
 
 
 def sum_in_cell(ref_Grid,Matrix_Free,Matrix_Bound,inside_val:int)->list:

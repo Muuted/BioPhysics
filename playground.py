@@ -62,15 +62,15 @@ def compress_img(path, img_name,ysize_goal):
 
     plt.show()
 
-
+"""
 data_path = "C:\\Users\\AdamSkovbjergKnudsen\\Desktop\\ISA Biophys\\data eksperimenter\\20191203-Calcium-sensors-ANXA-RFP for Python\\"
 Calcium_data= "Ca_time_images_filenum4.txt"
 """
-compress_img(
+"""compress_img(
     path=data_path
     ,img_name=Calcium_data
     ,ysize_goal=80
-)
+)"""
 """
 ref_struct_name = "ref_struct__filenum4.txt"
 c_in,c_out,D_Ca_cyto,T_tot,len_size,dx,dy,k1,k2,c_in_annexin,bound_annexin_start,A_b_init,D_Annexin_cyto,dt,close_time,c_pump,holesize,dR,R,x0,y0,wall_val,inside_val,outside_val,open_val = constants()
@@ -106,4 +106,20 @@ for i in range(6):
          open = True
 
     plt.matshow(ref_structure)
-    plt.show()
+    plt.show()"""
+
+
+df = pd.DataFrame({
+     'A': [0, 1, 2, 3, 4],
+    'B': [5, 6, 7, 8, 9],
+    'C': ['a', 'b', 'c', 'd', 'e']
+    })
+
+#print(df.info())
+print(df)
+
+df.replace({'A': {0: 100, 4: 400}})
+
+print(" new ")
+print(df)
+

@@ -75,7 +75,7 @@ def main_circle_sim(
     for t in np.arange(0,T_tot-1): 
         if t%(int(T_tot/10)) == 0:
             #print(f"time={t} of {T_tot}")
-            print(f"Progress :  {int((t/T_tot)*100)} %")   
+            print(f" Simulation Progress :  {int((t/T_tot)*100)} %")   
         t1, t2 = t%2, (t+1)%2
         
         for x in range(0,len_size):
@@ -144,6 +144,7 @@ if __name__ == "__main__":
     ref_struct_name = "ref_struct__filenum4.txt"
 
     save_data = True
+    
 
     Sim_data_list = main_circle_sim(
         c_in,c_out,D_Ca_cyto,T_tot,len_size
@@ -154,7 +155,7 @@ if __name__ == "__main__":
                     )
     ref_structure,Free_Ca,Free_annexin,Bound_annexin,Bound_Ca = Sim_data_list
 
-    data_list = Ring_sum(
+    """data_list = Ring_sum(
         ref_Grid=Free_Ca[T_tot-1]
         ,offsets=[x0,y0]
         ,Radius=R   ,dRadius=dR
@@ -164,7 +165,7 @@ if __name__ == "__main__":
     Ring_sums = data_list[0]
     Ring_radius = data_list[1]
     conc_removed_grid = data_list[2]
-    visual_rings = data_list[3]
+    visual_rings = data_list[3]"""
 
     sumfree,sumbound,sumtot = sum_annexin(
         A_free=Free_annexin
@@ -278,6 +279,8 @@ if __name__ == "__main__":
             'Free Annexins': [Free_annexin],
             'Bound Annexins': [Bound_annexin],
             'Reference Matrix': [ref_structure],
+            'hole position X': x0 + R,
+            'hole position Y': y0,
             'Sim time (s)': Real_sim_time,
             'time steps': T_tot,
             'k1': k1,
@@ -292,7 +295,10 @@ if __name__ == "__main__":
             'hole size': holesize,
             'dx':dx,
             'dy':dy,
-            'side length':len_size
+            'side length':len_size,
+            'inside val': inside_val,
+            'outside val': outside_val,
+            'wall val': wall_val
                         })
 
         print(df.info())
