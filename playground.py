@@ -108,47 +108,22 @@ for i in range(6):
     plt.matshow(ref_structure)
     plt.show()"""
 
-N = 2
-matrix = np.zeros(shape=(N,N))
-
-df = pd.DataFrame({
-     'A': [matrix],
-    'B': 10,
-    'C': 5
-    })
-
-df2 = pd.DataFrame({
-     'A':[matrix],
-     'D':5
-})
-
-df = df.append(df2,ignore_index=True)
-#print(df.info())
-print(df.info())
-
-matrix2 = np.zeros(shape=(N,N))
-for i in range(2):
-     for j in range(2):
-          matrix2[i][j] = 10
+data_path = "C:\\Users\\AdamSkovbjergKnudsen\\Desktop\\ISA Biophys\\data eksperimenter\\20191203-Calcium-sensors-ANXA-RFP for Python\\"
 
 
-
-if 'A' in df.columns:
-    df = df.drop(columns=['A'])
-    print("hello")
-else:
-     print("not there")
-
-print(df.info())
+Ca_data = "Ring_sum_data_Ca_filenum4.txt"
+Annexin_data = "Ring_sum_data_Annexins_filenum4.txt"
 
 
-df2 = pd.DataFrame({
-     'A':[matrix2],
-     'D':5
-})
+real_data_Ca = pd.read_csv(data_path + Ca_data)
+real_data_Ann= pd.read_csv(data_path + Annexin_data)
 
-df = df.append(df2,ignore_index=True)
+print(f"the shape of ca data = {np.shape(real_data_Ca)}")
 
-print(" new ")
-print(df.info())
 
+print(real_data_Ca.loc[0][0])
+
+vec = np.linspace(0,len(real_data_Ca.loc[0]),len(real_data_Ca.loc[0]))
+plt.figure()
+plt.plot(vec,real_data_Ca.loc[0])
+plt.show()

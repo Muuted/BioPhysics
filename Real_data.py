@@ -13,7 +13,8 @@ def main_ring_summing():
 
 
     Real_time_steps_data = 235
-    Real_sim_time = 120
+    #Real_sim_time = 1
+    save_data = True
     
     fig_save_path = "C:\\Users\\AdamSkovbjergKnudsen\\Desktop\\ISA Biophys\\data eksperimenter\\20191203-Calcium-sensors-ANXA-RFP for Python\\Python_simulation_data\\"
     fig_folder_path =  fig_save_path + f"simtime={Real_sim_time}\\"
@@ -25,9 +26,12 @@ def main_ring_summing():
 
 
     
+
     Free_Ca = df['Free Calcium'][0]
     Bound_Ca = df['Bound Calcium'][0]
     
+    print(np.shape(Free_Ca))
+
     Free_Annexins = df['Free Annexins'][0]
     Bound_annexins = df['Bound Annexins'][0]
 
@@ -51,28 +55,32 @@ def main_ring_summing():
         ,inside_val = inside_val
     )
 
+
+    if save_data == True:
+        if 'Ring sum list Ca' in df.columns:
+            df = df.drop(columns=['Ring sum list Ca'])
+        if 'Ring sum list Annexin' in df.columns:
+            df = df.drop(columns=['Ring sum list Annexin'])
+
     
-    if 'Ring sum list Ca' in df.columns:
-        df = df.drop(columns=['Ring sum list Ca'])
-    if 'Ring sum list Annexin' in df.columns:
-        df = df.drop(columns=['Ring sum list Annexin'])
+
+        df2 = pd.DataFrame({
+            'Ring sum list Ca': [Ring_sum_list_Ca],
+            'Ring sum list Annexin': [Ring_sum_list_Annexin]
+        })
+
     
+
+        df = df.append(df2,ignore_index=True)
+        print("\n \n \n")
+
     
-    df2 = pd.DataFrame({
-        'Ring sum list Ca': [Ring_sum_list_Ca],
-        'Ring sum list Annexin': [Ring_sum_list_Annexin]
-    })
+        print(df.info())
 
-    df = df.append(df2,ignore_index=True)
-    print("\n \n \n")
+        fig_folder_path =  fig_save_path + f"simtime={Real_sim_time}\\"
 
-
-    print(df.info())
-
-    fig_folder_path =  fig_save_path + f"simtime={Real_sim_time}\\"
-
-    fig_name = f"Simulation_data_simtime={Real_sim_time}.pkl"
-    df.to_pickle(fig_folder_path + fig_name)
+        fig_name = f"Simulation_data_simtime={Real_sim_time}.pkl"
+        df.to_pickle(fig_folder_path + fig_name)
 
     print("\n \n ---------- Done ---------- \n \n")
 
