@@ -91,7 +91,7 @@ def main_compare():
     cmap_type = "RdBu"
 
     vmin_val_Ca , vmax_val_Ca = 1e-7 , 1e-5
-    vmin_val_Ann, vmax_val_Ann = 1e-4 , 1e-5
+    vmin_val_Ann, vmax_val_Ann = 1e-6 , 6e-5
 
     for i in range(exp_data_shape_t-1):
         fig.canvas.manager.window.showMaximized()
@@ -113,9 +113,9 @@ def main_compare():
         pos0 = ax[1,0].matshow(Free_Ca[t],cmap=cmap_type,vmin=vmin_val_Ca,vmax=vmax_val_Ca)
         ax[1,0].set_title("free Ca")
 
-        ToT_ann =Bound_annexin[t] + Free_annexin[t]
-        pos0 = ax[1,1].matshow(ToT_ann ,cmap=cmap_type,vmin=vmin_val_Ann,vmax=vmax_val_Ann)
-        ax[1,1].set_title("free annexin")
+        #ToT_ann =Bound_annexin[t] + Free_annexin[t]
+        pos0 = ax[1,1].matshow(Free_annexin[t] ,cmap=cmap_type,vmin=vmin_val_Ann,vmax=vmax_val_Ann)
+        ax[1,1].set_title("Total annexin")
         
         if i == 0:
             fig.colorbar(pos0,ax=ax[1,0],shrink=0.7)
