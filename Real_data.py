@@ -25,7 +25,6 @@ def main_ring_summing():
     print(df.info())
 
 
-    
 
     Free_Ca = df['Free Calcium'][0]
     Bound_Ca = df['Bound Calcium'][0]
