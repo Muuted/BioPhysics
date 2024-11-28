@@ -110,18 +110,18 @@ for i in range(6):
 
 data_path = "C:\\Users\\AdamSkovbjergKnudsen\\Desktop\\ISA Biophys\\data eksperimenter\\20191203-Calcium-sensors-ANXA-RFP for Python\\"
 
-
 Ca_data = "Ring_sum_data_Ca_filenum4.txt"
 Annexin_data = "Ring_sum_data_Annexins_filenum4.txt"
 
-
 real_data_Ca = pd.read_csv(data_path + Ca_data)
 real_data_Ann= pd.read_csv(data_path + Annexin_data)
+print(real_data_Ca.loc[0][0])
+
 
 print(f"the shape of ca data = {np.shape(real_data_Ca)}")
 
 
-print(real_data_Ca.loc[0][0])
+
 
 vec = np.linspace(0,len(real_data_Ca.loc[0]),len(real_data_Ca.loc[0]))
 plt.figure()
