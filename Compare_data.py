@@ -62,67 +62,64 @@ def main_compare():
                 sim_shorten_list_Ann[i][x] = sim_ring_data_Ann[t][x]
             i += 1
     
-    vec = np.linspace(0,exp_data_shapeX,exp_data_shapeX)
-
-    """
-    sim_shorten_list_Ca_exposure = np.zeros(shape=(exp_data_shape_t,exp_data_shapeX))
-    sim_shorten_list_Ann_exposure = np.zeros(shape=(exp_data_shape_t,exp_data_shapeX))
-
-    i = 0
-    norm = 0
-    for i in range(exp_data_shape_t):
-        
-        for x in range(exp_data_shapeX):
-            if i < exp_data_shape_t-1:
-                for t in range(int(time_check_vec[i]),int(time_check_vec[i+1])):
-                    sim_shorten_list_Ann_exposure[i][x] += sim_ring_data_Ca[t][x]
-                    sim_shorten_list_Ann_exposure[i][x] += sim_ring_data_Ann[t][x]
-                
-            if i == exp_data_shape_t:
-                t = sim_T_tot
-                sim_shorten_list_Ann_exposure[i][x] += sim_ring_data_Ca[t][x]
-                sim_shorten_list_Ann_exposure[i][x] += sim_ring_data_Ann[t][x]
-                
-    """    
-            
-    
+    vec = np.linspace(0,exp_data_shapeX,exp_data_shapeX)    
         
     fig, ax = plt.subplots(2,2)
     cmap_type = "RdBu"
 
     vmin_val_Ca , vmax_val_Ca = 1e-7 , 1e-5
     vmin_val_Ann, vmax_val_Ann = 1e-6 , 6e-5
+    normalize = True
+    data_opening_frame = 20
+    end_i = exp_data_shape_t - 1 - data_opening_frame
 
-    for i in range(exp_data_shape_t-1):
+    for i in range(end_i):
         fig.canvas.manager.window.showMaximized()
         t = int(time_check_vec[i])
         t_show = round(t*sim_dt,3)
         T_final = round(time_check_vec[len(time_check_vec)-1]*sim_dt,3)
+        
+        j = i + data_opening_frame  # getting the opening of the hole
+                                    # in the experiment to match the simulation
 
-        ax[0,0].plot(vec,sim_shorten_list_Ca[i]/(max(sim_shorten_list_Ca[i])),label="simulation")
-        ax[0,0].plot(vec,real_data_Ca.loc[i]/(max(real_data_Ca.loc[i])),label="Experiment")
+        if normalize == True:
+            norm_sim_Ca = max(sim_shorten_list_Ca[i])
+            norm_data_Ca = max(real_data_Ca.loc[j])
+
+            norm_sim_ann = max(sim_shorten_list_Ann[i])
+            norm_data_ann = max(real_data_Ann.loc[j])
+        if normalize == False:
+            norm_sim_Ca, norm_data_Ca = 1 ,1
+            norm_sim_ann, norm_data_ann = 1 ,1
+
+        ax[0,0].plot(vec,sim_shorten_list_Ca[i]/norm_sim_Ca,label="simulation")
+        ax[0,0].plot(vec,real_data_Ca.loc[j]/norm_data_Ca,label="Experiment")
         ax[0,0].set_title(f"Calcium rings t={t_show}s of {T_final}")
+        ax[0,0].set_xlabel(f"Ring")
+        ax[0,0].set_ylabel(r" $ \frac{ [Ca] }{ max([Ca]) } $ ", rotation='horizontal')
         ax[0,0].legend()
 
-        ax[0,1].plot(vec,sim_shorten_list_Ann[i]/(max(sim_shorten_list_Ann[i])),label="simulation")
-        ax[0,1].plot(vec,real_data_Ann.loc[i]/(max(real_data_Ann.loc[i])),label="Experiment")
-        ax[0,1].set_title(f"Annexin rings t={t_show}s of {T_final}")
-        ax[0,1].legend()
+        ax[1,0].plot(vec,sim_shorten_list_Ann[i]/norm_sim_ann,label="simulation")
+        ax[1,0].plot(vec,real_data_Ann.loc[j]/norm_data_ann,label="Experiment")
+        ax[1,0].set_title(f"Annexin rings t={t_show}s of {T_final}")
+        ax[1,0].set_xlabel(f"Ring")
+        ax[1,0].set_ylabel(r" $ \frac{ [Ann] }{ max([Ann]) } $ ", rotation='horizontal')
+        ax[1,0].legend()
 
 
-        pos0 = ax[1,0].matshow(Free_Ca[t],cmap=cmap_type,vmin=vmin_val_Ca,vmax=vmax_val_Ca)
-        ax[1,0].set_title("free Ca")
+        pos0 = ax[0,1].matshow(Free_Ca[t],cmap=cmap_type,vmin=vmin_val_Ca,vmax=vmax_val_Ca)
+        ax[0,1].set_title("free Ca")
 
         #ToT_ann =Bound_annexin[t] + Free_annexin[t]
         pos0 = ax[1,1].matshow(Free_annexin[t] ,cmap=cmap_type,vmin=vmin_val_Ann,vmax=vmax_val_Ann)
-        ax[1,1].set_title("Total annexin")
+        ax[1,1].set_title("Free annexin")
         
         if i == 0:
-            fig.colorbar(pos0,ax=ax[1,0],shrink=0.7)
+            fig.colorbar(pos0,ax=ax[0,1],shrink=0.7)
             fig.colorbar(pos0,ax=ax[1,1],shrink=0.7)
             plt.show()
             fig, ax = plt.subplots(2,2)
-            fig.colorbar(pos0,ax=ax[1,0],shrink=0.7)
+            fig.colorbar(pos0,ax=ax[0,1],shrink=0.7)
             fig.colorbar(pos0,ax=ax[1,1],shrink=0.7)
         
         plt.draw()

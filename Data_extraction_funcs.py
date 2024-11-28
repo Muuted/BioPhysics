@@ -96,7 +96,7 @@ def Ring_sum(
             R2 = int(Radius_vec[R])
             sum_Ca = 0
             sum_Annexin = 0
-
+            norm = 0
             for y in range(Ysize):
                 for x in range(Xsize):
 
@@ -105,14 +105,17 @@ def Ring_sum(
                             r = np.sqrt( (x - x0)**2 + (y - y0)**2 )
 
                             if R2 <= r <= R1 :
+                                norm += 1
                                 sum_Ca += sim_grid_free_Ca[t][y][x] + sim_grid_bound_Ca[t][y][x]
                                 sum_Annexin += sim_grid_free_Annexin[t][y][x] + sim_grid_bound_Annexin[t][y][x]
                                 if t == 0:
                                     Visual_grid[y][x] = Vis_val
 
+            if norm == 0:
+                norm = 1
             Vis_val += dVis_val
-            Ring_sum_list_Ca[t][R] = sum_Ca
-            Ring_sum_list_Annexins[t][R] = sum_Annexin
+            Ring_sum_list_Ca[t][R] = sum_Ca/norm
+            Ring_sum_list_Annexins[t][R] = sum_Annexin/norm
 
         if t == 0:
             plt.matshow(Visual_grid)

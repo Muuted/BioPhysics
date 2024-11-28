@@ -9,6 +9,13 @@ def constants():
     Real_sim_time = 120 #seconds
     real_close_time = 10 #s
     
+    data_real_time = 120
+    data_number_of_frames = 235
+    data_time_pr_frame = data_real_time/235
+    data_opening_frame = 19
+    data_hole_open_time = 19*data_time_pr_frame
+    
+
     len_size = 80 # number of grid points
     dx, dy = picture_size/len_size ,picture_size/len_size # meters
 

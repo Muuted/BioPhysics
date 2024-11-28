@@ -7,6 +7,7 @@ from Constants import constants
 import time as tm
 import os
 import pandas as pd
+from Real_data import main_ring_summing
 
 def main_circle_sim(
         c_in,c_out,D_Ca_cyto,T_tot,len_size
@@ -335,3 +336,5 @@ if __name__ == "__main__":
         fig_conc_Ca_time.savefig(fig_folder_path + fig_name)
 
         plt.close("all")
+
+        main_ring_summing()
