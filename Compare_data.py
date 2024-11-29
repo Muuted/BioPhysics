@@ -13,18 +13,28 @@ def main_compare():
     """   The simulation data loaded  """
 
     fig_save_path = "C:\\Users\\AdamSkovbjergKnudsen\\Desktop\\ISA Biophys\\data eksperimenter\\20191203-Calcium-sensors-ANXA-RFP for Python\\Python_simulation_data\\"
+    fig_folder_path =  fig_save_path + f"Cell structure simtime={Real_sim_time}\\"
     fig_folder_path =  fig_save_path + f"simtime={Real_sim_time}\\"
+
+    #fig_name = f"Cell structure Simulation_data_simtime={Real_sim_time}.pkl"
     fig_name = f"Simulation_data_simtime={Real_sim_time}.pkl"
 
-    df_sim = pd.read_pickle(fig_folder_path+fig_name)
+    df_sim = pd.read_pickle(fig_folder_path + fig_name)
     print(df_sim.info())
 
     
     Free_Ca = df_sim['Free Calcium'][0]
     Free_annexin = df_sim['Free Annexins'][0]
     Bound_annexin = df_sim['Bound Annexins'][0]
-    sim_ring_data_Ca = df_sim['Ring sum list Ca'][3]
-    sim_ring_data_Ann = df_sim['Ring sum list Annexin'][3]
+
+    for i in range(5):
+        a = df_sim['Ring sum list Ca'][i]
+        if isinstance(a , np.ndarray):
+            sim_ring_data_Ca = df_sim['Ring sum list Ca'][i]
+            sim_ring_data_Ann = df_sim['Ring sum list Annexin'][i]
+            print(f"i = {i}")
+            break
+    
     sim_dt = df_sim['dt'][0]
     sim_real_time = df_sim['Sim time (s)'][0]
     sim_T_tot = int(df_sim['time steps'][0])
@@ -62,7 +72,9 @@ def main_compare():
                 sim_shorten_list_Ann[i][x] = sim_ring_data_Ann[t][x]
             i += 1
     
+    
     vec = np.linspace(0,exp_data_shapeX,exp_data_shapeX)    
+
         
     fig, ax = plt.subplots(2,2)
     cmap_type = "RdBu"
@@ -84,22 +96,24 @@ def main_compare():
 
         if normalize == True:
             norm_sim_Ca = max(sim_shorten_list_Ca[i])
+            norm_sim_Ca = max(sim_ring_data_Ca[t])
             norm_data_Ca = max(real_data_Ca.loc[j])
 
             norm_sim_ann = max(sim_shorten_list_Ann[i])
+            norm_sim_ann = max(sim_ring_data_Ann[t])
             norm_data_ann = max(real_data_Ann.loc[j])
         if normalize == False:
             norm_sim_Ca, norm_data_Ca = 1 ,1
             norm_sim_ann, norm_data_ann = 1 ,1
 
-        ax[0,0].plot(vec,sim_shorten_list_Ca[i]/norm_sim_Ca,label="simulation")
+        ax[0,0].plot(vec,sim_ring_data_Ca[t]/norm_sim_Ca,label="simulation")
         ax[0,0].plot(vec,real_data_Ca.loc[j]/norm_data_Ca,label="Experiment")
         ax[0,0].set_title(f"Calcium rings t={t_show}s of {T_final}")
         ax[0,0].set_xlabel(f"Ring")
         ax[0,0].set_ylabel(r" $ \frac{ [Ca] }{ max([Ca]) } $ ", rotation='horizontal')
         ax[0,0].legend()
 
-        ax[1,0].plot(vec,sim_shorten_list_Ann[i]/norm_sim_ann,label="simulation")
+        ax[1,0].plot(vec,sim_ring_data_Ann[t]/norm_sim_ann,label="simulation")
         ax[1,0].plot(vec,real_data_Ann.loc[j]/norm_data_ann,label="Experiment")
         ax[1,0].set_title(f"Annexin rings t={t_show}s of {T_final}")
         ax[1,0].set_xlabel(f"Ring")
@@ -131,70 +145,7 @@ def main_compare():
 
         
             
-    
 
-
-    
-    """
-    exposure_compare = False
-    if exposure_compare == False:
-        fig1 = plt.figure()
-        for i in range(exp_data_shape_t):
-
-            plt.plot(vec,sim_shorten_list_Ca[i]/(max(sim_shorten_list_Ca[i])),label="simulation Ca")
-            plt.plot(vec,real_data_Ca.loc[i]/(max(real_data_Ca.loc[i])),label="Experiment Ca")
-            
-            plt.title(f"Calcium : {i} of {exp_data_shape_t}")
-            plt.legend()
-
-            plt.draw()
-            plt.pause(0.1)
-            plt.clf()
-
-        
-        fig2 = plt.figure()
-
-        for i in range(exp_data_shape_t):
-
-            plt.plot(vec,sim_shorten_list_Ann[i]/(max(sim_shorten_list_Ann[i])),label="simulation Ca")
-            plt.plot(vec,real_data_Ann.loc[i]/(max(real_data_Ann.loc[i])),label="Experiment Ca")
-            
-            plt.title(f"Annexins : {i} of {exp_data_shape_t}")
-            plt.legend()
-
-            plt.draw()
-            plt.pause(0.1)
-            plt.clf()
-
-    if exposure_compare == True:
-        fig1 = plt.figure()
-        for i in range(exp_data_shape_t):
-
-            plt.plot(vec,sim_shorten_list_Ca_exposure[i]/(max(sim_shorten_list_Ca_exposure[i])),label="simulation Ca")
-            plt.plot(vec,real_data_Ca.loc[i]/(max(real_data_Ca.loc[i])),label="Experiment Ca")
-            
-            plt.title(f"Calcium exposure: {i} of {exp_data_shape_t}")
-            plt.legend()
-
-            plt.draw()
-            plt.pause(0.1)
-            plt.clf()
-            exit()
-
-        
-        fig2 = plt.figure()
-
-        for i in range(exp_data_shape_t):
-
-            plt.plot(vec,sim_shorten_list_Ann_exposure[i]/(max(sim_shorten_list_Ann_exposure[i])),label="simulation Ca")
-            plt.plot(vec,real_data_Ann.loc[i]/(max(real_data_Ann.loc[i])),label="Experiment Ca")
-            
-            plt.title(f"Annexins exposure : {i} of {exp_data_shape_t}")
-            plt.legend()
-
-            plt.draw()
-            plt.pause(0.1)
-            plt.clf()"""
 
 if __name__ == "__main__":
     main_compare()

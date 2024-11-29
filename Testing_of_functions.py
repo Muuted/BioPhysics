@@ -431,6 +431,31 @@ def test_eqaution_solution():
     #plt.close("all")
 
 
+def testing_cell_geometry():
+    c_in,c_out,D_Ca_cyto,T_tot,len_size,dx,dy,k1,k2,c_in_annexin,bound_annexin_start,D_Annexin_cyto,dt,close_time,c_pump,holesize,dR,R,x0,y0,wall_val,inside_val,outside_val,open_val,Real_sim_time, real_close_time = constants()
+    data_path = "C:\\Users\\AdamSkovbjergKnudsen\\Desktop\\ISA Biophys\\data eksperimenter\\20191203-Calcium-sensors-ANXA-RFP for Python\\"
+    ref_struct_name_cell = "ref_struct_from_Ca_filenum4.txt"
+
+    
+    py_ref_struct,outside_val,inside_val,wall_val,hole_pos = make_ref_structure(
+            path=data_path
+            ,ref_name=ref_struct_name_cell
+            ,hole_pos=[27,5]
+        )
+    print(np.shape(py_ref_struct))
+    print(f"outsideval={outside_val} \n wall_val = {wall_val} \n inside_val = {inside_val}")
+    open_close_membrane2(
+        Grid=py_ref_struct
+        ,holesize=2
+        ,open_val=open_val
+        ,wall_val=wall_val
+        ,open_wall_bool=True
+        ,offsets=hole_pos
+    )
+
+    plt.matshow(py_ref_struct)
+    plt.show()
+
 
 
 if __name__ =="__main__":
@@ -441,5 +466,6 @@ if __name__ =="__main__":
     #test_annexin_diff_open_hole()
     #Finding_the_pump_value()
     #test_analytical_vs_sim_dAf_dAb()
-    test_eqaution_solution()
+    #test_eqaution_solution()
+    testing_cell_geometry()
     

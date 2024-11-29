@@ -2,7 +2,12 @@ import numpy as np
 import matplotlib.pyplot as plt
 import pandas as pd
 
-def make_ref_structure(path,ref_name):
+def make_ref_structure(
+        path,ref_name
+        ,hole_pos
+        ):
+    
+
     ref_string = "\\" + "\\"
     for i in range(3):
         if path[len(path)-2:len(path)-1] != ref_string:
@@ -14,34 +19,60 @@ def make_ref_structure(path,ref_name):
 
     y0,x0= ref_structure.shape
     val_list = []
+
     for y in range(y0):
         for x in range(x0):
             a = ref_structure.loc[y][x]
             if a not in val_list:
                 val_list.append(a)
+
     val_list.sort()
+
     if len(val_list) > 3:
         print(f"val list to finde inside,outside and wall vals are to big \n its len(val_list)={len(val_list)}")
         exit()
+
     outside_val = val_list[0]
     inside_val = val_list[1]
-    wall_vall = val_list[2]
+    wall_val = val_list[2]
 
     py_ref_struct = np.zeros(shape=(y0,x0))
+
     for y in range(y0):
         for x in range(x0):
-            py_ref_struct[y][x] =ref_structure.loc[y][x]
-
-    #plt.matshow(py_ref_struct)
-    #plt.show()
-    #xoffset = input("Choose the x value for the hole")
-    xoffset = 70
+            py_ref_struct[y][x] = ref_structure.loc[y][x]
+   
+    
+    min_x_wall_pos, max_x_wall_pos = 2*x0,0
+    min_y_wall_pos, max_y_wall_pos = 2*y0,0
     for y in range(y0):
-        a = py_ref_struct[y][int(xoffset)]
-        if a == wall_vall:
-            yoffset = y
-            break
-    return py_ref_struct,outside_val,inside_val,wall_vall,xoffset,yoffset
+        for x in range(x0):
+            if py_ref_struct[y][x] == wall_val:
+
+                if min_x_wall_pos > x:
+                    min_x_wall_pos = x
+                if min_y_wall_pos > y :
+                    min_y_wall_pos = y
+                
+                if max_x_wall_pos < x :
+                    max_x_wall_pos = x
+                if max_y_wall_pos < y :
+                    max_y_wall_pos = y
+    
+    final_py_ref_struct = py_ref_struct[min_y_wall_pos-3:max_y_wall_pos+3,min_x_wall_pos-3:max_x_wall_pos+3]
+
+    print(f"shape of final structure = {np.shape(final_py_ref_struct)}")
+    
+    if type(hole_pos) == str:
+        hole_pos = hole_pos.strip()
+    
+    if hole_pos == "" :
+        plt.matshow(final_py_ref_struct)
+        plt.show(block=False)
+        hole_pos_x = int(input("Choose the x value for the hole = "))
+        hole_pos_y = int(input("Choose the y value for the hole = "))
+        hole_pos = [hole_pos_x,hole_pos_y]
+    return final_py_ref_struct,outside_val,inside_val,wall_val,hole_pos
 
 
 def sum_annexin(A_free,A_bound):
@@ -120,7 +151,7 @@ def Ring_sum(
         if t == 0:
             plt.matshow(Visual_grid)
             plt.title("Visual Grid, does this look correct? \n if yes, just close figure and sum will continue")
-            plt.show()
+            plt.show(block=False)
         
         
 

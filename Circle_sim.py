@@ -312,8 +312,8 @@ if __name__ == "__main__":
         if not os.path.exists(fig_folder_path):
             os.makedirs(fig_folder_path)
 
-        fig_name = f"Simulation_data_simtime={Real_sim_time}.pkl"
-        df.to_pickle(fig_folder_path + fig_name)
+        df_name = f"Simulation_data_simtime={Real_sim_time}.pkl"
+        df.to_pickle(fig_folder_path + df_name)
 
 
         plt.show(block=False)
@@ -337,4 +337,9 @@ if __name__ == "__main__":
 
         plt.close("all")
 
-        main_ring_summing()
+        main_ring_summing(
+        fig_save_path = fig_save_path
+        ,fig_folder_path = fig_folder_path
+        ,df_name = df_name
+        ,hole_pos=""#[35,5]
+                        )

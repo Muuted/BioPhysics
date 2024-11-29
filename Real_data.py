@@ -5,26 +5,40 @@ from Constants import constants
 import pandas as pd
 from Data_extraction_funcs import Ring_sum
 
-def main_ring_summing():
-    c_in,c_out,D_Ca_cyto,T_tot,len_size,dx,dy,k1,k2,c_in_annexin,bound_annexin_start,D_Annexin_cyto,dt,close_time,c_pump,holesize,dR,R,x0,y0,wall_val,inside_val,outside_val,open_val,Real_sim_time, real_close_time = constants()
+def main_ring_summing(
+        fig_save_path
+        ,fig_folder_path
+        ,df_name
+        ,hole_pos = ""
+):
+    A = constants()
+    """
+    c_in,c_out,D_Ca_cyto,T_tot,len_size,
+    dx,dy,k1,k2,c_in_annexin,bound_annexin_start,
+    D_Annexin_cyto,dt,close_time,c_pump,holesize,
+    dR,R,x0,y0,wall_val,inside_val,outside_val,
+    open_val,Real_sim_time, real_close_time
+    """
 
-    data_path = "C:\\Users\\AdamSkovbjergKnudsen\\Desktop\\ISA Biophys\\data eksperimenter\\20191203-Calcium-sensors-ANXA-RFP for Python\\"
-    ref_struct_name = "ref_struct__filenum4.txt"
+    #data_path = "C:\\Users\\AdamSkovbjergKnudsen\\Desktop\\ISA Biophys\\data eksperimenter\\20191203-Calcium-sensors-ANXA-RFP for Python\\"
+    #ref_struct_name = "ref_struct__filenum4.txt"
+    if type(hole_pos) == str:
+        hole_pos = hole_pos.strip()
 
+    if hole_pos != "":
+        x0,y0 = hole_pos
 
     Real_time_steps_data = 235
     #Real_sim_time = 1
     save_data = True
     
-    fig_save_path = "C:\\Users\\AdamSkovbjergKnudsen\\Desktop\\ISA Biophys\\data eksperimenter\\20191203-Calcium-sensors-ANXA-RFP for Python\\Python_simulation_data\\"
-    fig_folder_path =  fig_save_path + f"simtime={Real_sim_time}\\"
-    fig_name = f"Simulation_data_simtime={Real_sim_time}.pkl"
-
-    df = pd.read_pickle(fig_folder_path+fig_name)
+    
+    df = pd.read_pickle(fig_folder_path + df_name)
 
     print(df.info())
 
-
+    # constants
+    inside_val = df['inside val'][0]
 
     Free_Ca = df['Free Calcium'][0]
     Bound_Ca = df['Bound Calcium'][0]
@@ -36,11 +50,12 @@ def main_ring_summing():
 
     ref_structure = df['Reference Matrix'][0]
     
-    x0 = df['hole position X'][0]
-    y0 = df['hole position Y'][0]
+    if hole_pos == "":
+        x0 = df['hole position X'][0]
+        y0 = df['hole position Y'][0]
     
 
-    time_step_vec_data = np.linspace(0,Real_sim_time,Real_time_steps_data)
+    #time_step_vec_data = np.linspace(0,Real_sim_time,Real_time_steps_data)
     
     
     Ring_sum_list_Ca, Ring_sum_list_Annexin = Ring_sum(
@@ -76,10 +91,10 @@ def main_ring_summing():
     
         print(df.info())
 
-        fig_folder_path =  fig_save_path + f"simtime={Real_sim_time}\\"
+        #fig_folder_path =  fig_save_path + f"simtime={Real_sim_time}\\"
 
-        fig_name = f"Simulation_data_simtime={Real_sim_time}.pkl"
-        df.to_pickle(fig_folder_path + fig_name)
+        #fig_name = f"Simulation_data_simtime={Real_sim_time}.pkl"
+        df.to_pickle(fig_folder_path + df_name)
 
     print("\n \n ---------- Done ---------- \n \n")
 
@@ -88,4 +103,16 @@ def main_ring_summing():
 
 
 if __name__ == "__main__":
-    main_ring_summing()
+    c_in,c_out,D_Ca_cyto,T_tot,len_size,dx,dy,k1,k2,c_in_annexin,bound_annexin_start,D_Annexin_cyto,dt,close_time,c_pump,holesize,dR,R,x0,y0,wall_val,inside_val,outside_val,open_val,Real_sim_time, real_close_time = constants()
+    fig_save_path = "C:\\Users\\AdamSkovbjergKnudsen\\Desktop\\ISA Biophys\\data eksperimenter\\20191203-Calcium-sensors-ANXA-RFP for Python\\Python_simulation_data\\"
+    fig_folder_path =  fig_save_path + f"simtime={Real_sim_time}\\"
+    fig_name = f"Simulation_data_simtime={Real_sim_time}.pkl"
+
+    #fig_folder_path =  fig_save_path + f"Cell structure simtime={Real_sim_time}\\"
+    #fig_name = f"Cell structure Simulation_data_simtime={Real_sim_time}.pkl"
+    main_ring_summing(
+        fig_save_path = fig_save_path
+        ,fig_folder_path = fig_folder_path
+        ,df_name = fig_name
+        ,hole_pos=""#[35,5]
+    )

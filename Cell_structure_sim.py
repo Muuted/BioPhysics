@@ -7,6 +7,7 @@ from Constants import constants
 import time as tm
 import os
 import pandas as pd
+from Real_data import main_ring_summing
 
 def main_cell_structure_sim(
         c_in,c_out,D_Ca_cyto,T_tot,len_size
@@ -28,9 +29,10 @@ def main_cell_structure_sim(
             ,wall_val=wall_val
                                         )
     else:
-        py_ref_struct,outside_val,inside_val,wall_vall,xoffset,yoffset = make_ref_structure(
+        ref_structure,outside_val,inside_val,wall_val,hole_pos = make_ref_structure(
             path=data_path
-            ,ref_name=ref_bakteria
+            ,ref_name=ref_struct_name_cell
+            ,hole_pos=[27,5]
         )
 
 
@@ -64,12 +66,12 @@ def main_cell_structure_sim(
 
     open_close_membrane2(
         Grid=ref_structure
-        ,Radius=R, dRadius=dR
-        ,offsets=[x0,y0],holesize=holesize
+        ,holesize=2
         ,open_val=open_val
         ,wall_val=wall_val
-        ,open_wall=open_hole
-                        )
+        ,open_wall_bool=True
+        ,offsets=hole_pos
+    )
     i = 0 # for showing that the theory steady state concentration  
           # matches the simulated one.
     for t in np.arange(0,T_tot-1): 
@@ -131,8 +133,14 @@ def main_cell_structure_sim(
                 open_hole = False
                 print(f"wall closure time t={t}")
             else:
-                print(" \n \n \n Need to code the other ref structure -- closing program \n \n \n")
-                exit()
+                open_close_membrane2(
+                    Grid=ref_structure
+                    ,holesize=2
+                    ,open_val=open_val
+                    ,wall_val=wall_val
+                    ,open_wall_bool=False
+                    ,offsets=hole_pos
+                                    )
                 
     return ref_structure,Free_Ca,Free_annexin,Bound_annexin,Bound_Ca
     
@@ -145,8 +153,9 @@ if __name__ == "__main__":
     c_in,c_out,D_Ca_cyto,T_tot,len_size,dx,dy,k1,k2,c_in_annexin,bound_annexin_start,D_Annexin_cyto,dt,close_time,c_pump,holesize,dR,R,x0,y0,wall_val,inside_val,outside_val,open_val,Real_sim_time, real_close_time = constants()
     
     data_path = "C:\\Users\\AdamSkovbjergKnudsen\\Desktop\\ISA Biophys\\data eksperimenter\\20191203-Calcium-sensors-ANXA-RFP for Python\\"
-    ref_struct_name_cell = "ref_struct__filenum4.txt"
+    ref_struct_name_cell = "ref_struct_from_Ca_filenum4.txt"
 
+    fig_save_path = "C:\\Users\\AdamSkovbjergKnudsen\\Desktop\\ISA Biophys\\data eksperimenter\\20191203-Calcium-sensors-ANXA-RFP for Python\\Python_simulation_data\\"
     save_data = True
     
 
@@ -161,17 +170,8 @@ if __name__ == "__main__":
                     )
     ref_structure,Free_Ca,Free_annexin,Bound_annexin,Bound_Ca = Sim_data_list
 
-    """data_list = Ring_sum(
-        ref_Grid=Free_Ca[T_tot-1]
-        ,offsets=[x0,y0]
-        ,Radius=R   ,dRadius=dR
-        ,num_of_rings=3
-    )
-    
-    Ring_sums = data_list[0]
-    Ring_radius = data_list[1]
-    conc_removed_grid = data_list[2]
-    visual_rings = data_list[3]"""
+    plt.matshow(ref_structure)
+    plt.title("ref structure")
 
     sumfree,sumbound,sumtot = sum_annexin(
         A_free=Free_annexin
@@ -184,7 +184,7 @@ if __name__ == "__main__":
     print(f"len(sumbound)={len(sumbound)}")
     print(f"len(sumtot)={len(sumtot)}")
     
-    fig_save_path = "C:\\Users\\AdamSkovbjergKnudsen\\Desktop\\ISA Biophys\\data eksperimenter\\20191203-Calcium-sensors-ANXA-RFP for Python\\Python_simulation_data\\"
+    
 
     cmap_type = "hot"
     #cmap_type = "viridis"
@@ -224,12 +224,6 @@ if __name__ == "__main__":
     axs.set_title("Reference structure")
     fig_ref_structure.colorbar(pos,ax=axs,shrink=0.7)
 
-    """ 
-    plt.figure()
-    plt.plot(Ring_radius,Ring_sums,'-.')
-    plt.xlabel("number of pixels from opening")
-    plt.title("Ring sums try, normalized by Area")
-    """
 
     fig_mat_ann, ax = plt.subplots(1,2)
     fig_mat_ann.canvas.manager.window.showMaximized()
@@ -278,6 +272,7 @@ if __name__ == "__main__":
     plt.ylabel("[Ca]")  
     
     
+    
     if save_data == True:
         df = pd.DataFrame({
             'Free Calcium': [Free_Ca],
@@ -313,13 +308,13 @@ if __name__ == "__main__":
         if not os.path.exists(fig_folder_path):
             os.makedirs(fig_folder_path)
 
-        fig_name = f"Cell structure Simulation_data_simtime={Real_sim_time}.pkl"
-        df.to_pickle(fig_folder_path + fig_name)
+        fig_name_df = f"Cell structure Simulation_data_simtime={Real_sim_time}.pkl"
+        df.to_pickle(fig_folder_path + fig_name_df)
 
-
+        print("done making folder")
         plt.show(block=False)
         plt.pause(10)
-
+        
 
         fig_name = f"Cell structure Annexins over time Realsimtime={Real_sim_time}s"
         fig_ann_time.savefig(fig_folder_path + fig_name)
@@ -337,3 +332,12 @@ if __name__ == "__main__":
         fig_conc_Ca_time.savefig(fig_folder_path + fig_name)
 
         plt.close("all")
+
+        print("doing ring sums")
+        main_ring_summing(
+            fig_save_path=fig_save_path
+            ,fig_folder_path=fig_folder_path
+            ,fig_name=fig_name_df
+            ,hole_pos= [27,5]
+        )
+        print("ring sums done")
