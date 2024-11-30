@@ -16,7 +16,7 @@ def main_cell_structure_sim(
         ,wall_val,inside_val,outside_val,open_val
         ,open_hole=True
         ,ref_bakteria = ""
-        ,data_path=""
+        ,data_path= ""
                     ) -> list:
     
     # Creation of our Grids
@@ -333,11 +333,11 @@ if __name__ == "__main__":
 
         plt.close("all")
 
-        print("doing ring sums")
+        
         main_ring_summing(
             fig_save_path=fig_save_path
             ,fig_folder_path=fig_folder_path
-            ,fig_name=fig_name_df
+            ,df_name=fig_name_df
             ,hole_pos= [27,5]
         )
-        print("ring sums done")
+        

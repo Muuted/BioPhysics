@@ -14,10 +14,10 @@ def main_compare():
 
     fig_save_path = "C:\\Users\\AdamSkovbjergKnudsen\\Desktop\\ISA Biophys\\data eksperimenter\\20191203-Calcium-sensors-ANXA-RFP for Python\\Python_simulation_data\\"
     fig_folder_path =  fig_save_path + f"Cell structure simtime={Real_sim_time}\\"
-    fig_folder_path =  fig_save_path + f"simtime={Real_sim_time}\\"
+    #fig_folder_path =  fig_save_path + f"simtime={Real_sim_time}\\"
 
-    #fig_name = f"Cell structure Simulation_data_simtime={Real_sim_time}.pkl"
-    fig_name = f"Simulation_data_simtime={Real_sim_time}.pkl"
+    fig_name = f"Cell structure Simulation_data_simtime={Real_sim_time}.pkl"
+    #fig_name = f"Simulation_data_simtime={Real_sim_time}.pkl"
 
     df_sim = pd.read_pickle(fig_folder_path + fig_name)
     print(df_sim.info())

@@ -103,11 +103,16 @@ def Ring_sum(
         ,num_of_rings:int  
         ,inside_val:int
             )-> tuple:
-    
+
+
     Tsize, Ysize, Xsize = np.shape(sim_grid_free_Ca)
     x0,y0 = hole_pos #position of the hole in the membrane
 
-    Radius_vec = np.linspace(start=0,stop=Ysize,num=num_of_rings)
+    Radius_vec = np.linspace(
+        start=0
+        ,stop=Ysize
+        ,num=num_of_rings
+        )
 
     Ring_sum_list_Ca = np.zeros(shape=(Tsize,len(Radius_vec)))
     Ring_sum_list_Annexins = np.zeros(shape=(Tsize,len(Radius_vec)))
@@ -151,7 +156,7 @@ def Ring_sum(
         if t == 0:
             plt.matshow(Visual_grid)
             plt.title("Visual Grid, does this look correct? \n if yes, just close figure and sum will continue")
-            plt.show(block=False)
+            #plt.show()
         
         
 
