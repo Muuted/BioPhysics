@@ -8,7 +8,7 @@ from Data_extraction_funcs import *
 
 def main_compare():
     Real_time_steps_data = 235
-    Real_sim_time = 10
+    Real_sim_time = 50
 
     """   The simulation data loaded  """
 

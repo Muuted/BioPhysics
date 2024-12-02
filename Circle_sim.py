@@ -112,10 +112,11 @@ def main_circle_sim(
                         ,D=D_Annexin_cyto
                                 )
 
-                    if c_in < Free_Ca[t+1][y][x] <= c_in:
-                        Free_Ca[t+1][y][x] = c_in
+                    #if c_in < Free_Ca[t+1][y][x] <= c_in:
+                        #Free_Ca[t+1][y][x] = c_in
 
-                    if Free_Ca[t+1][y][x] >= c_pump + c_in:
+                    #if Free_Ca[t+1][y][x] >= c_pump + c_in:
+                    if Free_Ca[t+1][y][x] > c_in:
                         Free_Ca[t+1][y][x] += -c_pump # the pumping mechanism
                                                 #, for only inside the cell
 
