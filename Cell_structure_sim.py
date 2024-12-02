@@ -305,6 +305,7 @@ if __name__ == "__main__":
         print(df.info())
 
         fig_folder_path =  fig_save_path + f"Cell structure simtime={Real_sim_time}\\"
+        
         if not os.path.exists(fig_folder_path):
             os.makedirs(fig_folder_path)
 

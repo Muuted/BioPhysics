@@ -8,16 +8,18 @@ from Data_extraction_funcs import *
 
 def main_compare():
     Real_time_steps_data = 235
-    Real_sim_time = 120
+    Real_sim_time = 10
 
     """   The simulation data loaded  """
 
     fig_save_path = "C:\\Users\\AdamSkovbjergKnudsen\\Desktop\\ISA Biophys\\data eksperimenter\\20191203-Calcium-sensors-ANXA-RFP for Python\\Python_simulation_data\\"
-    fig_folder_path =  fig_save_path + f"Cell structure simtime={Real_sim_time}\\"
-    #fig_folder_path =  fig_save_path + f"simtime={Real_sim_time}\\"
-
-    fig_name = f"Cell structure Simulation_data_simtime={Real_sim_time}.pkl"
-    #fig_name = f"Simulation_data_simtime={Real_sim_time}.pkl"
+    
+    #fig_folder_path =  fig_save_path + f"Cell structure simtime={Real_sim_time}\\"
+    #fig_name = f"Cell structure Simulation_data_simtime={Real_sim_time}.pkl"
+    
+    
+    fig_folder_path =  fig_save_path + f"simtime={Real_sim_time}\\"    
+    fig_name = f"Simulation_data_simtime={Real_sim_time}.pkl"
 
     df_sim = pd.read_pickle(fig_folder_path + fig_name)
     print(df_sim.info())
@@ -56,6 +58,7 @@ def main_compare():
     First thing is that we need to make a list for the sim data, that has as many time rows as
     our experimental data set.
     """
+
     exp_data_shape_t, exp_data_shapeX = np.shape(real_data_Ca)
 
     sim_shorten_list_Ca = np.zeros(shape=(exp_data_shape_t,exp_data_shapeX))

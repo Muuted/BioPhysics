@@ -459,7 +459,7 @@ def testing_cell_geometry():
 
 
 if __name__ =="__main__":
-    #test_reference_struct()
+    test_reference_struct()
     #test_Ca_diff_corner_closed_hole()
     #test_Ca_diff_corner_open_hole()
     #test_annexin_diff_closed_hole()
@@ -467,5 +467,5 @@ if __name__ =="__main__":
     #Finding_the_pump_value()
     #test_analytical_vs_sim_dAf_dAb()
     #test_eqaution_solution()
-    testing_cell_geometry()
+    #testing_cell_geometry()
     

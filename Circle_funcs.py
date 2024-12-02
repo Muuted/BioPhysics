@@ -148,8 +148,11 @@ def init_conc(ref_grid, time:int
             if ref_grid[y][x] == outside_val:
                 Grid[0][y][x] = c_out
 
-            #if x == 0 or y == 0 or x == ref_shape-1 or y == ref_shape-1:
-             #   Grid[0][y][x] = c_out
+            if x == 0 or x == ref_shapex - 1 :
+                Grid[0][y][x] = c_out
+            if y == 0 or y == ref_shapey - 1 :
+                Grid[0][y][x] = c_out
+            
     return Grid
 
 def init_ref_circle(boxlen:int
@@ -174,10 +177,11 @@ def init_ref_circle(boxlen:int
             if Radius + dRadius < radii:
                 ref_Grit[y][x] = outside_val
             
-            if x == 0 or y == 0 or x ==boxlen-1 or y == boxlen-1:
-                # this one comes last, as to override the value from the
-                # if statement -> Radius + dRadius < radii:
-                ref_Grit[y][x] = wall_val 
+            if x == 0 or x == boxlen - 1:
+                ref_Grit[y][x] = wall_val
+            if y == 0 or y == boxlen - 1:
+                ref_Grit[y][x] = wall_val
+            
 
     print("shape of refgrid =",np.shape(ref_Grit))
     return ref_Grit

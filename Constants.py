@@ -6,8 +6,8 @@ def constants():
     Avogadro = 6.02214076e23 # 1/mol
     # time and step size, and diffusion constant
     picture_size = 83e-6 # meters
-    Real_sim_time = 120 #seconds
-    real_close_time = 10 #s
+    Real_sim_time = 50 #seconds
+    real_close_time =  6 #s
     
     data_real_time = 120
     data_number_of_frames = 235
@@ -55,7 +55,7 @@ def constants():
     #size of cell, hole in cell and the center's placement.
     holesize = 1
     dR = int(2)
-    R = int(len_size*0.5 - 3*dR) 
+    R = int(len_size*0.4)# - 3*dR) 
     
     x0,y0 = int(len_size/2), int(len_size/2)
 

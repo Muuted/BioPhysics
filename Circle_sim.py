@@ -43,6 +43,7 @@ def main_circle_sim(
         ,inside_val=inside_val
         ,outside_val=outside_val
                         )
+    
     Free_annexin = init_conc(
         ref_grid=ref_structure
         ,time=T_tot
@@ -82,6 +83,7 @@ def main_circle_sim(
         for x in range(0,len_size):
             for y in range(0,len_size):
                 #Bound_Ca[t+1][y][x] += Bound_Ca[t][y][x]
+                #if ref_structure[y][x] != wall_val:
                 if ref_structure[y][x] == wall_val or ref_structure[y][x] == outside_val:
                     Free_Ca[t+1][y][x] = Free_Ca[t][y][x]
                     Free_annexin[t+1][y][x] = Free_annexin[t][y][x] 
@@ -110,8 +112,9 @@ def main_circle_sim(
                         ,D=D_Annexin_cyto
                                 )
 
-                    if c_in < Free_Ca[t+1][y][x] <= c_pump + c_in:
-                        Free_Ca[t+1][y][x] += c_in
+                    if c_in < Free_Ca[t+1][y][x] <= c_in:
+                        Free_Ca[t+1][y][x] = c_in
+
                     if Free_Ca[t+1][y][x] >= c_pump + c_in:
                         Free_Ca[t+1][y][x] += -c_pump # the pumping mechanism
                                                 #, for only inside the cell
@@ -337,9 +340,11 @@ if __name__ == "__main__":
 
         plt.close("all")
 
+        
         main_ring_summing(
         fig_save_path = fig_save_path
         ,fig_folder_path = fig_folder_path
         ,df_name = df_name
-        ,hole_pos=""#[35,5]
+        ,hole_pos=""#[74,40]
                         )
+        
