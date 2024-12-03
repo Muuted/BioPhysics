@@ -224,6 +224,7 @@ def Finding_the_pump_value():
     bound_annexin_start = 0
     time1 = tm.time()
     real_time_vec = np.linspace(0,Real_time,T_tot)
+    
     N = 10
     for i in range(N):
         print(f"\n \n ----------------------- \n \n")
@@ -249,27 +250,32 @@ def Finding_the_pump_value():
             ,Matrix_Bound= np.zeros(shape=(T_tot,len_size,len_size))
             ,inside_val=inside_val
                                     )
-        time_stop = 0
-        for i in range(len(real_time_vec)):
-            if real_time_vec[i] >= 50: #s
-                time_stop = i
-                break
-
-        if conc_Ca_time[i] > 0.2:
-            c_pump *= 0.8
         
-        if 0.1 < conc_Ca_time[i] <= 0.2:
-            df = pd.DataFrame({
-                'Found C_pump': c_pump
-            })
-            fig_save_path = "C:\\Users\\AdamSkovbjergKnudsen\\Desktop\\ISA Biophys\\data eksperimenter\\20191203-Calcium-sensors-ANXA-RFP for Python\\Python_simulation_data\\"
-            fig_folder_path =  fig_save_path + f"simtime={Real_sim_time}\\"
-            df_name = "Found C_pump value"
-            df.to_pickle(fig_folder_path + df_name)
+        
+        
+        time_compare = int(55/dt)
+        if conc_Ca_time[time_compare] <= 0.1:
+            c_pump *= 1.3
+        
+        if 0.1 < conc_Ca_time[time_compare] <= 0.2:
             print(f"\n \n ----------------- ------ \n \n")
             print(f"We found the c_pump value")
             print(f"\n \n ----------------- ------ \n \n")
-            break
+
+            df = pd.DataFrame({
+                'Found C_pump': c_pump
+            })
+
+            fig_save_path = "C:\\Users\\AdamSkovbjergKnudsen\\Desktop\\ISA Biophys\\data eksperimenter\\20191203-Calcium-sensors-ANXA-RFP for Python\\Python_simulation_data\\"
+            fig_folder_path =  fig_save_path #+ f"simtime={Real_sim_time}\\"
+            df_name = "Found C_pump value"
+            df.to_pickle(fig_folder_path + df_name)
+            
+        if i == N:
+            print(f"\n \n ----------------- ------ \n \n")
+            print("Never found the correct value")
+            print(f"\n \n ----------------- ------ \n \n")
+        
     
 
     plt.figure()
@@ -486,6 +492,7 @@ def testing_cell_geometry():
 
 
 if __name__ =="__main__":
+    time1_out = tm.time()
     #test_reference_struct()
     #test_Ca_diff_corner_closed_hole()
     #test_Ca_diff_corner_open_hole()
@@ -495,4 +502,6 @@ if __name__ =="__main__":
     #test_analytical_vs_sim_dAf_dAb()
     #test_eqaution_solution()
     #testing_cell_geometry()
-    
+    time2_out = tm.time()
+
+    print(f"\n \n " +f"total simulation time = {round((time2_out-time1_out)%60,2)}")

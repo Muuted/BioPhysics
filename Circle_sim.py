@@ -117,7 +117,10 @@ def main_circle_sim(
 
                     #if Free_Ca[t+1][y][x] >= c_pump + c_in:
                     if Free_Ca[t+1][y][x] > c_in:
-                        Free_Ca[t+1][y][x] += -c_pump # the pumping mechanism
+                        if Free_Ca[t+1][y][x] - c_pump <= c_in:
+                            Free_Ca[t+1][y][x] = c_in
+                        else:
+                            Free_Ca[t+1][y][x] += -c_pump # the pumping mechanism
                                                 #, for only inside the cell
 
 
