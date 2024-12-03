@@ -105,7 +105,7 @@ def main_ring_summing(
 if __name__ == "__main__":
     c_in,c_out,D_Ca_cyto,T_tot,len_size,dx,dy,k1,k2,c_in_annexin,bound_annexin_start,D_Annexin_cyto,dt,close_time,c_pump,holesize,dR,R,x0,y0,wall_val,inside_val,outside_val,open_val,Real_sim_time, real_close_time = constants()
     
-    #Real_sim_time = 1
+    #Real_sim_time = 50
 
     fig_save_path = "C:\\Users\\AdamSkovbjergKnudsen\\Desktop\\ISA Biophys\\data eksperimenter\\20191203-Calcium-sensors-ANXA-RFP for Python\\Python_simulation_data\\"
     fig_folder_path =  fig_save_path + f"simtime={Real_sim_time}\\"

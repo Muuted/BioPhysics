@@ -156,8 +156,8 @@ def Ring_sum(
         if t == 0:
             plt.matshow(Visual_grid)
             plt.title("Visual Grid, does this look correct? \n if yes, just close figure and sum will continue")
-            plt.show(block=False)
-            
+            #plt.show()
+
         
         
 

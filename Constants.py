@@ -6,7 +6,7 @@ def constants():
     Avogadro = 6.02214076e23 # 1/mol
     # time and step size, and diffusion constant
     picture_size = 83e-6 # meters
-    Real_sim_time = 50 #seconds
+    Real_sim_time = 120 #seconds
     real_close_time =  6 #s
     
     data_real_time = 120
@@ -69,7 +69,7 @@ def constants():
         f" \n \n"
         + "------------- Constant used in Simulation -------------------- \n "
         + f"    Real simulation time = {Real_sim_time} s \n "
-        + f"    hole close time = {int(close_time*dt)} s \n " 
+        + f"    hole close time = {int(real_close_time)} s \n " 
         + f"    dx=dy = {dx:e} m \n "
         + f"    dt = {dt:e} m \n "
         + f"    [Ca] outside cell = {c_out:e} \n "

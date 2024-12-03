@@ -219,31 +219,57 @@ def Finding_the_pump_value():
     Real_time = 80 #seconds.
     T_tot = int(Real_time/dt) # number of time steps.
 
-    close_time = T_tot*0.1
-    
+    #close_time = T_tot*0.1
+    c_in_annexin = 0
+    bound_annexin_start = 0
     time1 = tm.time()
-
-    Sim_data_list = main_circle_sim(
-        c_in,c_out,D_Ca_cyto,T_tot,len_size
-        ,dx,dy,k1,k2,c_in_annexin,bound_annexin_start,D_Annexin_cyto
-        ,dt,close_time,c_pump,holesize,dR,R,x0,y0
-        ,wall_val,inside_val,outside_val,open_val
-                    )
-    time2 = tm.time()
-
-    print(f"Sim took {(time2-time1)/60}min")
-
-    ref_structure = Sim_data_list[0]
-    Free_Ca = Sim_data_list[1]
-
-    conc_Ca_time = sum_in_cell(
-        ref_Grid=ref_structure
-        ,Matrix_Free=Free_Ca
-        ,Matrix_Bound= np.zeros(shape=(T_tot,len_size,len_size))
-        ,inside_val=inside_val
-                               )
-
     real_time_vec = np.linspace(0,Real_time,T_tot)
+    N = 10
+    for i in range(N):
+        print(f"\n \n ----------------- ------ \n \n")
+        print(f"we are doing the i={i} of {N}")
+        print(f"\n \n ----------------- ------ \n \n")
+        Sim_data_list = main_circle_sim(
+            c_in,c_out,D_Ca_cyto,T_tot,len_size
+            ,dx,dy,k1,k2,c_in_annexin,bound_annexin_start,D_Annexin_cyto
+            ,dt,close_time,c_pump,holesize,dR,R,x0,y0
+            ,wall_val,inside_val,outside_val,open_val
+                        )
+        time2 = tm.time()
+
+        print(f"Sim took {(time2-time1)/60}min")
+
+        ref_structure = Sim_data_list[0]
+        Free_Ca = Sim_data_list[1]
+
+        conc_Ca_time = sum_in_cell(
+            ref_Grid=ref_structure
+            ,Matrix_Free=Free_Ca
+            ,Matrix_Bound= np.zeros(shape=(T_tot,len_size,len_size))
+            ,inside_val=inside_val
+                                    )
+        time_stop = 0
+        for i in range(len(real_time_vec)):
+            if real_time_vec[i] >= 50: #s
+                time_stop = i
+                break
+
+        if conc_Ca_time[i] > 0.2:
+            c_pump *= 0.8
+        
+        if 0.1 < conc_Ca_time[i] <= 0.2:
+            df = pd.DataFrame({
+                'Found C_pump': c_pump
+            })
+            fig_save_path = "C:\\Users\\AdamSkovbjergKnudsen\\Desktop\\ISA Biophys\\data eksperimenter\\20191203-Calcium-sensors-ANXA-RFP for Python\\Python_simulation_data\\"
+            fig_folder_path =  fig_save_path + f"simtime={Real_sim_time}\\"
+            df_name = "Found C_pump value"
+            df.to_pickle(fig_folder_path + df_name)
+            print(f"\n \n ----------------- ------ \n \n")
+            print(f"We found the c_pump value")
+            print(f"\n \n ----------------- ------ \n \n")
+            break
+    
 
     plt.figure()
     plt.plot(real_time_vec,conc_Ca_time/max(conc_Ca_time))
@@ -459,12 +485,12 @@ def testing_cell_geometry():
 
 
 if __name__ =="__main__":
-    test_reference_struct()
+    #test_reference_struct()
     #test_Ca_diff_corner_closed_hole()
     #test_Ca_diff_corner_open_hole()
     #test_annexin_diff_closed_hole()
     #test_annexin_diff_open_hole()
-    #Finding_the_pump_value()
+    Finding_the_pump_value()
     #test_analytical_vs_sim_dAf_dAb()
     #test_eqaution_solution()
     #testing_cell_geometry()
