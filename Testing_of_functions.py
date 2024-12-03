@@ -226,9 +226,10 @@ def Finding_the_pump_value():
     real_time_vec = np.linspace(0,Real_time,T_tot)
     N = 10
     for i in range(N):
-        print(f"\n \n ----------------- ------ \n \n")
-        print(f"we are doing the i={i} of {N}")
-        print(f"\n \n ----------------- ------ \n \n")
+        print(f"\n \n ----------------------- \n \n")
+        print(f"we are doing the i={i} of {N}  \n "
+              +f"and c_pump={c_pump}")
+        print(f"\n \n ----------------------- \n \n")
         Sim_data_list = main_circle_sim(
             c_in,c_out,D_Ca_cyto,T_tot,len_size
             ,dx,dy,k1,k2,c_in_annexin,bound_annexin_start,D_Annexin_cyto
@@ -237,7 +238,7 @@ def Finding_the_pump_value():
                         )
         time2 = tm.time()
 
-        print(f"Sim took {(time2-time1)/60}min")
+        print(f" \n Sim took {(time2-time1)%60}min \n ")
 
         ref_structure = Sim_data_list[0]
         Free_Ca = Sim_data_list[1]
