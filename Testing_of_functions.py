@@ -216,21 +216,24 @@ def Finding_the_pump_value():
     print(r"Finding the value for the $ c_{pump} $ term")
     from Circle_sim import main_circle_sim
     c_in,c_out,D_Ca_cyto,T_tot,len_size,dx,dy,k1,k2,c_in_annexin,bound_annexin_start,D_Annexin_cyto,dt,close_time,c_pump,holesize,dR,R,x0,y0,wall_val,inside_val,outside_val,open_val,Real_sim_time, real_close_time = constants()
-    Real_time = 80 #seconds.
+    Real_time = 60 #seconds.
     T_tot = int(Real_time/dt) # number of time steps.
 
     #close_time = T_tot*0.1
+
     c_in_annexin = 0
     bound_annexin_start = 0
     time1 = tm.time()
     real_time_vec = np.linspace(0,Real_time,T_tot)
     
+    
+    
     N = 10
     for i in range(N):
         print(f"\n \n ----------------------- \n \n")
-        print(f"we are doing the i={i} of {N}  \n "
+        print(f"we are doing the i={i} of {N-1}  \n "
               +f"and c_pump={c_pump}")
-        print(f"\n \n ----------------------- \n \n")
+        #print(f"\n \n ----------------------- \n \n")
         Sim_data_list = main_circle_sim(
             c_in,c_out,D_Ca_cyto,T_tot,len_size
             ,dx,dy,k1,k2,c_in_annexin,bound_annexin_start,D_Annexin_cyto
@@ -239,7 +242,7 @@ def Finding_the_pump_value():
                         )
         time2 = tm.time()
 
-        print(f" \n Sim took {(time2-time1)%60}min \n ")
+        print(f" \n Sim took {(time2-time1)%60} min \n ")
 
         ref_structure = Sim_data_list[0]
         Free_Ca = Sim_data_list[1]
@@ -255,28 +258,30 @@ def Finding_the_pump_value():
         
         time_compare = int(55/dt)
         if conc_Ca_time[time_compare] <= 0.1:
-            c_pump *= 1.3
+            c_pump *= 0.5
         
-        if 0.1 < conc_Ca_time[time_compare] <= 0.2:
+        if 0.1 < conc_Ca_time[time_compare] :
             print(f"\n \n ----------------- ------ \n \n")
-            print(f"We found the c_pump value")
+            print(f"We found the c_pump value it is c_pump = {c_pump}")
             print(f"\n \n ----------------- ------ \n \n")
 
             df = pd.DataFrame({
+                'graph': [conc_Ca_time],
                 'Found C_pump': c_pump
             })
 
             fig_save_path = "C:\\Users\\AdamSkovbjergKnudsen\\Desktop\\ISA Biophys\\data eksperimenter\\20191203-Calcium-sensors-ANXA-RFP for Python\\Python_simulation_data\\"
             fig_folder_path =  fig_save_path #+ f"simtime={Real_sim_time}\\"
-            df_name = "Found C_pump value"
-            df.to_pickle(fig_folder_path + df_name)
+            df_name = "Found C_pump value.pkl"
+            df.to_pickle(fig_save_path + df_name)
+            break
             
-        if i == N:
+        if i == N-1:
             print(f"\n \n ----------------- ------ \n \n")
             print("Never found the correct value")
             print(f"\n \n ----------------- ------ \n \n")
         
-    
+        print(f"value at {time_compare} s, conc_Ca_time[time_compare] = {conc_Ca_time[time_compare]}")
 
     plt.figure()
     plt.plot(real_time_vec,conc_Ca_time/max(conc_Ca_time))
@@ -504,4 +509,4 @@ if __name__ =="__main__":
     #testing_cell_geometry()
     time2_out = tm.time()
 
-    print(f"\n \n " +f"total simulation time = {round((time2_out-time1_out)%60,2)}")
+    print(f"\n \n " +f"total simulation time = {round((time2_out-time1_out)%60,2)} min")
