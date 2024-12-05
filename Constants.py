@@ -42,8 +42,8 @@ def constants():
     A_total_density = ((2e6/10))/(1e-18) #number/meter^3 from article directly
     A_total_conc = (A_total_density/Avogadro)*(0.1/100)#should get 0.1% of the 3D volume concentration for all proteins
 
-    k1 = 30e3 # 1/(Ms)
-    k2 = 1e-3 #1/s
+    k1 = 1e-2 #30e3 # 1/(Ms) 1e-2
+    k2 = 1e2 #1e-3 #1/s 1e2
 
     
     bound_annexin_start = k1*A_total_conc*c_in/(k1*c_in + k2)

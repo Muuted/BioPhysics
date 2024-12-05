@@ -218,18 +218,12 @@ def Finding_the_pump_value():
     c_in,c_out,D_Ca_cyto,T_tot,len_size,dx,dy,k1,k2,c_in_annexin,bound_annexin_start,D_Annexin_cyto,dt,close_time,c_pump,holesize,dR,R,x0,y0,wall_val,inside_val,outside_val,open_val,Real_sim_time, real_close_time = constants()
     Real_time = 80 #seconds.
     ref_time = int(55/dt)
-    #close_time = 1
     T_tot = int(Real_time/dt) # number of time steps.
-
-    #close_time = T_tot*0.1
-
     c_in_annexin = 0
     bound_annexin_start = 0
     time1 = tm.time()
     real_time_vec = np.linspace(0,Real_time,T_tot)
-    
-    
-    d_c_pump = 0.5
+    d_c_pump = 0.5 # change of the pump value
     to_small =False
     to_big = False
     N = 100
@@ -239,7 +233,7 @@ def Finding_the_pump_value():
             +f" we are doing the i={i} of {N-1}  \n "
             +f" and c_pump={c_pump}"
               )
-        #print(f"\n \n ----------------------- \n \n")
+
         Sim_data_list = main_circle_sim(
             c_in,c_out,D_Ca_cyto,T_tot,len_size
             ,dx,dy,k1,k2,c_in_annexin,bound_annexin_start,D_Annexin_cyto
@@ -279,9 +273,7 @@ def Finding_the_pump_value():
             d_c_pump *= 0.5
             to_big = False
             to_small = False
-            print(f"we changed the d_c_pump")
-            
-            
+            print(f"we changed the d_c_pump")               
         
         if 0.1 < conc_Ca_time[ref_time]/max(conc_Ca_time)  < 0.2:
             print(f"\n ----------------- ------ \n")
@@ -307,10 +299,15 @@ def Finding_the_pump_value():
         #print(f"value at {len(conc_Ca_time)-1} s, conc_Ca_time[time_compare] = {conc_Ca_time[len(conc_Ca_time)-1]}")
 
     plt.figure()
-    plt.plot(real_time_vec,conc_Ca_time/max(conc_Ca_time))
-    plt.title(f"[Ca] in cell, " + r"$ c_{pump} $" +f"={c_pump}")
+    plt.plot(real_time_vec,conc_Ca_time/max(conc_Ca_time),label="Total [Ca]")
+    plt.plot(55,0.2,label="target value",marker='o',color='red')
+    plt.title(f"Total [Ca] in cell \n " + r"$ c_{pump} $" + r" $ \approx $ " + f"{round(c_pump,2)}")
     plt.xlabel("time [s]")
-    plt.ylabel(r" $ \frac{ [Ca]_{tot} }{ max( [Ca]_{tot} ) } $ ",rotation='horizontal',fontsize=22)
+    plt.ylabel(r" $ \frac{ [Ca]_{tot} }{ max( [Ca]_{tot} ) } $ "
+               #,rotation='horizontal'
+               ,fontsize=20#,y=0.45
+    )
+    plt.legend()
     plt.show()
     
 
@@ -318,7 +315,7 @@ def test_analytical_vs_sim_dAf_dAb():
     print(r"Testing the analytical vs simulated evolution of $ A_f (t) $ and $ A_b (t) $")
     c_in,c_out,D_Ca_cyto,T_tot,len_size,dx,dy,k1,k2,c_in_annexin,bound_annexin_start,D_Annexin_cyto,dt,close_time,c_pump,holesize,dR,R,x0,y0,wall_val,inside_val,outside_val,open_val,Real_sim_time, real_close_time = constants()
     
-    T_tot= 500
+    #T_tot= int(/dt)
     bound_annexin_start = 0
     close_time = 0
 
@@ -340,11 +337,11 @@ def test_analytical_vs_sim_dAf_dAb():
 
     print(f"maximum free annexin ={max(A_sumfree)}")
     A_f_stability,A_b_stability = Annexin_stablilization(
-        k1=k1,k2=k2
-        ,A_fo=c_in_annexin + bound_annexin_start
-        ,realtime=int(T_tot*dt)
-        ,c_in=c_in
-        ,dt=dt
+        k1 = k1  , k2 = k2
+        ,A_tot = c_in_annexin + bound_annexin_start
+        ,realtime = int(T_tot*dt)
+        ,c_in = c_in
+        ,dt = dt
     )
     point_count = points_inside_cell(refgrid=ref_structure,inside_val=inside_val)
     #initial_free_Annexin = np.sum(Free_annexin[0])
@@ -433,10 +430,14 @@ def test_eqaution_solution():
     c_in,c_out,D_Ca_cyto,T_tot,len_size,dx,dy,k1,k2,c_in_annexin,bound_annexin_start,D_Annexin_cyto,dt,close_time,c_pump,holesize,dR,R,x0,y0,wall_val,inside_val,outside_val,open_val,Real_sim_time, real_close_time = constants()
 
     init_tot_ann = c_in_annexin + bound_annexin_start
-    Real_sim_time = 3000
+    Real_sim_time = 0.1
+    
+    print(f"tau = {1/(k2 + k1*c_in)}")
+    k1 = 1e-2
+    k2 = 1e2
     A_f, A_b = Annexin_stablilization(
-        k1=k1,k2 = k2
-        ,A_fo = init_tot_ann
+        k1 =k1,k2 = k2
+        ,A_tot = init_tot_ann
         ,c_in= c_in
         ,realtime= Real_sim_time
         ,dt = dt
@@ -526,9 +527,9 @@ if __name__ =="__main__":
     #test_Ca_diff_corner_open_hole()
     #test_annexin_diff_closed_hole()
     #test_annexin_diff_open_hole()
-    Finding_the_pump_value()
+    #Finding_the_pump_value()
     #test_analytical_vs_sim_dAf_dAb()
-    #test_eqaution_solution()
+    test_eqaution_solution()
     #testing_cell_geometry()
     time2_out = tm.time()
 

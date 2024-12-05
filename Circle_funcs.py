@@ -190,14 +190,14 @@ def init_ref_circle(boxlen:int
 
 def Annexin_stablilization(
         k1:float,k2:float
-        ,A_fo:float
+        ,A_tot:float
         ,c_in:float
         ,realtime:float
         ,dt:float
         )->list:
     
-    K = k1*c_in/k2
-    C = A_fo/(1+K)
+    #K = k1*c_in/k2
+    #C = A_tot/(1+K)
     b = k1*c_in + k2
 
     A_f = []
@@ -205,10 +205,11 @@ def Annexin_stablilization(
 
     for t in np.arange(0,realtime,dt):
         A_f.append(
-            C + (A_fo - C)*np.exp(-b*t)
+            (A_tot/b)*(k2 + k1*c_in*np.exp(-b*t ))
         )
+        
         A_b.append(
-            ((k1*c_in*A_fo)/b)*( 1 - np.exp(-b*t) )
+            ((k1*c_in*A_tot)/b)*( 1 - np.exp(-b*t) )
             )
 
     return A_f, A_b

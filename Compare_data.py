@@ -66,7 +66,7 @@ def main_compare():
 
     time_check_vec = np.linspace(0,sim_T_tot,exp_data_shape_t)
 
-    
+    print(df_sim['c_pump'][0])
     i = 0
     for t in range(sim_T_tot):
         if t >= time_check_vec[i]:
@@ -78,12 +78,20 @@ def main_compare():
     
     vec = np.linspace(0,exp_data_shapeX,exp_data_shapeX)    
 
+    max_ca_sim = np.max(sim_shorten_list_Ca)
+    max_ann_sim = np.max(sim_shorten_list_Ann)
+
+    max_ca_data = np.max(real_data_Ca.loc)
+    max_ann_data = np.max(real_data_Ann.loc)
+
+    scaling_factor_ca = 1
+    scaling_factor_ann = 1
         
     fig, ax = plt.subplots(2,2)
-    cmap_type = "RdBu"
+    cmap_type = "gray" #"RdBu"
 
-    vmin_val_Ca , vmax_val_Ca = 1e-7 , 1e-5
-    vmin_val_Ann, vmax_val_Ann = 1e-6 , 6e-5
+    vmin_val_Ca , vmax_val_Ca = 1e-7 , 1e-4
+    vmin_val_Ann, vmax_val_Ann = 1e-5 , 1e-3
     normalize = True
     data_opening_frame = 20
     end_i = exp_data_shape_t - 1 - data_opening_frame
@@ -98,8 +106,8 @@ def main_compare():
                                     # in the experiment to match the simulation
 
         if normalize == True:
-            norm_sim_Ca = max(sim_shorten_list_Ca[i])
-            norm_sim_Ca = max(sim_ring_data_Ca[t])
+            norm_sim_Ca =1# max(sim_shorten_list_Ca[i])
+            norm_sim_Ca = 1#max(sim_ring_data_Ca[t])
             norm_data_Ca = max(real_data_Ca.loc[j])
 
             norm_sim_ann = max(sim_shorten_list_Ann[i])
@@ -110,32 +118,36 @@ def main_compare():
             norm_sim_ann, norm_data_ann = 1 ,1
 
         ax[0,0].plot(vec,sim_ring_data_Ca[t]/norm_sim_Ca,label="simulation")
-        ax[0,0].plot(vec,real_data_Ca.loc[j]/norm_data_Ca,label="Experiment")
+        #ax[0,0].plot(vec,real_data_Ca.loc[j]/norm_data_Ca,label="Experiment")
         ax[0,0].set_title(f"Calcium rings t={t_show}s of {T_final}")
         ax[0,0].set_xlabel(f"Ring")
         ax[0,0].set_ylabel(r" $ \frac{ [Ca] }{ max([Ca]) } $ "
                            , rotation='horizontal'
-                           ,fontsize=13,y=0.45,x=1
+                           ,fontsize=13,y=0.45
                            )
-        #ax[0,0].set
+        ax[0,0].set_ylim(-1e-7,4e-4)
         ax[0,0].legend()
 
         ax[1,0].plot(vec,sim_ring_data_Ann[t]/norm_sim_ann,label="simulation")
-        ax[1,0].plot(vec,real_data_Ann.loc[j]/norm_data_ann,label="Experiment")
+        #ax[1,0].plot(vec,real_data_Ann.loc[j]/norm_data_ann,label="Experiment")
         ax[1,0].set_title(f"Annexin rings t={t_show}s of {T_final}")
         ax[1,0].set_xlabel(f"Ring")
         ax[1,0].set_ylabel(r" $ \frac{ [Ann] }{ max([Ann]) } $ "
                            , rotation='horizontal'
-                           ,fontsize=12,y=0.45,x=1
+                           ,fontsize=13,y=0.45
                            )
         ax[1,0].legend()
 
 
-        pos0 = ax[0,1].matshow(Free_Ca[t],cmap=cmap_type,vmin=vmin_val_Ca,vmax=vmax_val_Ca)
+        pos0 = ax[0,1].matshow(Free_Ca[t],cmap=cmap_type
+                               ,vmin=vmin_val_Ca,vmax=vmax_val_Ca
+                               )
         ax[0,1].set_title("free Ca")
 
-        #ToT_ann =Bound_annexin[t] + Free_annexin[t]
-        pos0 = ax[1,1].matshow(Free_annexin[t] ,cmap=cmap_type,vmin=vmin_val_Ann,vmax=vmax_val_Ann)
+        ToT_ann =Bound_annexin[t] + Free_annexin[t]
+        pos0 = ax[1,1].matshow(ToT_ann ,cmap=cmap_type
+                               ,vmin=vmin_val_Ann,vmax=vmax_val_Ann
+                               )
         ax[1,1].set_title("Free annexin")
         
         if i == 0:
@@ -147,7 +159,7 @@ def main_compare():
             fig.colorbar(pos0,ax=ax[1,1],shrink=0.7)
         
         plt.draw()
-        plt.pause(0.01)
+        plt.pause(0.05)
         ax[0,0].clear()
         ax[0,1].clear()
         ax[1,0].clear()
