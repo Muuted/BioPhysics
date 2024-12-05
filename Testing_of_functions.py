@@ -216,7 +216,8 @@ def Finding_the_pump_value():
     print(r"Finding the value for the $ c_{pump} $ term")
     from Circle_sim import main_circle_sim
     c_in,c_out,D_Ca_cyto,T_tot,len_size,dx,dy,k1,k2,c_in_annexin,bound_annexin_start,D_Annexin_cyto,dt,close_time,c_pump,holesize,dR,R,x0,y0,wall_val,inside_val,outside_val,open_val,Real_sim_time, real_close_time = constants()
-    Real_time = 60 #seconds.
+    Real_time = 55 #seconds.
+    #close_time = 1
     T_tot = int(Real_time/dt) # number of time steps.
 
     #close_time = T_tot*0.1
@@ -227,12 +228,16 @@ def Finding_the_pump_value():
     real_time_vec = np.linspace(0,Real_time,T_tot)
     
     
-    
-    N = 10
+    d_c_pump = 0.5
+    to_small =False
+    to_big = False
+    N = 100
     for i in range(N):
-        print(f"\n \n ----------------------- \n \n")
-        print(f"we are doing the i={i} of {N-1}  \n "
-              +f"and c_pump={c_pump}")
+        print(
+            f"\n ----------------------- \n"
+            +f" we are doing the i={i} of {N-1}  \n "
+            +f" and c_pump={c_pump}"
+              )
         #print(f"\n \n ----------------------- \n \n")
         Sim_data_list = main_circle_sim(
             c_in,c_out,D_Ca_cyto,T_tot,len_size
@@ -254,16 +259,33 @@ def Finding_the_pump_value():
             ,inside_val=inside_val
                                     )
         
+
+        if conc_Ca_time[len(conc_Ca_time)-1]/max(conc_Ca_time) < 0.1:
+            c_pump *=  (1 - d_c_pump)
+            to_small = True
+            print(f"\n ----------------------- \n")
+            print(f"to small   c_pump={c_pump}")
+
+
+        if conc_Ca_time[len(conc_Ca_time)-1]/max(conc_Ca_time) > 0.2:
+            c_pump *= (1 + d_c_pump)
+            to_big = True
+            print(f"\n \n ----------------------- \n \n")
+            print(f"to big   c_pump={c_pump}")
+
+
+        if to_big and to_small == True:
+            d_c_pump *= 0.5
+            to_big = False
+            to_small = False
+            print(f"we changed the d_c_pump")
+            
+            
         
-        
-        time_compare = int(55/dt)
-        if conc_Ca_time[time_compare] <= 0.1:
-            c_pump *= 0.5
-        
-        if 0.1 < conc_Ca_time[time_compare] :
-            print(f"\n \n ----------------- ------ \n \n")
+        if 0.1 < conc_Ca_time[len(conc_Ca_time)-1]/max(conc_Ca_time)  < 0.2:
+            print(f"\n ----------------- ------ \n")
             print(f"We found the c_pump value it is c_pump = {c_pump}")
-            print(f"\n \n ----------------- ------ \n \n")
+            print(f"\n ----------------- ------ \n")
 
             df = pd.DataFrame({
                 'graph': [conc_Ca_time],
@@ -281,7 +303,7 @@ def Finding_the_pump_value():
             print("Never found the correct value")
             print(f"\n \n ----------------- ------ \n \n")
         
-        print(f"value at {time_compare} s, conc_Ca_time[time_compare] = {conc_Ca_time[time_compare]}")
+        #print(f"value at {len(conc_Ca_time)-1} s, conc_Ca_time[time_compare] = {conc_Ca_time[len(conc_Ca_time)-1]}")
 
     plt.figure()
     plt.plot(real_time_vec,conc_Ca_time/max(conc_Ca_time))

@@ -35,6 +35,7 @@ def constants():
 
     pump_multiplyer = 30 # found from sim testing.
     c_pump = dt*(5e-8)*pump_multiplyer # Molar/second
+    c_pump = 3.028415305204001e-09 
 
 
     # Anxexin constants.  
