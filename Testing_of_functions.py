@@ -216,7 +216,8 @@ def Finding_the_pump_value():
     print(r"Finding the value for the $ c_{pump} $ term")
     from Circle_sim import main_circle_sim
     c_in,c_out,D_Ca_cyto,T_tot,len_size,dx,dy,k1,k2,c_in_annexin,bound_annexin_start,D_Annexin_cyto,dt,close_time,c_pump,holesize,dR,R,x0,y0,wall_val,inside_val,outside_val,open_val,Real_sim_time, real_close_time = constants()
-    Real_time = 55 #seconds.
+    Real_time = 80 #seconds.
+    ref_time = int(55/dt)
     #close_time = 1
     T_tot = int(Real_time/dt) # number of time steps.
 
@@ -260,14 +261,14 @@ def Finding_the_pump_value():
                                     )
         
 
-        if conc_Ca_time[len(conc_Ca_time)-1]/max(conc_Ca_time) < 0.1:
+        if conc_Ca_time[ref_time]/max(conc_Ca_time) < 0.1:
             c_pump *=  (1 - d_c_pump)
             to_small = True
             print(f"\n ----------------------- \n")
             print(f"to small   c_pump={c_pump}")
 
 
-        if conc_Ca_time[len(conc_Ca_time)-1]/max(conc_Ca_time) > 0.2:
+        if conc_Ca_time[ref_time]/max(conc_Ca_time) > 0.2:
             c_pump *= (1 + d_c_pump)
             to_big = True
             print(f"\n \n ----------------------- \n \n")
@@ -282,7 +283,7 @@ def Finding_the_pump_value():
             
             
         
-        if 0.1 < conc_Ca_time[len(conc_Ca_time)-1]/max(conc_Ca_time)  < 0.2:
+        if 0.1 < conc_Ca_time[ref_time]/max(conc_Ca_time)  < 0.2:
             print(f"\n ----------------- ------ \n")
             print(f"We found the c_pump value it is c_pump = {c_pump}")
             print(f"\n ----------------- ------ \n")
@@ -309,7 +310,7 @@ def Finding_the_pump_value():
     plt.plot(real_time_vec,conc_Ca_time/max(conc_Ca_time))
     plt.title(f"[Ca] in cell, " + r"$ c_{pump} $" +f"={c_pump}")
     plt.xlabel("time [s]")
-    plt.ylabel("Concentration/max(conc)")
+    plt.ylabel(r" $ \frac{ [Ca]_{tot} }{ max( [Ca]_{tot} ) } $ ",rotation='horizontal')
     plt.show()
     
 
