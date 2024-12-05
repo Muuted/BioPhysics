@@ -310,7 +310,7 @@ def Finding_the_pump_value():
     plt.plot(real_time_vec,conc_Ca_time/max(conc_Ca_time))
     plt.title(f"[Ca] in cell, " + r"$ c_{pump} $" +f"={c_pump}")
     plt.xlabel("time [s]")
-    plt.ylabel(r" $ \frac{ [Ca]_{tot} }{ max( [Ca]_{tot} ) } $ ",rotation='horizontal')
+    plt.ylabel(r" $ \frac{ [Ca]_{tot} }{ max( [Ca]_{tot} ) } $ ",rotation='horizontal',fontsize=22)
     plt.show()
     
 

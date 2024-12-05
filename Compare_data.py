@@ -113,14 +113,21 @@ def main_compare():
         ax[0,0].plot(vec,real_data_Ca.loc[j]/norm_data_Ca,label="Experiment")
         ax[0,0].set_title(f"Calcium rings t={t_show}s of {T_final}")
         ax[0,0].set_xlabel(f"Ring")
-        ax[0,0].set_ylabel(r" $ \frac{ [Ca] }{ max([Ca]) } $ ", rotation='horizontal')
+        ax[0,0].set_ylabel(r" $ \frac{ [Ca] }{ max([Ca]) } $ "
+                           , rotation='horizontal'
+                           ,fontsize=13,y=0.45,x=1
+                           )
+        #ax[0,0].set
         ax[0,0].legend()
 
         ax[1,0].plot(vec,sim_ring_data_Ann[t]/norm_sim_ann,label="simulation")
         ax[1,0].plot(vec,real_data_Ann.loc[j]/norm_data_ann,label="Experiment")
         ax[1,0].set_title(f"Annexin rings t={t_show}s of {T_final}")
         ax[1,0].set_xlabel(f"Ring")
-        ax[1,0].set_ylabel(r" $ \frac{ [Ann] }{ max([Ann]) } $ ", rotation='horizontal')
+        ax[1,0].set_ylabel(r" $ \frac{ [Ann] }{ max([Ann]) } $ "
+                           , rotation='horizontal'
+                           ,fontsize=12,y=0.45,x=1
+                           )
         ax[1,0].legend()
 
 
