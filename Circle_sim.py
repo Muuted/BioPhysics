@@ -156,7 +156,7 @@ if __name__ == "__main__":
     ref_struct_name = "ref_struct__filenum4.txt"
 
     save_data = True
-    
+    c_pump  = 0 
 
     Sim_data_list = main_circle_sim(
         c_in,c_out,D_Ca_cyto,T_tot,len_size

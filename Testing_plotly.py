@@ -1,5 +1,7 @@
 import plotly.graph_objects as go
+import numpy as np
 """
+
     fig1 = go.Figure()
     fig1.add_trace(
         go.Scatter(
@@ -39,3 +41,57 @@ import plotly.graph_objects as go
     )
     fig3.show()
     """
+
+
+
+def Animate_figures(
+        X_frames,Y_frames
+        ,figure_title: str
+        ,ymax,ymin,xmax,xmin
+        ,time_vec
+        ,dt
+        ):
+    time_shape = np.shape(Y_frames)[0]
+
+    animate_fig = go.Figure(
+        data=[
+            go.Scatter(
+                x = X_frames
+                ,y = Y_frames[0]
+                )
+            ]
+        ,layout = go.Layout(
+            xaxis = dict(
+                range = [xmin,xmax]
+                ,autorange=False
+            )
+            ,yaxis = dict(
+                range=[ymin,ymax]
+                ,autorange=False
+            )
+            ,title = dict(
+                text = figure_title
+            )
+            ,updatemenus=[dict(
+                type="buttons"
+                ,buttons=[dict(
+                    label= "Play"
+                    ,method = "animate"
+                    ,args=[None]
+                )]
+            )]
+        )
+
+        ,frames =[
+            go.Frame(
+                data=[go.Scatter(x=X_frames,y=Y_frames[frame])]
+                ,layout=go.Layout(
+                    title_text=figure_title 
+                    +f"   time = {int(time_vec[frame]*dt)}s of  {int(time_vec[len(time_vec)-1]*dt)}s"
+                    )
+                ) 
+                for frame in range(time_shape)
+                ]
+        )
+    
+    animate_fig.show()
