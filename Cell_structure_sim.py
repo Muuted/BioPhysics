@@ -7,7 +7,7 @@ from Constants import constants
 import time as tm
 import os
 import pandas as pd
-from Real_data import main_ring_summing
+from Ring_sum_file import main_ring_summing
 
 def main_cell_structure_sim(
         c_in,c_out,D_Ca_cyto,T_tot,len_size

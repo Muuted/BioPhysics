@@ -164,7 +164,81 @@ def Ring_sum(
     return Ring_sum_list_Ca, Ring_sum_list_Annexins 
 
 
+def Ring_sum_quick(
+        ref_grid
+        ,sim_grid_free_Ca,sim_grid_bound_Ca
+        ,sim_grid_free_Annexin,sim_grid_bound_Annexin
+        ,hole_pos:tuple
+        ,num_of_rings:int  
+        ,inside_val:int
+        ,time_step_vec
+            )-> tuple:
 
+
+    Tsize, Ysize, Xsize = np.shape(sim_grid_free_Ca)
+    x0,y0 = hole_pos #position of the hole in the membrane
+
+    Radius_vec = np.linspace(
+        start=0
+        ,stop=Ysize
+        ,num=num_of_rings
+        )
+    time_vec = np.linspace(
+    start=0
+    ,stop=Tsize
+    ,num=num_of_rings
+    )
+
+    Ring_sum_list_Ca = np.zeros(shape=(Tsize,len(Radius_vec)))
+    Ring_sum_list_Annexins = np.zeros(shape=(Tsize,len(Radius_vec)))
+
+    Visual_grid = np.zeros(shape=(Ysize,Xsize))
+    
+    Vis_val = 10
+    dVis_val = 10
+
+    for i in range(len(time_step_vec)):
+        t = int(time_vec[i])
+
+        if t%(int(Tsize/10)) == 0:
+            #print(f"time={t} of {T_tot}")
+            print(f" Ring summing Progress :  {int((t/Tsize)*100)} %")   
+        for R in range(0,len(Radius_vec)-1):
+
+            R1 = int(Radius_vec[R+1])
+            R2 = int(Radius_vec[R])
+            sum_Ca = 0
+            sum_Annexin = 0
+            norm = 0
+            for y in range(Ysize):
+                for x in range(Xsize):
+
+                    if 0 <= x < Xsize and 0 <= y < Ysize:
+                        if ref_grid[y][x] == inside_val:
+                            r = np.sqrt( (x - x0)**2 + (y - y0)**2 )
+
+                            if R2 <= r <= R1 :
+                                norm += 1
+                                sum_Ca += sim_grid_free_Ca[t][y][x] + sim_grid_bound_Ca[t][y][x]
+                                sum_Annexin += sim_grid_free_Annexin[t][y][x] + sim_grid_bound_Annexin[t][y][x]
+                                if t == 0:
+                                    Visual_grid[y][x] = Vis_val
+
+            if norm == 0:
+                norm = 1
+            Vis_val += dVis_val
+            Ring_sum_list_Ca[t][R] = sum_Ca/norm
+            Ring_sum_list_Annexins[t][R] = sum_Annexin/norm
+
+        if t == 0:
+            plt.matshow(Visual_grid)
+            plt.title("Visual Grid, does this look correct? \n if yes, just close figure and sum will continue")
+            #plt.show()
+
+        
+        
+
+    return Ring_sum_list_Ca, Ring_sum_list_Annexins 
 
 def sum_in_cell(ref_Grid,Matrix_Free,Matrix_Bound,inside_val:int)->list:
     print(f"shape of Matrix = {np.shape(Matrix_Free)}")

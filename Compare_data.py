@@ -1,4 +1,4 @@
-
+import os
 import matplotlib.pyplot as plt
 import numpy as np
 
@@ -6,7 +6,7 @@ from Constants import constants
 import pandas as pd
 from Data_extraction_funcs import *
 
-from Testing_plotly import Animate_figures
+from Testing_plotly import *
 
 def main_compare():
     Real_time_steps_data = 235
@@ -20,7 +20,8 @@ def main_compare():
     #fig_name = f"Cell structure Simulation_data_simtime={Real_sim_time}.pkl"
     
     
-    fig_folder_path =  fig_save_path + f"simtime={Real_sim_time}\\"    
+    fig_folder_path =  fig_save_path + f"simtime={Real_sim_time}\\"   
+    video_save_path = fig_folder_path + f"video_folder\\"
     fig_name = f"Simulation_data_simtime={Real_sim_time}.pkl"
 
     df_sim = pd.read_pickle(fig_folder_path + fig_name)
@@ -33,6 +34,11 @@ def main_compare():
 
     k1 = df_sim['k1'][0]
     k2 = df_sim['k2'][0]
+    
+    sim_dt = df_sim['dt'][0]
+    sim_T_tot = int(df_sim['time steps'][0])
+    hole_closure_time = df_sim['hole closure time'][0]
+
     for i in range(5):
         a = df_sim['Ring sum list Ca'][i]
         if isinstance(a , np.ndarray):
@@ -41,9 +47,7 @@ def main_compare():
             print(f"i = {i}")
             break
     
-    sim_dt = df_sim['dt'][0]
-    sim_real_time = df_sim['Sim time (s)'][0]
-    sim_T_tot = int(df_sim['time steps'][0])
+    
     
         
 
@@ -103,16 +107,50 @@ def main_compare():
         animate_Ca[i] = sim_ring_data_Ca[t]
         animate_Ann[i] = sim_ring_data_Ann[t]
     
+    """
+    Animate_multi_figure(
+        X_frames = vec
+        ,Y_frames_sim = animate_Ca
+        ,Y_frames_data = real_data_Ca
+        ,figure_title = "Ca over time"
+        ,ymin = 0 ,ymax = max_ca_sim
+        ,xmin = -0.2 ,xmax = exp_data_shapeX
+        ,time_vec = time_check_vec
+        ,dt = sim_dt
+        ,data_hole_open = 20
+        ,save_path = fig_folder_path
+        ,fig_name = f"animate Ca for realsimtime={Real_sim_time}.html"
+    )
+    
     Animate_figures(
         X_frames=vec
-        ,Y_frames=animate_Ca
+        ,Y_frames_sim=animate_Ca
+        ,Y_frames_data=real_data_Ca
         ,figure_title="Ca over time"
         ,ymin=0 ,ymax=max_ca_sim
-        ,xmin=0 ,xmax=exp_data_shapeX
+        ,xmin=-0.2 ,xmax=exp_data_shapeX
         ,time_vec=time_check_vec
         ,dt=sim_dt
+        ,save_path= fig_folder_path
+        ,fig_name= f"animate Ca for realsimtime={Real_sim_time}.html"
     )
-    exit()
+    
+    Animate_figures(
+        X_frames=vec
+        ,Y_frames_sim=animate_Ann
+        ,Y_frames_data=real_data_Ann
+        ,figure_title="Annexins over time"
+        ,ymin=0 ,ymax=max_ann_sim
+        ,xmin=-0.2 ,xmax=exp_data_shapeX
+        ,time_vec=time_check_vec
+        ,dt=sim_dt
+        ,save_path= fig_folder_path
+        ,fig_name= f"animate Annexins for realsimtime={Real_sim_time}.html"
+
+    )
+
+    """
+    
     fig, ax = plt.subplots(2,2)
     cmap_type = "gray" #"RdBu"
 
@@ -170,25 +208,45 @@ def main_compare():
         if i == 0:
             fig.colorbar(pos0,ax=ax[0,1],shrink=0.7)
             fig.colorbar(pos0,ax=ax[1,1],shrink=0.7)
-            plt.show()
-            fig, ax = plt.subplots(2,2)
-            fig.colorbar(pos0,ax=ax[0,1],shrink=0.7)
-            fig.colorbar(pos0,ax=ax[1,1],shrink=0.7)
+            #plt.show()
+            #fig, ax = plt.subplots(2,2)
+            #fig.colorbar(pos0,ax=ax[0,1],shrink=0.7)
+            #fig.colorbar(pos0,ax=ax[1,1],shrink=0.7)
         
         plt.draw()
+        
+
         if t < 20 :
-            plt.pause(0.5)
+            plt.pause(0.05)
         else:
             plt.pause(0.05)
+        
+        if not os.path.exists(video_save_path):
+            os.makedirs(video_save_path)
+        
+        fig.savefig(video_save_path + f"{i}")
+        plt.pause(0.05)
+
         ax[0,0].clear()
         ax[0,1].clear()
         ax[1,0].clear()
         ax[1,1].clear()
 
+    
         
             
 
 
 if __name__ == "__main__":
     main_compare()
+    Real_sim_time = 120
+    fig_save_path = "C:\\Users\\AdamSkovbjergKnudsen\\Desktop\\ISA Biophys\\data eksperimenter\\20191203-Calcium-sensors-ANXA-RFP for Python\\Python_simulation_data\\"
+    fig_folder_path =  fig_save_path + f"simtime={Real_sim_time}\\"   
+    video_save_path = fig_folder_path + f"video_folder\\" 
+    Make_video2(
+        output_path=fig_folder_path
+        ,input_path=video_save_path
+        ,video_name= "movie.avi"
+        ,fps= 4
+    )
     print("\n \n \n ----------- DONE ------------- \n \n ")

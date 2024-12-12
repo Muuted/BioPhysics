@@ -6,7 +6,7 @@ def constants():
     Avogadro = 6.02214076e23 # 1/mol
     # time and step size, and diffusion constant
     picture_size = 83e-6 # meters
-    Real_sim_time = 30 #seconds
+    Real_sim_time = 120 #seconds
     real_close_time =  6 #s
     
     data_real_time = 120
@@ -42,8 +42,8 @@ def constants():
     A_total_density = ((2e6/10))/(1e-18) #number/meter^3 from article directly
     A_total_conc = (A_total_density/Avogadro)*(0.1/100)#should get 0.1% of the 3D volume concentration for all proteins
 
-    k1 = 1e-2 #30e3 # 1/(Ms) 1e-2
-    k2 = 1e2 #1e-3 #1/s 1e2
+    k1 = 1e4 #1e2 #30e3 # 1/(Ms) 1e-2
+    k2 = 1e-1#1e-2 #1e-3 #1/s 1e2
 
     
     bound_annexin_start = k1*A_total_conc*c_in/(k1*c_in + k2)

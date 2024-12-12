@@ -214,6 +214,9 @@ def Annexin_stablilization(
 
     return A_f, A_b
 
+
+
+
 def points_inside_cell(refgrid,inside_val):
 
     ylen,xlen = np.shape(refgrid)
@@ -226,6 +229,141 @@ def points_inside_cell(refgrid,inside_val):
     return point_count
             
 
+def main_circle_sim(
+        c_in,c_out,D_Ca_cyto,T_tot,len_size
+        ,dx,dy,k1,k2,c_in_annexin,bound_annexin_start,D_Annexin_cyto
+        ,dt,close_time,c_pump,holesize,dR,R,x0,y0
+        ,wall_val,inside_val,outside_val,open_val
+        ,open_hole=True
+        ,ref_bakteria = ""
+        ,data_path=""
+                    ) -> list:
+    
+    # Creation of our Grids
+    if ref_bakteria == "":
+        ref_structure = init_ref_circle(
+            boxlen=len_size
+            ,Radius=R,dRadius=dR ,offsets=[x0,y0]
+            ,inside_val=inside_val
+            ,outside_val=outside_val
+            ,wall_val=wall_val
+                                        )
+    else:
+        py_ref_struct,outside_val,inside_val,wall_vall,xoffset,yoffset = make_ref_structure(
+            path=data_path
+            ,ref_name=ref_bakteria
+        )
+
+
+    Free_Ca = init_conc(
+        ref_grid=ref_structure
+        ,time=T_tot
+        ,c_in=c_in
+        ,c_out=c_out
+        ,inside_val=inside_val
+        ,outside_val=outside_val
+                        )
+    
+    Free_annexin = init_conc(
+        ref_grid=ref_structure
+        ,time=T_tot
+        ,c_in= c_in_annexin
+        ,c_out=0
+        ,inside_val=inside_val
+        ,outside_val=outside_val
+                            )
+
+    Bound_annexin = init_conc(
+        ref_grid=ref_structure
+        ,time=T_tot
+        ,c_in= bound_annexin_start
+        ,c_out=0
+        ,inside_val=inside_val
+        ,outside_val=outside_val
+                            )
+    
+    Bound_Ca = np.zeros(shape=(T_tot,len_size,len_size))
+
+    open_close_membrane(
+        Grid=ref_structure
+        ,Radius=R, dRadius=dR
+        ,offsets=[x0,y0],holesize=holesize
+        ,open_val=open_val
+        ,wall_val=wall_val
+        ,open_wall=open_hole
+                        )
+    i = 0 # for showing that the theory steady state concentration  
+          # matches the simulated one.
+    for t in np.arange(0,T_tot-1): 
+        if t%(int(T_tot/10)) == 0:
+            #print(f"time={t} of {T_tot}")
+            print(f" Simulation Progress :  {int((t/T_tot)*100)} %")   
+        t1, t2 = t%2, (t+1)%2
+        
+        for x in range(0,len_size):
+            for y in range(0,len_size):
+                #Bound_Ca[t+1][y][x] += Bound_Ca[t][y][x]
+                #if ref_structure[y][x] != wall_val:
+                if ref_structure[y][x] == wall_val or ref_structure[y][x] == outside_val:
+                    Free_Ca[t+1][y][x] = Free_Ca[t][y][x]
+                    Free_annexin[t+1][y][x] = Free_annexin[t][y][x] 
+                    Bound_annexin[t+1][y][x] = Bound_annexin[t][y][x]
+
+                if ref_structure[y][x] == inside_val or ref_structure[y][x] == open_val:
+                    radii = np.sqrt( (x-x0)**2 + (y-y0)**2 )
+                    pos = cicle_boundary(x=x,y=y,boxlen=len_size
+                                            ,ref_matrix=ref_structure
+                                            ,refval=wall_val
+                                        )
+
+                    circle_dCondt(
+                        C=Free_Ca,pos=pos
+                        ,const=[t,dt,dx,dy,R,dR,radii]
+                        ,D=D_Ca_cyto
+                    )
+
+                    circle_dAdt(
+                        A_free= Free_annexin
+                        ,A_bound=Bound_annexin
+                        ,C=Free_Ca
+                        ,C_bound=Bound_Ca
+                        ,pos=pos 
+                        ,const=[t,dt,dx,dy,k1,k2,R,dR,radii]
+                        ,D=D_Annexin_cyto
+                                )
+
+                    #if c_in < Free_Ca[t+1][y][x] <= c_in:
+                        #Free_Ca[t+1][y][x] = c_in
+
+                    #if Free_Ca[t+1][y][x] >= c_pump + c_in:
+                    if Free_Ca[t+1][y][x] > c_in:
+                        if Free_Ca[t+1][y][x] - c_pump <= c_in:
+                            Free_Ca[t+1][y][x] = c_in
+                        else:
+                            Free_Ca[t+1][y][x] += -c_pump # the pumping mechanism
+                                                #, for only inside the cell
+
+
+                    if t == 0:
+                        i += 1 #count points in cell.
+        if t >= close_time and open_hole==True:
+            if ref_bakteria == "":
+                open_close_membrane(
+                    Grid=ref_structure
+                    ,Radius=R, dRadius=dR
+                    ,offsets=[x0,y0],holesize=holesize
+                    ,open_val=open_val
+                    ,wall_val=wall_val
+                    ,open_wall=False
+                                    )
+                open_hole = False
+                print(f"wall closure time t={t}")
+            else:
+                print(" \n \n \n Need to code the other ref structure -- closing program \n \n \n")
+                exit()
+                
+    return ref_structure,Free_Ca,Free_annexin,Bound_annexin,Bound_Ca
+    
 
 if __name__ == "__main__":
     pass
