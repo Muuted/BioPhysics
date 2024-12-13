@@ -81,13 +81,14 @@ def open_close_membrane(Grid
 def open_close_membrane2(
         Grid
         ,offsets
-        ,holesize:int
+        ,Xholesize:int
+        ,Yholesize:int
         ,open_val:int ,wall_val:int
         ,open_wall_bool:bool
                         ):
     x0,y0 = offsets
-    xlow,xhigh= int(x0 - holesize) , int(x0 + holesize)
-    ylow,yhigh = int(y0 - holesize) , int(y0 + holesize)
+    xlow,xhigh= int(x0 - Xholesize) , int(x0 + Xholesize)
+    ylow,yhigh = int(y0 - Yholesize) , int(y0 + Yholesize)
     
     for y in range(ylow,yhigh):
         for x in range(xlow,xhigh):
@@ -95,6 +96,7 @@ def open_close_membrane2(
             if open_wall_bool == True:
                 if Grid[y][x] == wall_val:
                     Grid[y][x] = open_val
+
             if open_wall_bool == False:
                 if Grid[y][x] == open_val:
                     Grid[y][x] = wall_val

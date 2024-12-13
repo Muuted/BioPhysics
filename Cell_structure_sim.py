@@ -8,6 +8,8 @@ import time as tm
 import os
 import pandas as pd
 from Ring_sum_file import main_ring_summing
+from Testing_plotly import Make_video2
+from Compare_data import main_compare
 
 def main_cell_structure_sim(
         c_in,c_out,D_Ca_cyto,T_tot,len_size
@@ -32,7 +34,7 @@ def main_cell_structure_sim(
         ref_structure,outside_val,inside_val,wall_val,hole_pos = make_ref_structure(
             path=data_path
             ,ref_name=ref_struct_name_cell
-            ,hole_pos=[27,5]
+            ,hole_pos=[34,4]
         )
 
 
@@ -66,12 +68,13 @@ def main_cell_structure_sim(
 
     open_close_membrane2(
         Grid=ref_structure
-        ,holesize=2
+        ,Xholesize=2
+        ,Yholesize=4
         ,open_val=open_val
         ,wall_val=wall_val
-        ,open_wall_bool=True
+        ,open_wall_bool=open_hole
         ,offsets=hole_pos
-    )
+        )
     i = 0 # for showing that the theory steady state concentration  
           # matches the simulated one.
     for t in np.arange(0,T_tot-1): 
@@ -83,6 +86,9 @@ def main_cell_structure_sim(
         for x in range(0,len_size):
             for y in range(0,len_size):
                 #Bound_Ca[t+1][y][x] += Bound_Ca[t][y][x]
+                if ref_structure[y][x] == wall_val and open_hole == False:
+                    Free_Ca[t+1][y][x] = wall_val
+                
                 if ref_structure[y][x] == wall_val or ref_structure[y][x] == outside_val:
                     Free_Ca[t+1][y][x] = Free_Ca[t][y][x]
                     Free_annexin[t+1][y][x] = Free_annexin[t][y][x] 
@@ -121,33 +127,25 @@ def main_cell_structure_sim(
                     if t == 0:
                         i += 1 #count points in cell.
         if t >= close_time and open_hole==True:
-            if ref_bakteria == "":
-                open_close_membrane2(
-                    Grid=ref_structure
-                    ,Radius=R, dRadius=dR
-                    ,offsets=[x0,y0],holesize=holesize
-                    ,open_val=open_val
-                    ,wall_val=wall_val
-                    ,open_wall=False
-                                    )
-                open_hole = False
-                print(f"wall closure time t={t}")
-            else:
-                open_close_membrane2(
-                    Grid=ref_structure
-                    ,holesize=2
-                    ,open_val=open_val
-                    ,wall_val=wall_val
-                    ,open_wall_bool=False
-                    ,offsets=hole_pos
-                                    )
+            open_close_membrane2(
+                Grid=ref_structure
+                ,Xholesize=2
+                ,Yholesize=4
+                ,open_val=open_val
+                ,wall_val=wall_val
+                ,open_wall_bool=False
+                ,offsets=hole_pos
+                )
+            open_hole = False
+            print(f"wall closure time t={t}")
+        
                 
     return ref_structure,Free_Ca,Free_annexin,Bound_annexin,Bound_Ca
     
 
 
 
-    
+ 
 
 if __name__ == "__main__":
     c_in,c_out,D_Ca_cyto,T_tot,len_size,dx,dy,k1,k2,c_in_annexin,bound_annexin_start,D_Annexin_cyto,dt,close_time,c_pump,holesize,dR,R,x0,y0,wall_val,inside_val,outside_val,open_val,Real_sim_time, real_close_time = constants()
@@ -156,6 +154,9 @@ if __name__ == "__main__":
     ref_struct_name_cell = "ref_struct_from_Ca_filenum4.txt"
 
     fig_save_path = "C:\\Users\\AdamSkovbjergKnudsen\\Desktop\\ISA Biophys\\data eksperimenter\\20191203-Calcium-sensors-ANXA-RFP for Python\\Python_simulation_data\\"
+    fig_folder_path =  fig_save_path + f"Cell structure simtime={Real_sim_time}\\"
+    video_save_path = fig_folder_path + f"video_folder\\"     
+
     save_data = True
     
 
@@ -280,7 +281,7 @@ if __name__ == "__main__":
             'Free Annexins': [Free_annexin],
             'Bound Annexins': [Bound_annexin],
             'Reference Matrix': [ref_structure],
-            'hole position X': x0 + R,
+            'hole position X': x0 ,
             'hole position Y': y0,
             'Sim time (s)': Real_sim_time,
             'time steps': T_tot,
@@ -304,7 +305,7 @@ if __name__ == "__main__":
 
         print(df.info())
 
-        fig_folder_path =  fig_save_path + f"Cell structure simtime={Real_sim_time}\\"
+        
         
         if not os.path.exists(fig_folder_path):
             os.makedirs(fig_folder_path)
@@ -314,7 +315,7 @@ if __name__ == "__main__":
 
         print("done making folder")
         plt.show(block=False)
-        plt.pause(10)
+        plt.pause(2)
         
 
         fig_name = f"Cell structure Annexins over time Realsimtime={Real_sim_time}s"
@@ -339,6 +340,26 @@ if __name__ == "__main__":
             fig_save_path=fig_save_path
             ,fig_folder_path=fig_folder_path
             ,df_name=fig_name_df
-            ,hole_pos= [27,5]
+            ,hole_pos= [34,4]
+        )
+        
+        
+        
+        main_compare(
+        Real_sim_time=Real_sim_time
+        ,fig_save_path=fig_save_path
+        ,fig_folder_path=fig_folder_path
+        ,video_save_path=video_save_path
+        ,df_name=fig_name_df
+        )
+        #fig_save_path = "C:\\Users\\AdamSkovbjergKnudsen\\Desktop\\ISA Biophys\\data eksperimenter\\20191203-Calcium-sensors-ANXA-RFP for Python\\Python_simulation_data\\"
+        #fig_folder_path =  fig_save_path + f"simtime={Real_sim_time}\\"   
+        #video_save_path = fig_folder_path + f"video_folder\\" 
+
+        Make_video2(
+            output_path=fig_folder_path
+            ,input_path=video_save_path
+            ,video_name= "movie.avi"
+            ,fps= 4
         )
         

@@ -8,23 +8,29 @@ from Data_extraction_funcs import *
 
 from Testing_plotly import *
 
-def main_compare(Real_sim_time):
+def main_compare(
+        Real_sim_time
+        ,fig_save_path
+        ,fig_folder_path
+        ,video_save_path
+        ,df_name
+        ):
     Real_time_steps_data = 235
     #Real_sim_time = 120
 
     """   The simulation data loaded  """
 
-    fig_save_path = "C:\\Users\\AdamSkovbjergKnudsen\\Desktop\\ISA Biophys\\data eksperimenter\\20191203-Calcium-sensors-ANXA-RFP for Python\\Python_simulation_data\\"
+    #fig_save_path = "C:\\Users\\AdamSkovbjergKnudsen\\Desktop\\ISA Biophys\\data eksperimenter\\20191203-Calcium-sensors-ANXA-RFP for Python\\Python_simulation_data\\"
     
     #fig_folder_path =  fig_save_path + f"Cell structure simtime={Real_sim_time}\\"
     #fig_name = f"Cell structure Simulation_data_simtime={Real_sim_time}.pkl"
     
     
-    fig_folder_path =  fig_save_path + f"simtime={Real_sim_time}\\"   
-    video_save_path = fig_folder_path + f"video_folder\\"
-    fig_name = f"Simulation_data_simtime={Real_sim_time}.pkl"
+    #fig_folder_path =  fig_save_path + f"simtime={Real_sim_time}\\"   
+    #video_save_path = fig_folder_path + f"video_folder\\"
+    #df_name = f"Simulation_data_simtime={Real_sim_time}.pkl"
 
-    df_sim = pd.read_pickle(fig_folder_path + fig_name)
+    df_sim = pd.read_pickle(fig_folder_path + df_name)
     print(df_sim.info())
 
     
@@ -38,10 +44,9 @@ def main_compare(Real_sim_time):
     sim_T_tot, Ysize, Xsize = np.shape(Free_Ca)
     
     sim_dt = df_sim['dt'][0]
-    print(sim_T_tot)
-    sim_T_tot = int(df_sim['time steps'][0])
-    print(sim_T_tot)
-    exit()
+    
+    #sim_T_tot = int(df_sim['time steps'][0])
+    
     hole_closure_time = df_sim['hole closure time'][0]
 
     for i in range(5):
@@ -187,7 +192,7 @@ def main_compare(Real_sim_time):
             os.makedirs(video_save_path)
         
         fig.savefig(video_save_path + f"{i}")
-        plt.pause(0.05)
+        plt.pause(0.01)
 
         ax[0,0].clear()
         ax[0,1].clear()
@@ -200,7 +205,7 @@ def main_compare(Real_sim_time):
 
 
 if __name__ == "__main__":
-    Real_sim_time = 120
+    Real_sim_time = 119
     main_compare(
         Real_sim_time=Real_sim_time
     )
