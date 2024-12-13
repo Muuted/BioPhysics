@@ -35,8 +35,13 @@ def main_compare(Real_sim_time):
     k1 = df_sim['k1'][0]
     k2 = df_sim['k2'][0]
     
+    sim_T_tot, Ysize, Xsize = np.shape(Free_Ca)
+    
     sim_dt = df_sim['dt'][0]
+    print(sim_T_tot)
     sim_T_tot = int(df_sim['time steps'][0])
+    print(sim_T_tot)
+    exit()
     hole_closure_time = df_sim['hole closure time'][0]
 
     for i in range(5):
@@ -107,49 +112,6 @@ def main_compare(Real_sim_time):
         animate_Ca[i] = sim_ring_data_Ca[t]
         animate_Ann[i] = sim_ring_data_Ann[t]
     
-    """
-    Animate_multi_figure(
-        X_frames = vec
-        ,Y_frames_sim = animate_Ca
-        ,Y_frames_data = real_data_Ca
-        ,figure_title = "Ca over time"
-        ,ymin = 0 ,ymax = max_ca_sim
-        ,xmin = -0.2 ,xmax = exp_data_shapeX
-        ,time_vec = time_check_vec
-        ,dt = sim_dt
-        ,data_hole_open = 20
-        ,save_path = fig_folder_path
-        ,fig_name = f"animate Ca for realsimtime={Real_sim_time}.html"
-    )
-    
-    Animate_figures(
-        X_frames=vec
-        ,Y_frames_sim=animate_Ca
-        ,Y_frames_data=real_data_Ca
-        ,figure_title="Ca over time"
-        ,ymin=0 ,ymax=max_ca_sim
-        ,xmin=-0.2 ,xmax=exp_data_shapeX
-        ,time_vec=time_check_vec
-        ,dt=sim_dt
-        ,save_path= fig_folder_path
-        ,fig_name= f"animate Ca for realsimtime={Real_sim_time}.html"
-    )
-    
-    Animate_figures(
-        X_frames=vec
-        ,Y_frames_sim=animate_Ann
-        ,Y_frames_data=real_data_Ann
-        ,figure_title="Annexins over time"
-        ,ymin=0 ,ymax=max_ann_sim
-        ,xmin=-0.2 ,xmax=exp_data_shapeX
-        ,time_vec=time_check_vec
-        ,dt=sim_dt
-        ,save_path= fig_folder_path
-        ,fig_name= f"animate Annexins for realsimtime={Real_sim_time}.html"
-
-    )
-
-    """
     
     fig, ax = plt.subplots(2,2)
     cmap_type = "gray" #"RdBu"

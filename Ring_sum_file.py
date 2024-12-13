@@ -87,11 +87,11 @@ def main_ring_summing(
         )
     else:
         Ring_sum_list_Ca, Ring_sum_list_Annexin = Ring_sum(
-            ref_grid=ref_structure
-            ,sim_grid_free_Ca=Free_Ca
-            ,sim_grid_bound_Ca=Bound_Ca
-            ,sim_grid_free_Annexin= Free_Annexins
-            ,sim_grid_bound_Annexin= Bound_annexins
+            ref_grid = ref_structure
+            ,sim_grid_free_Ca = Free_Ca
+            ,sim_grid_bound_Ca = Bound_Ca
+            ,sim_grid_free_Annexin = Free_Annexins
+            ,sim_grid_bound_Annexin = Bound_annexins
             ,hole_pos=[x0,y0]
             ,num_of_rings = 10
             ,inside_val = inside_val
