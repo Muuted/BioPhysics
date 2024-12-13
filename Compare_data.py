@@ -8,9 +8,9 @@ from Data_extraction_funcs import *
 
 from Testing_plotly import *
 
-def main_compare():
+def main_compare(Real_sim_time):
     Real_time_steps_data = 235
-    Real_sim_time = 120
+    #Real_sim_time = 120
 
     """   The simulation data loaded  """
 
@@ -203,7 +203,7 @@ def main_compare():
         pos0 = ax[1,1].matshow(ToT_ann ,cmap=cmap_type
                                ,vmin=vmin_val_Ann,vmax=vmax_val_Ann
                                )
-        ax[1,1].set_title("Free annexin")
+        ax[1,1].set_title("total annexin")
         
         if i == 0:
             fig.colorbar(pos0,ax=ax[0,1],shrink=0.7)
@@ -238,8 +238,10 @@ def main_compare():
 
 
 if __name__ == "__main__":
-    main_compare()
     Real_sim_time = 120
+    main_compare(
+        Real_sim_time=Real_sim_time
+    )
     fig_save_path = "C:\\Users\\AdamSkovbjergKnudsen\\Desktop\\ISA Biophys\\data eksperimenter\\20191203-Calcium-sensors-ANXA-RFP for Python\\Python_simulation_data\\"
     fig_folder_path =  fig_save_path + f"simtime={Real_sim_time}\\"   
     video_save_path = fig_folder_path + f"video_folder\\" 

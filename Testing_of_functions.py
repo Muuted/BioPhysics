@@ -430,11 +430,11 @@ def test_eqaution_solution():
     c_in,c_out,D_Ca_cyto,T_tot,len_size,dx,dy,k1,k2,c_in_annexin,bound_annexin_start,D_Annexin_cyto,dt,close_time,c_pump,holesize,dR,R,x0,y0,wall_val,inside_val,outside_val,open_val,Real_sim_time, real_close_time = constants()
 
     init_tot_ann = c_in_annexin + bound_annexin_start
-    Real_sim_time = 0.1
+    Real_sim_time = 30
     
-    print(f"tau = {1/(k2 + k1*c_in)}")
-    k1 = 1e-2
-    k2 = 1e2
+    print(f"tau = {1/(k2 + k1*c_in)} s")
+    #k1 = 1e-2
+    #k2 = 1e-1
     A_f, A_b = Annexin_stablilization(
         k1 =k1,k2 = k2
         ,A_tot = init_tot_ann
@@ -486,9 +486,9 @@ def test_eqaution_solution():
     #plt.show(block=False)
     #plt.pause(10)
 
-    fig_save_path = "C:\\Users\\AdamSkovbjergKnudsen\\Desktop\\ISA Biophys\\data eksperimenter\\20191203-Calcium-sensors-ANXA-RFP for Python\\Python_simulation_data\\"
-    fig_name = "Annexins analytical equilibrium graph"
-    fig.savefig(fig_save_path + fig_name)
+    #fig_save_path = "C:\\Users\\AdamSkovbjergKnudsen\\Desktop\\ISA Biophys\\data eksperimenter\\20191203-Calcium-sensors-ANXA-RFP for Python\\Python_simulation_data\\"
+    #fig_name = "Annexins analytical equilibrium graph"
+    #fig.savefig(fig_save_path + fig_name)
 
     #plt.close("all")
 
@@ -521,7 +521,7 @@ def testing_cell_geometry():
 
 
 if __name__ =="__main__":
-    time1_out = tm.time()
+    
     #test_reference_struct()
     #test_Ca_diff_corner_closed_hole()
     #test_Ca_diff_corner_open_hole()
@@ -531,6 +531,4 @@ if __name__ =="__main__":
     #test_analytical_vs_sim_dAf_dAb()
     test_eqaution_solution()
     #testing_cell_geometry()
-    time2_out = tm.time()
-
-    print(f"\n \n " +f"total simulation time = {round((time2_out-time1_out)%60,2)} min")
+    

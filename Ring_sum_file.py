@@ -10,6 +10,7 @@ def main_ring_summing(
         ,fig_folder_path
         ,df_name
         ,hole_pos = ""
+        ,sum_quick = False
                 ):
     
     A = constants()
@@ -59,28 +60,42 @@ def main_ring_summing(
 
     time_step_vec_data = np.linspace(0,sim_time_steps,Real_time_steps_data)
     
-    Ring_sum_list_Ca, Ring_sum_list_Annexin = Ring_sum_quick(
-        ref_grid=ref_structure
-        ,sim_grid_free_Ca=Free_Ca
-        ,sim_grid_bound_Ca=Bound_Ca
-        ,sim_grid_free_Annexin= Free_Annexins
-        ,sim_grid_bound_Annexin= Bound_annexins
-        ,hole_pos=[x0,y0]
-        ,num_of_rings = 10
-        ,inside_val = inside_val
-        ,time_step_vec=time_step_vec_data
-    )
-    """
-    Ring_sum_list_Ca, Ring_sum_list_Annexin = Ring_sum(
-        ref_grid=ref_structure
-        ,sim_grid_free_Ca=Free_Ca
-        ,sim_grid_bound_Ca=Bound_Ca
-        ,sim_grid_free_Annexin= Free_Annexins
-        ,sim_grid_bound_Annexin= Bound_annexins
-        ,hole_pos=[x0,y0]
-        ,num_of_rings = 10
-        ,inside_val = inside_val
-    )"""
+    if sum_quick == True:
+        Ysize,Xsize = np.shape(ref_structure)
+        time_step_vec_data = np.linspace(0,sim_time_steps,Real_time_steps_data)
+        short_Free_Ca = np.zeros(shape=(Real_time_steps_data,Ysize,Xsize))
+        short_Bound_Ca = np.zeros(shape=(Real_time_steps_data,Ysize,Xsize))
+        short_Free_Annexins = np.zeros(shape=(Real_time_steps_data,Ysize,Xsize))
+        short_Bound_Annexins = np.zeros(shape=(Real_time_steps_data,Ysize,Xsize))
+
+        for frame in range( len(time_step_vec_data)):
+            t = int(time_step_vec_data[frame])
+            short_Free_Ca[frame] = Free_Ca[t]
+            short_Bound_Ca[frame] = Bound_Ca[t]
+            short_Free_Annexins[frame] = Free_Annexins[t]
+            short_Bound_Annexins[frame] = Bound_annexins[t]
+            
+        Ring_sum_list_Ca, Ring_sum_list_Annexin = Ring_sum(
+            ref_grid = ref_structure
+            ,sim_grid_free_Ca = short_Free_Ca
+            ,sim_grid_bound_Ca = short_Bound_Ca
+            ,sim_grid_free_Annexin = short_Free_Annexins
+            ,sim_grid_bound_Annexin = short_Bound_Annexins
+            ,hole_pos = [x0,y0]
+            ,num_of_rings = 10
+            ,inside_val = inside_val
+        )
+    else:
+        Ring_sum_list_Ca, Ring_sum_list_Annexin = Ring_sum(
+            ref_grid=ref_structure
+            ,sim_grid_free_Ca=Free_Ca
+            ,sim_grid_bound_Ca=Bound_Ca
+            ,sim_grid_free_Annexin= Free_Annexins
+            ,sim_grid_bound_Annexin= Bound_annexins
+            ,hole_pos=[x0,y0]
+            ,num_of_rings = 10
+            ,inside_val = inside_val
+        )
 
 
     if save_data == True:

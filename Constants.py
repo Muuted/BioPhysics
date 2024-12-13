@@ -6,10 +6,10 @@ def constants():
     Avogadro = 6.02214076e23 # 1/mol
     # time and step size, and diffusion constant
     picture_size = 83e-6 # meters
-    Real_sim_time = 120 #seconds
+    Real_sim_time = 119 #seconds
     real_close_time =  6 #s
     
-    data_real_time = 120
+    data_real_time = 121
     data_number_of_frames = 235
     data_time_pr_frame = data_real_time/235
     data_opening_frame = 19
@@ -41,6 +41,7 @@ def constants():
     # Anxexin constants.  
     A_total_density = ((2e6/10))/(1e-18) #number/meter^3 from article directly
     A_total_conc = (A_total_density/Avogadro)*(0.1/100)#should get 0.1% of the 3D volume concentration for all proteins
+    A_total_conc = 3.3e-6 # Molar
 
     k1 = 1e4 #1e2 #30e3 # 1/(Ms) 1e-2
     k2 = 1e-1#1e-2 #1e-3 #1/s 1e2

@@ -115,6 +115,8 @@ def replenish(Grid,boxsize:int,c_out):
         Grid[y][boxsize-1] = c_out
     
     return Grid
+
+
 def cicle_boundary(x:int,y:int,boxlen:int,ref_matrix, refval):
     nx, ny = x+1 , y+1
     bx, by = x-1 , y-1
