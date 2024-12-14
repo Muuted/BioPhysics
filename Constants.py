@@ -36,6 +36,7 @@ def constants():
     pump_multiplyer = 30 # found from sim testing.
     c_pump = dt*(5e-8)*pump_multiplyer # Molar/second
     c_pump = 3.028415305204001e-09 
+    c_pump = 3.028415305204001e-10 
 
 
     # Anxexin constants.  
@@ -44,7 +45,7 @@ def constants():
     A_total_conc = 3.3e-6 # Molar
 
     k1 = 1e4 #1e2 #30e3 # 1/(Ms) 1e-2
-    k2 = 1e-1#1e-2 #1e-3 #1/s 1e2
+    k2 = 1e0#1e-2 #1e-3 #1/s 1e2
 
     
     bound_annexin_start = k1*A_total_conc*c_in/(k1*c_in + k2)

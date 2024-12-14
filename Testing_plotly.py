@@ -50,6 +50,8 @@ def Make_video2(
         video.write(cv2.imread( input_path + image_path))
         plt.pause(0.05)
 
+    
+    
     # Release the VideoWriter and move the output file to the specified location
     cv2.destroyAllWindows()
     video.release() 

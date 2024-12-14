@@ -505,6 +505,8 @@ def testing_cell_geometry():
             ,ref_name=ref_struct_name_cell
             ,hole_pos=[31,5]
         )
+    plt.matshow(py_ref_struct)
+    plt.show()
     print(np.shape(py_ref_struct))
     print(f"outsideval={outside_val} \n wall_val = {wall_val} \n inside_val = {inside_val}")
     Test_truth = False
@@ -516,7 +518,7 @@ def testing_cell_geometry():
             Test_truth = False
         open_close_membrane2(
             Grid=py_ref_struct
-            ,Xholesize=2
+            ,Xholesize=1
             ,Yholesize=4
             ,open_val=open_val
             ,wall_val=wall_val
@@ -528,6 +530,37 @@ def testing_cell_geometry():
         plt.show()
 
 
+def testing_cell_ca_diff():
+    from Cell_structure_sim import main_cell_structure_sim
+    c_in,c_out,D_Ca_cyto,T_tot,len_size,dx,dy,k1,k2,c_in_annexin,bound_annexin_start,D_Annexin_cyto,dt,close_time,c_pump,holesize,dR,R,x0,y0,wall_val,inside_val,outside_val,open_val,Real_sim_time, real_close_time = constants()
+    
+    data_path = "C:\\Users\\AdamSkovbjergKnudsen\\Desktop\\ISA Biophys\\data eksperimenter\\20191203-Calcium-sensors-ANXA-RFP for Python\\"
+    ref_struct_name_cell = "ref_struct_from_Ca_filenum4.txt"
+
+    T_tot = 2
+
+    Sim_data_list = main_cell_structure_sim(
+        c_in,c_out,D_Ca_cyto,T_tot,len_size
+        ,dx,dy,k1,k2,c_in_annexin,bound_annexin_start,D_Annexin_cyto
+        ,dt,close_time,c_pump,holesize,dR,R,x0,y0
+        ,wall_val,inside_val,outside_val,open_val
+        ,open_hole=True
+        ,ref_bakteria= ref_struct_name_cell
+        ,data_path= data_path
+                    )
+    ref_structure,Free_Ca,Free_annexin,Bound_annexin,Bound_Ca = Sim_data_list
+
+    plt.matshow(ref_structure)
+
+    plt.matshow(Free_Ca[0])
+
+    plt.matshow(Free_Ca[T_tot-1])
+
+    plt.show()
+
+    
+    
+    
 
 if __name__ =="__main__":
     
@@ -539,5 +572,6 @@ if __name__ =="__main__":
     #Finding_the_pump_value()
     #test_analytical_vs_sim_dAf_dAb()
     #test_eqaution_solution()
-    testing_cell_geometry()
+    #testing_cell_geometry()
+    testing_cell_ca_diff()
     

@@ -41,6 +41,7 @@ def make_ref_structure(
     for y in range(y0):
         for x in range(x0):
             py_ref_struct[y][x] = ref_structure.loc[y][x]
+
    
     
     min_x_wall_pos, max_x_wall_pos = 2*x0,0
@@ -61,6 +62,14 @@ def make_ref_structure(
     
     final_py_ref_struct = py_ref_struct[min_y_wall_pos-3:max_y_wall_pos+3,min_x_wall_pos-3:max_x_wall_pos+3]
 
+    for y in range(np.shape(final_py_ref_struct)[0]):
+        for x in range(np.shape(final_py_ref_struct)[1]):
+            if x == 0 or x == np.shape(final_py_ref_struct)[1]-1:
+                final_py_ref_struct[y][x] = wall_val
+            if y == 0 or y == np.shape(final_py_ref_struct)[0]-1:
+                final_py_ref_struct[y][x] = wall_val
+
+
     print(f"shape of final structure = {np.shape(final_py_ref_struct)}")
     
     if type(hole_pos) == str:
@@ -72,6 +81,7 @@ def make_ref_structure(
         hole_pos_x = int(input("Choose the x value for the hole = "))
         hole_pos_y = int(input("Choose the y value for the hole = "))
         hole_pos = [hole_pos_x,hole_pos_y]
+
     return final_py_ref_struct,outside_val,inside_val,wall_val,hole_pos
 
 

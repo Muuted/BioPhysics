@@ -33,11 +33,11 @@ def main_cell_structure_sim(
     else:
         ref_structure,outside_val,inside_val,wall_val,hole_pos = make_ref_structure(
             path=data_path
-            ,ref_name=ref_struct_name_cell
+            ,ref_name=ref_bakteria
             ,hole_pos=[34,4]
         )
 
-
+    
     Free_Ca = init_conc(
         ref_grid=ref_structure
         ,time=T_tot
@@ -68,7 +68,7 @@ def main_cell_structure_sim(
 
     open_close_membrane2(
         Grid=ref_structure
-        ,Xholesize=2
+        ,Xholesize=1
         ,Yholesize=4
         ,open_val=open_val
         ,wall_val=wall_val
@@ -83,9 +83,9 @@ def main_cell_structure_sim(
             print(f" Simulation Progress :  {int((t/T_tot)*100)} %")   
         t1, t2 = t%2, (t+1)%2
         
-        for x in range(0,len_size):
-            for y in range(0,len_size):
-                #Bound_Ca[t+1][y][x] += Bound_Ca[t][y][x]
+        for x in range(np.shape(ref_structure)[1]):
+            for y in range(np.shape(ref_structure)[0]):
+                
                 if ref_structure[y][x] == wall_val and open_hole == False:
                     Free_Ca[t+1][y][x] = wall_val
                 
@@ -93,6 +93,9 @@ def main_cell_structure_sim(
                     Free_Ca[t+1][y][x] = Free_Ca[t][y][x]
                     Free_annexin[t+1][y][x] = Free_annexin[t][y][x] 
                     Bound_annexin[t+1][y][x] = Bound_annexin[t][y][x]
+                
+                if ref_structure[y][x] == wall_val and open_hole == False:
+                    Free_Ca[t+1][y][x] = 0
 
                 if ref_structure[y][x] == inside_val or ref_structure[y][x] == open_val:
                     radii = np.sqrt( (x-x0)**2 + (y-y0)**2 )
@@ -129,7 +132,7 @@ def main_cell_structure_sim(
         if t >= close_time and open_hole==True:
             open_close_membrane2(
                 Grid=ref_structure
-                ,Xholesize=2
+                ,Xholesize=1
                 ,Yholesize=4
                 ,open_val=open_val
                 ,wall_val=wall_val
