@@ -51,11 +51,15 @@ def Make_video2(
         plt.pause(0.05)
 
     
-    
+
     # Release the VideoWriter and move the output file to the specified location
     cv2.destroyAllWindows()
     video.release() 
 
+    # remove exisiting file
+    if os.path.isfile(output_path + filename):
+        os.remove( output_path + filename )
+    
     shutil.move(filename, output_path)
 
 

@@ -8,7 +8,7 @@ import time as tm
 import os
 import pandas as pd
 from Ring_sum_file import main_ring_summing
-from Testing_plotly import Make_video2
+from Make_movie import Make_video2
 from Compare_data import main_compare
 
 if __name__ == "__main__":

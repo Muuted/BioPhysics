@@ -9,7 +9,7 @@ def constants():
     Real_sim_time = 120 #seconds
     real_close_time =  6 #s
     
-    data_real_time = 121
+    data_real_time = 120
     data_number_of_frames = 235
     data_time_pr_frame = data_real_time/235
     data_opening_frame = 19
@@ -35,8 +35,8 @@ def constants():
 
     pump_multiplyer = 30 # found from sim testing.
     c_pump = dt*(5e-8)*pump_multiplyer # Molar/second
-    c_pump = 3.028415305204001e-09 
-    c_pump = 3.028415305204001e-10 
+    c_pump_base = (3.028415305204001e-09)/(5.104687e-03)
+    c_pump = c_pump_base*dt
 
 
     # Anxexin constants.  
@@ -45,7 +45,7 @@ def constants():
     A_total_conc = 3.3e-6 # Molar
 
     k1 = 1e4 #1e2 #30e3 # 1/(Ms) 1e-2
-    k2 = 1e0#1e-2 #1e-3 #1/s 1e2
+    k2 = 1e-1#1e-2 #1e-3 #1/s 1e2
 
     
     bound_annexin_start = k1*A_total_conc*c_in/(k1*c_in + k2)
@@ -87,7 +87,7 @@ def constants():
         + f"    and k2 = {k2:e} 1/s \n "
         + f"    total number of sim steps = {T_tot:e} steps \n "
         #+ f"    sim equil time = {1/(k1*c_in_annexin + k2)} \n "
-        + f"    size of grid = ({len_size},{len_size}) \n "
+        #+ f"    size of grid = ({len_size},{len_size}) \n "
         f" ------------------------------------------------------------- \n \n "
     )
 

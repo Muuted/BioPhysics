@@ -30,7 +30,7 @@ def main_ring_summing(
     if hole_pos != "":
         x0,y0 = hole_pos
 
-    Real_time_steps_data = 235
+    Real_time_steps_data = 234
     #Real_sim_time = 1
     save_data = True
     
@@ -68,7 +68,7 @@ def main_ring_summing(
         short_Free_Annexins = np.zeros(shape=(Real_time_steps_data,Ysize,Xsize))
         short_Bound_Annexins = np.zeros(shape=(Real_time_steps_data,Ysize,Xsize))
 
-        for frame in range( len(time_step_vec_data)):
+        for frame in range( len(time_step_vec_data)-1):
             t = int(time_step_vec_data[frame])
             short_Free_Ca[frame] = Free_Ca[t]
             short_Bound_Ca[frame] = Bound_Ca[t]
@@ -97,7 +97,7 @@ def main_ring_summing(
             ,inside_val = inside_val
         )
 
-
+    
     if save_data == True:
         if 'Ring sum list Ca' in df.columns:
             df = df.drop(columns=['Ring sum list Ca'])

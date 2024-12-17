@@ -8,7 +8,7 @@ import time as tm
 import os
 import pandas as pd
 from Ring_sum_file import main_ring_summing
-from Testing_plotly import Make_video2
+from Make_movie import Make_video2
 from Compare_data import main_compare
 
 def main_cell_structure_sim(
@@ -46,6 +46,15 @@ def main_cell_structure_sim(
         ,inside_val=inside_val
         ,outside_val=outside_val
                         )
+    Bound_Ca = init_conc(
+        ref_grid=ref_structure
+        ,time=T_tot
+        ,c_in=0
+        ,c_out=0
+        ,inside_val=inside_val
+        ,outside_val=outside_val
+                        )
+    
     Free_annexin = init_conc(
         ref_grid=ref_structure
         ,time=T_tot
@@ -64,7 +73,7 @@ def main_cell_structure_sim(
         ,outside_val=outside_val
                             )
     
-    Bound_Ca = np.zeros(shape=(T_tot,len_size,len_size))
+   
 
     open_close_membrane2(
         Grid=ref_structure
@@ -160,9 +169,11 @@ if __name__ == "__main__":
     fig_folder_path =  fig_save_path + f"Cell structure simtime={Real_sim_time}\\"
     video_save_path = fig_folder_path + f"video_folder\\"     
 
+    fig_name_df = f"Cell structure Simulation_data_simtime={Real_sim_time}.pkl"
+
     save_data = True
     
-
+    sim_time1 = tm.time()
     Sim_data_list = main_cell_structure_sim(
         c_in,c_out,D_Ca_cyto,T_tot,len_size
         ,dx,dy,k1,k2,c_in_annexin,bound_annexin_start,D_Annexin_cyto
@@ -172,6 +183,7 @@ if __name__ == "__main__":
         ,ref_bakteria= ref_struct_name_cell
         ,data_path= data_path
                     )
+    sim_time2 = tm.time()
     ref_structure,Free_Ca,Free_annexin,Bound_annexin,Bound_Ca = Sim_data_list
 
     plt.matshow(ref_structure)
@@ -313,7 +325,7 @@ if __name__ == "__main__":
         if not os.path.exists(fig_folder_path):
             os.makedirs(fig_folder_path)
 
-        fig_name_df = f"Cell structure Simulation_data_simtime={Real_sim_time}.pkl"
+        
         df.to_pickle(fig_folder_path + fig_name_df)
 
         print("done making folder")
@@ -339,15 +351,17 @@ if __name__ == "__main__":
         plt.close("all")
 
         
+        ring_sim1 = tm.time()
         main_ring_summing(
             fig_save_path=fig_save_path
             ,fig_folder_path=fig_folder_path
             ,df_name=fig_name_df
             ,hole_pos= [34,4]
+            ,sum_quick=True
         )
+        ring_sim2 = tm.time()
         
-        
-        
+        compare1 = tm.time()
         main_compare(
         Real_sim_time=Real_sim_time
         ,fig_save_path=fig_save_path
@@ -355,14 +369,26 @@ if __name__ == "__main__":
         ,video_save_path=video_save_path
         ,df_name=fig_name_df
         )
+        compare2 = tm.time()
         #fig_save_path = "C:\\Users\\AdamSkovbjergKnudsen\\Desktop\\ISA Biophys\\data eksperimenter\\20191203-Calcium-sensors-ANXA-RFP for Python\\Python_simulation_data\\"
         #fig_folder_path =  fig_save_path + f"simtime={Real_sim_time}\\"   
         #video_save_path = fig_folder_path + f"video_folder\\" 
-
+        
+        make_videos1 = tm.time()
         Make_video2(
             output_path=fig_folder_path
             ,input_path=video_save_path
             ,video_name= "movie.avi"
-            ,fps= 4
+            ,fps= 8
+        )
+        make_videos2 = tm.time()
+
+        print(
+            f" \n --------------------------------- \n"
+            + f" simualation took = {(sim_time2-sim_time1)/60} s \n"
+            + f" ring sum took = {(ring_sim2-ring_sim1)/60} s \n"
+            + f" comparing took = {(compare2-compare1)/60} s \n"
+            + f" making video took = {(make_videos2-make_videos1)/60} s \n"
+            + f" \n --------------------------------- \n"
         )
         
