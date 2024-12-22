@@ -94,17 +94,17 @@ def main_cell_structure_sim(
         
         for x in range(np.shape(ref_structure)[1]):
             for y in range(np.shape(ref_structure)[0]):
+                                  
                 
-                if ref_structure[y][x] == wall_val and open_hole == False:
-                    Free_Ca[t+1][y][x] = wall_val
-                
-                if ref_structure[y][x] == wall_val or ref_structure[y][x] == outside_val:
+                if ref_structure[y][x] != inside_val:
                     Free_Ca[t+1][y][x] = Free_Ca[t][y][x]
                     Free_annexin[t+1][y][x] = Free_annexin[t][y][x] 
                     Bound_annexin[t+1][y][x] = Bound_annexin[t][y][x]
-                
+
                 if ref_structure[y][x] == wall_val and open_hole == False:
                     Free_Ca[t+1][y][x] = 0
+                    Free_annexin[t+1][y][x] = 0
+                    Bound_annexin[t+1][y][x] = 0
 
                 if ref_structure[y][x] == inside_val or ref_structure[y][x] == open_val:
                     radii = np.sqrt( (x-x0)**2 + (y-y0)**2 )
@@ -131,6 +131,7 @@ def main_cell_structure_sim(
 
                     if c_in < Free_Ca[t+1][y][x] <= c_pump + c_in:
                         Free_Ca[t+1][y][x] += c_in
+
                     if Free_Ca[t+1][y][x] >= c_pump + c_in:
                         Free_Ca[t+1][y][x] += -c_pump # the pumping mechanism
                                                 #, for only inside the cell

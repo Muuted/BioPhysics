@@ -1,5 +1,6 @@
 import os
 import matplotlib.pyplot as plt
+import matplotlib
 import numpy as np
 import time as tm
 from Constants import constants
@@ -128,10 +129,15 @@ def main_compare(
     
     fig, ax = plt.subplots(2,2)
     cmap_type = "gray" #"RdBu"
-    #cmap_type = "RdBu"
+    cmap_type = "gist_ncar"
+    #cmap_type = "nipy_spectral"
+    #cmap_type = "gnuplot"
+    
+    cmap_type = matplotlib.cm.get_cmap('gist_ncar')
+    #cmap_type.set_under('black')
 
-    vmin_val_Ca , vmax_val_Ca = 5e-8 , 4e-4
-    vmin_val_Ann, vmax_val_Ann = 1e-7 , 8e-6
+    vmin_val_Ca , vmax_val_Ca = 1e-7 , 6e-4
+    vmin_val_Ann, vmax_val_Ann = 2e-6 , 8e-6
     normalize = True
     data_opening_frame = 15
     end_i = exp_data_shape_t - 1 - data_opening_frame
@@ -150,13 +156,25 @@ def main_compare(
                                     # in the experiment to match the simulation
 
 
-        ax[0,0].plot(vec,sim_ring_data_Ca[t],label="simulation")
-        ax[0,0].plot(vec,real_data_Ca[j],label="Experiment")
+        ax[0,0].plot(vec,sim_ring_data_Ca[t]
+                     ,label="simulation"
+                     ,linestyle="-"
+                     ,marker = "o"
+                     )
+        ax[0,0].plot(vec,real_data_Ca[j]
+                     ,label="Experiment"
+                     ,linestyle="--"
+                     ,marker = "*"
+                     )
         ax[0,0].set_title(f"concentration Calcium rings \n "
                           +f"t={t_show}s of {T_final}"
                           +f"and k1={k1:.1e} , k2={k2:.1e}"
+                          ,fontsize = 15
                           )
-        ax[0,0].set_xlabel(f"Ring")
+        ax[0,0].set_xlabel(f"Ring"
+                           ,fontsize = 15
+                           ,x=1
+                           )
         ax[0,0].set_ylabel(r"[Ca]       "
                            , rotation='horizontal'
                            ,fontsize=15,y=0.45
@@ -164,13 +182,24 @@ def main_compare(
         ax[0,0].set_ylim(0,max_ca_sim*1.1)
         ax[0,0].legend()
 
-        ax[1,0].plot(vec,sim_ring_data_Ann[t],label="simulation")
-        ax[1,0].plot(vec,real_data_Ann[j],label="Experiment")
+        ax[1,0].plot(vec,sim_ring_data_Ann[t]
+                     ,label="simulation"
+                     ,linestyle="-"
+                     ,marker = "o"
+                     )
+        ax[1,0].plot(vec,real_data_Ann[j]
+                     ,label="Experiment"
+                     ,linestyle="--"
+                     ,marker = "*"
+                    )
         ax[1,0].set_title(
             f" Total concentration of Annexin rings \n"
             +f" time ={t_show}s of {T_final}"
+            ,fontsize = 15
             )
-        ax[1,0].set_xlabel(f"Ring")
+        ax[1,0].set_xlabel(f"Ring"
+                           ,fontsize = 15
+                           )
         ax[1,0].set_ylabel(r"[Ann]         "
                            , rotation='horizontal'
                            ,fontsize=15,y=0.45
@@ -179,20 +208,40 @@ def main_compare(
         ax[1,0].legend()
 
 
-        pos0 = ax[0,1].matshow(Free_Ca[t_matrix],cmap=cmap_type
-                               ,vmin=vmin_val_Ca,vmax=vmax_val_Ca
-                               )
-        ax[0,1].set_title("Concentration Ca")
+        pos0 = ax[0,1].matshow(Free_Ca[t_matrix]
+                               ,cmap=cmap_type
+                               ,vmin = vmin_val_Ca , vmax = vmax_val_Ca
+                               )       
+        
+        ax[0,1].set_title("Concentration Ca"
+                          ,fontsize = 15
+                          )
 
         ToT_ann =Bound_annexin[t_matrix] + Free_annexin[t_matrix]
-        pos0 = ax[1,1].matshow(ToT_ann ,cmap=cmap_type
-                               ,vmin=vmin_val_Ann,vmax=vmax_val_Ann
+        pos1 = ax[1,1].matshow(ToT_ann ,cmap=cmap_type
+                               ,vmin = vmin_val_Ann , vmax = vmax_val_Ann
                                )
-        ax[1,1].set_title("total concentration annexins")
+        ax[1,1].set_title("total concentration annexins"
+                          ,fontsize = 15
+                          )
         
+
         if i == 0:
-            fig.colorbar(pos0,ax=ax[0,1],shrink=0.7)
-            fig.colorbar(pos0,ax=ax[1,1],shrink=0.7)
+            cbformat0 = matplotlib.ticker.ScalarFormatter()
+            cbformat0.set_powerlimits((0,0)) 
+            
+            fig.colorbar(
+                pos0,ax=ax[0,1],shrink=1
+                ,format = cbformat0 #"%.1e"
+                    )
+            
+            
+            cbformat1 = matplotlib.ticker.ScalarFormatter()   # create the formatter
+            cbformat1.set_powerlimits((0,0))
+
+            fig.colorbar(pos1,ax=ax[1,1],shrink=1
+                         ,format = "%.1e"#cbformat1
+                         )
             #plt.show()
             #fig, ax = plt.subplots(2,2)
             #fig.colorbar(pos0,ax=ax[0,1],shrink=0.7)
@@ -231,6 +280,7 @@ if __name__ == "__main__":
     fig_folder_path =  fig_save_path + f"Cell structure simtime={Real_sim_time}\\"
     video_save_path = fig_folder_path + f"video_folder\\"     
     fig_name_df = f"Cell structure Simulation_data_simtime={Real_sim_time}.pkl"
+    
     time1 = tm.time()
     main_compare(
         Real_sim_time=Real_sim_time

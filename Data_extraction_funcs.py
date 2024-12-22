@@ -62,12 +62,13 @@ def make_ref_structure(
     
     final_py_ref_struct = py_ref_struct[min_y_wall_pos-3:max_y_wall_pos+3,min_x_wall_pos-3:max_x_wall_pos+3]
 
-    for y in range(np.shape(final_py_ref_struct)[0]):
+    """for y in range(np.shape(final_py_ref_struct)[0]):
         for x in range(np.shape(final_py_ref_struct)[1]):
             if x == 0 or x == np.shape(final_py_ref_struct)[1]-1:
                 final_py_ref_struct[y][x] = wall_val
             if y == 0 or y == np.shape(final_py_ref_struct)[0]-1:
                 final_py_ref_struct[y][x] = wall_val
+    """
 
 
     print(f"shape of final structure = {np.shape(final_py_ref_struct)}")
