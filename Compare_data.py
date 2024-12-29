@@ -91,8 +91,22 @@ def main_compare(
     animate_Ca = np.zeros(shape=(exp_data_shape_t,exp_data_shapeX))
     animate_Ann = np.zeros(shape=(exp_data_shape_t,exp_data_shapeX))
 
+    """
+    corr_ca, corr_Ann  = [],[]
+    scale_ca = 0.83#1 - sim_ring_data_Ca[0][0]/real_data_Ca[0][0]
+    scale_ann = 0.83#1 - sim_ring_data_Ann[0][0]/real_data_Ann[0][0]
 
+    print(f"scale_ca={scale_ca} \n scale_ann={scale_ann}")
+    for t in range(np.shape(sim_ring_data_Ca)[0]):
+        for ring in range(np.shape(sim_ring_data_Ca)[1]):
+            if t == 0:
+                corr_ca.append(sim_ring_data_Ca[t][ring]*scale_ca)
+                corr_Ann.append(sim_ring_data_Ann[t][ring]*scale_ann)
+            sim_ring_data_Ca[t][ring] -= corr_ca[ring]
+            sim_ring_data_Ann[t][ring] -= corr_Ann[ring]
     
+    """
+
     vec = np.linspace(0,exp_data_shapeX,exp_data_shapeX)    
 
     max_ca_sim = np.max(np.max(sim_ring_data_Ca))
@@ -101,7 +115,7 @@ def main_compare(
     max_ca_data =np.max( np.max(real_data_Ca))
     max_ann_data = np.max(np.max(real_data_Ann))
 
-        
+
     scaling_factor_ca = max_ca_data/max_ca_sim
     scaling_factor_ann = max_ann_data/max_ann_sim
     
