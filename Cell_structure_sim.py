@@ -31,10 +31,15 @@ def main_cell_structure_sim(
             ,wall_val=wall_val
                                         )
     else:
+        if ref_bakteria == f"ref_struct_from_Ca_filenum4.txt":
+            hole_pos1 = [34,4]
+        if ref_bakteria == f"ref_struct_from_Ca_filenum27.txt":
+            hole_pos1 = [37,4]
+
         ref_structure,outside_val,inside_val,wall_val,hole_pos = make_ref_structure(
             path=data_path
             ,ref_name=ref_bakteria
-            ,hole_pos=[34,4]
+            ,hole_pos=hole_pos1
         )
 
     
@@ -164,13 +169,15 @@ if __name__ == "__main__":
     c_in,c_out,D_Ca_cyto,T_tot,len_size,dx,dy,k1,k2,c_in_annexin,bound_annexin_start,D_Annexin_cyto,dt,close_time,c_pump,holesize,dR,R,x0,y0,wall_val,inside_val,outside_val,open_val,Real_sim_time, real_close_time = constants()
     
     data_path = "C:\\Users\\AdamSkovbjergKnudsen\\Desktop\\ISA Biophys\\data eksperimenter\\20191203-Calcium-sensors-ANXA-RFP for Python\\"
-    ref_struct_name_cell = "ref_struct_from_Ca_filenum4.txt"
+    
+    ref_fig_num = 4
+    ref_struct_name_cell = f"ref_struct_from_Ca_filenum{ref_fig_num}.txt"
 
     fig_save_path = "C:\\Users\\AdamSkovbjergKnudsen\\Desktop\\ISA Biophys\\data eksperimenter\\20191203-Calcium-sensors-ANXA-RFP for Python\\Python_simulation_data\\"
-    fig_folder_path =  fig_save_path + f"Cell structure simtime={Real_sim_time}\\"
+    fig_folder_path =  fig_save_path + f"Cell structure {ref_fig_num} simtime={Real_sim_time}\\"
     video_save_path = fig_folder_path + f"video_folder\\"     
 
-    fig_name_df = f"Cell structure Simulation_data_simtime={Real_sim_time}.pkl"
+    fig_name_df = f"Cell structure {ref_fig_num} Simulation_data_simtime={Real_sim_time}.pkl"
 
     save_data = True
     
