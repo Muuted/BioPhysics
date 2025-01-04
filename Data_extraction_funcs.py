@@ -3,7 +3,8 @@ import matplotlib.pyplot as plt
 import pandas as pd
 
 def make_ref_structure(
-        path,ref_name
+        path
+        ,ref_name
         ,hole_pos
         ):
     
@@ -17,7 +18,7 @@ def make_ref_structure(
 
     ref_structure = pd.read_csv(path + ref_name,delimiter=',',header=None)
 
-    y0,x0= ref_structure.shape
+    y0,x0 = ref_structure.shape
     val_list = []
 
     for y in range(y0):
@@ -253,14 +254,15 @@ def Ring_sum_quick(
 
 def sum_in_cell(ref_Grid,Matrix_Free,Matrix_Bound,inside_val:int)->list:
     print(f"shape of Matrix = {np.shape(Matrix_Free)}")
-    T_tot  = np.shape(Matrix_Free)[0]
+    T_tot,Ysize , Xsize  = np.shape(Matrix_Free)
     sidelen = np.shape(Matrix_Free)[1]
     conc_time = []
 
+    #Ysize , Xsize = np.shape(ref_Grid)
     for t in range(T_tot):
         totsum = 0
-        for y in range(sidelen):
-            for x in range(sidelen):
+        for y in range(Ysize):
+            for x in range(Xsize):
                 if ref_Grid[y][x] == inside_val:
                     totsum += Matrix_Free[t][y][x]
                     totsum += Matrix_Bound[t][y][x]

@@ -158,7 +158,7 @@ def main_cell_structure_sim(
             print(f"wall closure time t={t}")
         
                 
-    return ref_structure,Free_Ca,Free_annexin,Bound_annexin,Bound_Ca
+    return ref_structure,Free_Ca,Free_annexin,Bound_annexin,Bound_Ca,x0,y0
     
 
 
@@ -172,7 +172,10 @@ if __name__ == "__main__":
     
     ref_fig_num = 4
     ref_struct_name_cell = f"ref_struct_from_Ca_filenum{ref_fig_num}.txt"
-
+    if ref_struct_name_cell == f"ref_struct_from_Ca_filenum4.txt":
+            hole_pos1 = [34,4]
+    if ref_struct_name_cell == f"ref_struct_from_Ca_filenum27.txt":
+        hole_pos1 = [37,4]
     fig_save_path = "C:\\Users\\AdamSkovbjergKnudsen\\Desktop\\ISA Biophys\\data eksperimenter\\20191203-Calcium-sensors-ANXA-RFP for Python\\Python_simulation_data\\"
     fig_folder_path =  fig_save_path + f"Cell structure {ref_fig_num} simtime={Real_sim_time}\\"
     video_save_path = fig_folder_path + f"video_folder\\"     
@@ -192,7 +195,7 @@ if __name__ == "__main__":
         ,data_path= data_path
                     )
     sim_time2 = tm.time()
-    ref_structure,Free_Ca,Free_annexin,Bound_annexin,Bound_Ca = Sim_data_list
+    ref_structure,Free_Ca,Free_annexin,Bound_annexin,Bound_Ca,x0,y0 = Sim_data_list
 
     plt.matshow(ref_structure)
     plt.title("ref structure")
@@ -364,7 +367,7 @@ if __name__ == "__main__":
             fig_save_path=fig_save_path
             ,fig_folder_path=fig_folder_path
             ,df_name=fig_name_df
-            ,hole_pos= [34,4]
+            ,hole_pos= [x0,y0]
             ,sum_quick=True
         )
         ring_sim2 = tm.time()
