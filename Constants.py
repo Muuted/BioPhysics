@@ -2,12 +2,14 @@ from Circle_funcs import stabil_condi
 import matplotlib.pyplot as plt
 from Circle_funcs import Annexin_stablilization
 import numpy as np
-def constants():
+def constants(
+          print_vals = True
+            ):
     Avogadro = 6.02214076e23 # 1/mol
     # time and step size, and diffusion constant
     picture_size = 83e-6 # meters
-    Real_sim_time =  60#120 #seconds
-    real_close_time =  6 #s
+    Real_sim_time =  120 #seconds
+    real_close_time =  10 #s
     
     data_real_time = 120
     data_number_of_frames = 235
@@ -15,6 +17,19 @@ def constants():
     data_opening_frame = 19
     data_hole_open_time = 19*data_time_pr_frame
     
+
+    ref_fig_num_list = [4,27]
+    ref_fig_num = 4
+    ref_struct_name_cell = f"ref_struct_from_Ca_filenum{ref_fig_num}.txt"
+    data_path = "C:\\Users\\AdamSkovbjergKnudsen\\Desktop\\ISA Biophys\\data eksperimenter\\20191203-Calcium-sensors-ANXA-RFP for Python\\"
+    fig_save_path = "C:\\Users\\AdamSkovbjergKnudsen\\Desktop\\ISA Biophys\\data eksperimenter\\20191203-Calcium-sensors-ANXA-RFP for Python\\Python_simulation_data\\"
+    fig_folder_path =  fig_save_path + f"Cell structure {ref_fig_num} simtime={Real_sim_time}\\"
+    video_save_path = fig_folder_path + f"video_folder\\"     
+
+    fig_name_df = f"Cell structure {ref_fig_num} Simulation_data_simtime={Real_sim_time}.pkl"
+
+    Ca_data_experiment = f"Ring_sum_data_Ca_filenum{ref_fig_num}.txt"
+    Annexin_data_experiment = f"Ring_sum_data_Annexins_filenum{ref_fig_num}.txt"
 
     len_size = 80 # number of grid points
     dx, dy = picture_size/len_size ,picture_size/len_size # meters
@@ -24,7 +39,7 @@ def constants():
     c_in = 100e-9#*10*(-9)#e-9 #M Concetration inside cell
 
     D_Ca_cyto  = 2.7e-11#*10**(-11)#e-11 #meters^2/second
-    D_Annexin_cyto  = 5.0e-11#e-11 #meters^2/second
+    D_Annexin_cyto  = 2.7e-11 #5.0e-11 #meters^2/second
 
     dt = stabil_condi(dt=0.1,dx=dx,dy=dy
                     ,D_list=[ D_Ca_cyto , D_Annexin_cyto ]
@@ -45,7 +60,7 @@ def constants():
     A_total_conc = 3.3e-6 # Molar
 
     k1 = 1e4 #1e2 #30e3 # 1/(Ms) 1e-2
-    k2 = 1e-1#1e-2 #1e-3 #1/s 1e2
+    k2 = 1 #1e-1#1e-2 #1e-3 #1/s 1e2
 
     
     bound_annexin_start = k1*A_total_conc*c_in/(k1*c_in + k2)
@@ -62,34 +77,40 @@ def constants():
     
     x0,y0 = int(len_size/2), int(len_size/2)
 
+    if ref_fig_num == 4:
+            x0,y0 = [34,4]
+    if ref_fig_num == 27:
+        x0,y0 = [37,4]
+
     # Defining areas of interest, values for regonition.
     wall_val = 100
+    open_val = 20
     inside_val = 10
     outside_val = -5
-    open_val = 20
 
-    print(
-        f" \n \n"
-        + "------------- Constant used in Simulation -------------------- \n "
-        + f"    Real simulation time = {Real_sim_time} s \n "
-        + f"    hole close time = {int(real_close_time)} s \n " 
-        + f"    dx=dy = {dx:e} m \n "
-        + f"    dt = {dt:e} m \n "
-        + f"    [Ca] outside cell = {c_out:e} \n "
-        + f"    [Ca] inside cell = {c_in:e} \n "
-        + f"    Diffuse constant Ca in cell = {D_Ca_cyto} m^2/s \n "
-        + f"    Diffuse constant Annexin in cell = {D_Annexin_cyto} m^2/s \n "
-        + f"    c_pump = {c_pump} M/s \n "
-        + f"    Total initial conc Annexins = {A_total_conc:e} M \n "
-        + f"    c_in_ann = {c_in_annexin:e} M \n "
-        + f"    and the bound_ann_start = {bound_annexin_start:e} M \n "
-        + f"    k1 = {k1:e} 1/Ms \n "
-        + f"    and k2 = {k2:e} 1/s \n "
-        + f"    total number of sim steps = {T_tot:e} steps \n "
-        #+ f"    sim equil time = {1/(k1*c_in_annexin + k2)} \n "
-        #+ f"    size of grid = ({len_size},{len_size}) \n "
-        f" ------------------------------------------------------------- \n \n "
-    )
+    if print_vals == True:
+        print(
+            f" \n \n"
+            + "------------- Constant used in Simulation -------------------- \n "
+            + f"    Real simulation time = {Real_sim_time} s \n "
+            + f"    hole close time = {int(real_close_time)} s \n " 
+            + f"    dx=dy = {dx:e} m \n "
+            + f"    dt = {dt:e} m \n "
+            + f"    [Ca] outside cell = {c_out:e} \n "
+            + f"    [Ca] inside cell = {c_in:e} \n "
+            + f"    Diffuse constant Ca in cell = {D_Ca_cyto} m^2/s \n "
+            + f"    Diffuse constant Annexin in cell = {D_Annexin_cyto} m^2/s \n "
+            + f"    c_pump = {c_pump} M/s \n "
+            + f"    Total initial conc Annexins = {A_total_conc:e} M \n "
+            + f"    c_in_ann = {c_in_annexin:e} M \n "
+            + f"    and the bound_ann_start = {bound_annexin_start:e} M \n "
+            + f"    k1 = {k1:e} 1/Ms \n "
+            + f"    and k2 = {k2:e} 1/s \n "
+            + f"    total number of sim steps = {T_tot:e} steps \n "
+            #+ f"    sim equil time = {1/(k1*c_in_annexin + k2)} \n "
+            #+ f"    size of grid = ({len_size},{len_size}) \n "
+            f" ------------------------------------------------------------- \n \n "
+        )
 
     args_list = [
         c_in,c_out,D_Ca_cyto,T_tot,len_size
@@ -100,6 +121,10 @@ def constants():
         ,dt,close_time,c_pump,holesize,dR,R,x0,y0
         ,wall_val,inside_val,outside_val,open_val
         ,Real_sim_time, real_close_time
+        ,ref_struct_name_cell ,fig_save_path
+        ,fig_folder_path ,video_save_path 
+        ,fig_name_df ,data_path
+        ,Ca_data_experiment ,Annexin_data_experiment
     ]
     return args_list
 

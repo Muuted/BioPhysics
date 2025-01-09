@@ -212,104 +212,6 @@ def test_annexin_diff_open_hole():
     plt.legend()
     plt.show()
 
-
-def Finding_the_pump_value():
-    print(r"Finding the value for the $ c_{pump} $ term")
-    from Circle_sim import main_circle_sim
-    c_in,c_out,D_Ca_cyto,T_tot,len_size,dx,dy,k1,k2,c_in_annexin,bound_annexin_start,D_Annexin_cyto,dt,close_time,c_pump,holesize,dR,R,x0,y0,wall_val,inside_val,outside_val,open_val,Real_sim_time, real_close_time = constants()
-    Real_time = 80 #seconds.
-    ref_time = int(55/dt)
-    T_tot = int(Real_time/dt) # number of time steps.
-    c_in_annexin = 0
-    bound_annexin_start = 0
-    time1 = tm.time()
-    real_time_vec = np.linspace(0,Real_time,T_tot)
-    d_c_pump = 0.5 # change of the pump value
-    to_small =False
-    to_big = False
-    N = 100
-    for i in range(N):
-        print(
-            f"\n ----------------------- \n"
-            +f" we are doing the i={i} of {N-1}  \n "
-            +f" and c_pump={c_pump}"
-              )
-
-        Sim_data_list = main_circle_sim(
-            c_in,c_out,D_Ca_cyto,T_tot,len_size
-            ,dx,dy,k1,k2,c_in_annexin,bound_annexin_start,D_Annexin_cyto
-            ,dt,close_time,c_pump,holesize,dR,R,x0,y0
-            ,wall_val,inside_val,outside_val,open_val
-                        )
-        time2 = tm.time()
-
-        print(f" \n Sim took {(time2-time1)%60} min \n ")
-
-        ref_structure = Sim_data_list[0]
-        Free_Ca = Sim_data_list[1]
-
-        conc_Ca_time = sum_in_cell(
-            ref_Grid=ref_structure
-            ,Matrix_Free=Free_Ca
-            ,Matrix_Bound= np.zeros(shape=(T_tot,len_size,len_size))
-            ,inside_val=inside_val
-                                    )
-        
-
-        if conc_Ca_time[ref_time]/max(conc_Ca_time) < 0.1:
-            c_pump *=  (1 - d_c_pump)
-            to_small = True
-            print(f"\n ----------------------- \n")
-            print(f"to small   c_pump={c_pump}")
-
-
-        if conc_Ca_time[ref_time]/max(conc_Ca_time) > 0.2:
-            c_pump *= (1 + d_c_pump)
-            to_big = True
-            print(f"\n \n ----------------------- \n \n")
-            print(f"to big   c_pump={c_pump}")
-
-
-        if to_big and to_small == True:
-            d_c_pump *= 0.5
-            to_big = False
-            to_small = False
-            print(f"we changed the d_c_pump")               
-        
-        if 0.1 < conc_Ca_time[ref_time]/max(conc_Ca_time)  < 0.2:
-            print(f"\n ----------------- ------ \n")
-            print(f"We found the c_pump value it is c_pump = {c_pump}")
-            print(f"\n ----------------- ------ \n")
-
-            df = pd.DataFrame({
-                'graph': [conc_Ca_time],
-                'Found C_pump': c_pump
-            })
-
-            fig_save_path = "C:\\Users\\AdamSkovbjergKnudsen\\Desktop\\ISA Biophys\\data eksperimenter\\20191203-Calcium-sensors-ANXA-RFP for Python\\Python_simulation_data\\"
-            fig_folder_path =  fig_save_path #+ f"simtime={Real_sim_time}\\"
-            df_name = "Found C_pump value.pkl"
-            df.to_pickle(fig_save_path + df_name)
-            break
-            
-        if i == N-1:
-            print(f"\n \n ----------------- ------ \n \n")
-            print("Never found the correct value")
-            print(f"\n \n ----------------- ------ \n \n")
-        
-        #print(f"value at {len(conc_Ca_time)-1} s, conc_Ca_time[time_compare] = {conc_Ca_time[len(conc_Ca_time)-1]}")
-
-    plt.figure()
-    plt.plot(real_time_vec,conc_Ca_time/max(conc_Ca_time),label="Total [Ca]")
-    plt.plot(55,0.2,label="target value",marker='o',color='red')
-    plt.title(f"Total [Ca] in cell \n " + r"$ c_{pump} $" + r" $ \approx $ " + f"{round(c_pump,2)}")
-    plt.xlabel("time [s]")
-    plt.ylabel(r" $ \frac{ [Ca]_{tot} }{ max( [Ca]_{tot} ) } $ "
-               #,rotation='horizontal'
-               ,fontsize=20#,y=0.45
-    )
-    plt.legend()
-    plt.show()
     
 
 def test_analytical_vs_sim_dAf_dAb():
@@ -569,9 +471,8 @@ if __name__ =="__main__":
     #test_Ca_diff_corner_open_hole()
     #test_annexin_diff_closed_hole()
     #test_annexin_diff_open_hole()
-    #Finding_the_pump_value()
     #test_analytical_vs_sim_dAf_dAb()
     #test_eqaution_solution()
     #testing_cell_geometry()
-    testing_cell_ca_diff()
+    #testing_cell_ca_diff()
     

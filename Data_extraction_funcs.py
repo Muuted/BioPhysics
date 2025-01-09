@@ -118,7 +118,7 @@ def Ring_sum(
 
 
     Tsize, Ysize, Xsize = np.shape(sim_grid_free_Ca)
-    x0,y0 = hole_pos #position of the hole in the membrane
+    x0,y0 = hole_pos 
 
     Radius_vec = np.linspace(
         start=0
@@ -175,7 +175,7 @@ def Ring_sum(
 
     return Ring_sum_list_Ca, Ring_sum_list_Annexins 
 
-
+"""
 def Ring_sum_quick(
         ref_grid
         ,sim_grid_free_Ca,sim_grid_bound_Ca
@@ -245,12 +245,13 @@ def Ring_sum_quick(
         if t == 0:
             plt.matshow(Visual_grid)
             plt.title("Visual Grid, does this look correct? \n if yes, just close figure and sum will continue")
-            #plt.show()
+            plt.show()
 
         
         
 
     return Ring_sum_list_Ca, Ring_sum_list_Annexins 
+"""
 
 def sum_in_cell(ref_Grid,Matrix_Free,Matrix_Bound,inside_val:int)->list:
     print(f"shape of Matrix = {np.shape(Matrix_Free)}")
@@ -284,5 +285,51 @@ def remove_conc_outside(ref_grid,grid,outside_val):
                 removed_conc_grid[y][x] = grid[y][x]
     return removed_conc_grid    
 
+
+def Area_under_graph(
+        graph_data
+        ,ring_dist = 1
+        ):
+
+    Tsize,rings = np.shape(graph_data)
+
+    area_time = np.zeros(shape=Tsize)
+    
+    for t in range(Tsize):
+        Area = 0
+        for i in range(rings-1):
+            Area += (ring_dist/2)*(graph_data[t][i] + graph_data[t][i+1])
+
+        area_time[t] = Area
+
+    return area_time
+
+
+def scale_the_data(
+        sim_ring_data_Ca
+        ,sim_ring_data_Ann
+        ,real_data_Ca
+        ,real_data_Ann
+                ):
+ 
+    exp_data_shape_t,exp_data_shapeX = np.shape(real_data_Ca)
+
+    max_ca_sim = np.max(np.max(sim_ring_data_Ca))
+    max_ann_sim = np.max(np.max(sim_ring_data_Ann))
+
+    max_ca_data =np.max( np.max(real_data_Ca))
+    max_ann_data = np.max(np.max(real_data_Ann))
+
+    scaling_factor_ca = max_ca_data/max_ca_sim
+    scaling_factor_ann = max_ann_data/max_ann_sim
+    
+    for t in range(exp_data_shape_t):
+        for R in range(exp_data_shapeX):
+            real_data_Ca[t][R] *= 1/scaling_factor_ca
+            real_data_Ann[t][R] *= 1/scaling_factor_ann
+
+    
+
+    pass
 if __name__ == "__main__":
     pass

@@ -9,6 +9,12 @@ from Data_extraction_funcs import *
 from Circle_funcs import *
      
 
+A = [1,2,3,4]
+print(A[0:2])
+print(A[2:6])
+
+
+exit()
 def compress_img(path, img_name,ysize_goal):
     ref_string = "\\" + "\\"
     for i in range(3):

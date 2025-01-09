@@ -39,10 +39,10 @@ def main_cell_structure_sim(
         ref_structure,outside_val,inside_val,wall_val,hole_pos = make_ref_structure(
             path=data_path
             ,ref_name=ref_bakteria
-            ,hole_pos=hole_pos1
+            ,hole_pos=[x0,y0]#hole_pos1
         )
 
-    
+    x0,y0 = hole_pos
     Free_Ca = init_conc(
         ref_grid=ref_structure
         ,time=T_tot
@@ -158,7 +158,7 @@ def main_cell_structure_sim(
             print(f"wall closure time t={t}")
         
                 
-    return ref_structure,Free_Ca,Free_annexin,Bound_annexin,Bound_Ca,x0,y0
+    return ref_structure,Free_Ca,Free_annexin,Bound_annexin,Bound_Ca
     
 
 
@@ -166,21 +166,16 @@ def main_cell_structure_sim(
  
 
 if __name__ == "__main__":
-    c_in,c_out,D_Ca_cyto,T_tot,len_size,dx,dy,k1,k2,c_in_annexin,bound_annexin_start,D_Annexin_cyto,dt,close_time,c_pump,holesize,dR,R,x0,y0,wall_val,inside_val,outside_val,open_val,Real_sim_time, real_close_time = constants()
-    
-    data_path = "C:\\Users\\AdamSkovbjergKnudsen\\Desktop\\ISA Biophys\\data eksperimenter\\20191203-Calcium-sensors-ANXA-RFP for Python\\"
-    
-    ref_fig_num = 4
-    ref_struct_name_cell = f"ref_struct_from_Ca_filenum{ref_fig_num}.txt"
-    if ref_struct_name_cell == f"ref_struct_from_Ca_filenum4.txt":
-            hole_pos1 = [34,4]
-    if ref_struct_name_cell == f"ref_struct_from_Ca_filenum27.txt":
-        hole_pos1 = [37,4]
-    fig_save_path = "C:\\Users\\AdamSkovbjergKnudsen\\Desktop\\ISA Biophys\\data eksperimenter\\20191203-Calcium-sensors-ANXA-RFP for Python\\Python_simulation_data\\"
-    fig_folder_path =  fig_save_path + f"Cell structure {ref_fig_num} simtime={Real_sim_time}\\"
-    video_save_path = fig_folder_path + f"video_folder\\"     
+    const_list = constants()
+    c_in ,c_out, D_Ca_cyto, T_tot, len_size, dx, dy, k1, k2 = const_list[0:9]
+    c_in_annexin ,bound_annexin_start ,D_Annexin_cyto = const_list[9:12]
+    dt ,close_time, c_pump, holesize ,dR ,R ,x0 ,y0 = const_list[12:20]
+    wall_val ,inside_val ,outside_val ,open_val = const_list[20:24]
+    Real_sim_time, real_close_time = const_list[24:26]
+    ref_struct_name_cell ,fig_save_path = const_list[26:28]
+    fig_folder_path ,video_save_path ,fig_name_df, data_path = const_list[28:32]
+    Ca_data_exp ,Annexin_data_exp = const_list[32:34]
 
-    fig_name_df = f"Cell structure {ref_fig_num} Simulation_data_simtime={Real_sim_time}.pkl"
 
     save_data = True
     
@@ -195,7 +190,7 @@ if __name__ == "__main__":
         ,data_path= data_path
                     )
     sim_time2 = tm.time()
-    ref_structure,Free_Ca,Free_annexin,Bound_annexin,Bound_Ca,x0,y0 = Sim_data_list
+    ref_structure,Free_Ca,Free_annexin,Bound_annexin,Bound_Ca= Sim_data_list
 
     plt.matshow(ref_structure)
     plt.title("ref structure")
@@ -281,8 +276,7 @@ if __name__ == "__main__":
     pos4 = ax[1].matshow(Bound_Ca[T_tot-1],cmap=cmap_type)
     ax[1].set_title("bound Ca end")
     fig_mat_Ca.colorbar(pos4,ax=ax[1],shrink=0.7)
-    
-    
+
 
 
     conc_over_time_Free_Ca = sum_in_cell(ref_Grid=ref_structure
@@ -363,27 +357,29 @@ if __name__ == "__main__":
 
         
         ring_sim1 = tm.time()
+
         main_ring_summing(
             fig_save_path=fig_save_path
             ,fig_folder_path=fig_folder_path
             ,df_name=fig_name_df
-            ,hole_pos= [x0,y0]
+            ,hole_pos= ""
             ,sum_quick=True
         )
         ring_sim2 = tm.time()
         
         compare1 = tm.time()
+        
         main_compare(
         Real_sim_time=Real_sim_time
         ,fig_save_path=fig_save_path
         ,fig_folder_path=fig_folder_path
         ,video_save_path=video_save_path
         ,df_name=fig_name_df
+        ,data_path=data_path
+        ,Ca_data=Ca_data_exp
+        ,Annexin_data=Annexin_data_exp
         )
         compare2 = tm.time()
-        #fig_save_path = "C:\\Users\\AdamSkovbjergKnudsen\\Desktop\\ISA Biophys\\data eksperimenter\\20191203-Calcium-sensors-ANXA-RFP for Python\\Python_simulation_data\\"
-        #fig_folder_path =  fig_save_path + f"simtime={Real_sim_time}\\"   
-        #video_save_path = fig_folder_path + f"video_folder\\" 
         
         make_videos1 = tm.time()
         Make_video2(
