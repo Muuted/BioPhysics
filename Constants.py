@@ -2,22 +2,22 @@ from Circle_funcs import stabil_condi
 import matplotlib.pyplot as plt
 from Circle_funcs import Annexin_stablilization
 import numpy as np
+from Data_extraction_funcs import Determining_open_n_close_time
+
 def constants(
           print_vals = True
             ):
+    
+
+
+
+    
     Avogadro = 6.02214076e23 # 1/mol
     # time and step size, and diffusion constant
     picture_size = 83e-6 # meters
     Real_sim_time =  120 #seconds
     real_close_time =  10 #s
     
-    data_real_time = 120
-    data_number_of_frames = 235
-    data_time_pr_frame = data_real_time/235
-    data_opening_frame = 19
-    data_hole_open_time = 19*data_time_pr_frame
-    
-
     ref_fig_num_list = [4,27]
     ref_fig_num = 4
     ref_struct_name_cell = f"ref_struct_from_Ca_filenum{ref_fig_num}.txt"
@@ -25,12 +25,24 @@ def constants(
     fig_save_path = "C:\\Users\\AdamSkovbjergKnudsen\\Desktop\\ISA Biophys\\data eksperimenter\\20191203-Calcium-sensors-ANXA-RFP for Python\\Python_simulation_data\\"
     fig_folder_path =  fig_save_path + f"Cell structure {ref_fig_num} simtime={Real_sim_time}\\"
     video_save_path = fig_folder_path + f"video_folder\\"     
-
     fig_name_df = f"Cell structure {ref_fig_num} Simulation_data_simtime={Real_sim_time}.pkl"
-
     Ca_data_experiment = f"Ring_sum_data_Ca_filenum{ref_fig_num}.txt"
     Annexin_data_experiment = f"Ring_sum_data_Annexins_filenum{ref_fig_num}.txt"
+    
+    """
+    frame_open, frame_close, data_number_of_frames = Determining_open_n_close_time(
+        data_path=data_path
+        ,Ca_data_exp=Ca_data_experiment
+        ,Annexin_data_exp=Annexin_data_experiment
+    )
+    
 
+    data_real_time = 120
+    data_time_pr_frame = data_real_time/data_number_of_frames
+    data_hole_open_time = frame_open*data_time_pr_frame
+    real_close_time = frame_close*data_time_pr_frame
+    """
+  
     len_size = 80 # number of grid points
     dx, dy = picture_size/len_size ,picture_size/len_size # meters
 
@@ -55,9 +67,10 @@ def constants(
 
 
     # Anxexin constants.  
-    A_total_density = ((2e6/10))/(1e-18) #number/meter^3 from article directly
-    A_total_conc = (A_total_density/Avogadro)*(0.1/100)#should get 0.1% of the 3D volume concentration for all proteins
-    A_total_conc = 3.3e-6 # Molar
+    A_total_density = (2.0e6)/(1.0e-18) #number/meter^3 from article directly
+    A_total_conc = (A_total_density/Avogadro)*(0.1/100.0)/1000.0 #should get 0.1% of the 3D volume concentration for all proteins
+
+    #A_total_conc = 3.3e-6 # Molar
 
     k1 = 1e4 #1e2 #30e3 # 1/(Ms) 1e-2
     k2 = 1 #1e-1#1e-2 #1e-3 #1/s 1e2

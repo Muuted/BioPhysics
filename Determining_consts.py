@@ -285,7 +285,16 @@ def Find_pump_via_area():
             ,stop = len(ca_sim)
             ,num= len(conc_over_time_Free_Ca)
         )
-        conc_over_time_Free_Ca = [conc_over_time_Free_Ca[t] - conc_over_time_Free_Ca[0] for t in range(len(conc_over_time_Free_Ca))]
+        #conc_over_time_Free_Ca = [conc_over_time_Free_Ca[t] - conc_over_time_Free_Ca[0] for t in range(len(conc_over_time_Free_Ca))]
+
+        plt.figure()
+        #plt.plot(ca_sim/max(ca_sim),'.-',label="sim")
+        plt.plot(ca_exp/max(ca_exp),'.-',label="exp")
+        #plt.plot(vec,conc_over_time_Free_Ca/max(conc_over_time_Free_Ca),label="conc time")
+        plt.legend()
+        plt.show()
+        
+        exit()
         plt.figure()
         plt.plot(ca_sim/max(ca_sim),'.-',label="sim")
         plt.plot(ca_exp[16:]/max(ca_exp),'.-',label="exp")

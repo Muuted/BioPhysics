@@ -1,6 +1,7 @@
 import numpy as np
 import matplotlib.pyplot as plt
 import pandas as pd
+#from Constants import constants
 
 def make_ref_structure(
         path
@@ -329,7 +330,78 @@ def scale_the_data(
             real_data_Ann[t][R] *= 1/scaling_factor_ann
 
     
+def Determining_open_n_close_time(
+        data_path
+        ,Ca_data_exp
+        ,Annexin_data_exp
+        ):
+    
+  
 
-    pass
+    """  --------- Experimental data loaded  -------------- """
+
+    data_Ca = pd.read_csv(data_path + Ca_data_exp)
+    data_Ann= pd.read_csv(data_path + Annexin_data_exp)
+    
+    exp_data_shape_t, exp_data_shapeX = np.shape(data_Ca)        
+
+    real_data_Ca = np.zeros(shape=(exp_data_shape_t,exp_data_shapeX))
+    real_data_Ann = np.zeros(shape=(exp_data_shape_t,exp_data_shapeX))
+
+    for t in range(exp_data_shape_t):
+        for R in range(exp_data_shapeX):
+            real_data_Ca[t][R] = data_Ca.loc[t][R]
+            real_data_Ann[t][R] = data_Ann.loc[t][R]
+
+
+    tot_ca = [np.sum(real_data_Ca[t][:]) for t in range(exp_data_shape_t)]
+
+    number_of_frames = len(tot_ca)
+    
+    avg_start = 0
+    N = 5
+    for i in range(N):
+        avg_start += abs((tot_ca[i+1] - tot_ca[i]))/N
+
+    max_conc =0
+    a_max = 0
+    frame_open = -1
+    frame_close = 0
+    for i in range(len(tot_ca)-1):
+        a = tot_ca[i+1] - tot_ca[i]
+        if a > 50*avg_start and frame_open == -1:
+            a_max = a
+            frame_open = i
+        
+        if max_conc < tot_ca[i]:
+            max_conc = tot_ca[i]
+            frame_close = i
+    
+    print(f"open frame = {frame_open} and the close frame = {frame_close}")
+    print(f"total frame = {len(tot_ca)}")
+    plt.figure()
+    plt.plot(tot_ca,linestyle='-.',color="red")
+    plt.vlines(x=frame_open,ymin=min(tot_ca),ymax=max(tot_ca),label="hole opens")
+    plt.vlines(x=frame_close,ymin=min(tot_ca),ymax=max(tot_ca),linestyles='--',label="hole close")
+    plt.show()
+
+    return frame_open, frame_close, number_of_frames
+    
 if __name__ == "__main__":
-    pass
+    """
+    const_list = constants()
+    c_in ,c_out, D_Ca_cyto, T_tot, len_size, dx, dy, k1, k2 = const_list[0:9]
+    c_in_annexin ,bound_annexin_start ,D_Annexin_cyto = const_list[9:12]
+    dt ,close_time, c_pump, holesize ,dR ,R ,x0 ,y0 = const_list[12:20]
+    wall_val ,inside_val ,outside_val ,open_val = const_list[20:24]
+    Real_sim_time, real_close_time = const_list[24:26]
+    ref_struct_name_cell ,fig_save_path = const_list[26:28]
+    fig_folder_path ,video_save_path ,fig_name_df, data_path = const_list[28:32]
+    Ca_data_exp ,Annexin_data_exp = const_list[32:34]
+
+    Determining_open_n_close_time(
+        data_path=data_path
+        ,Ca_data_exp=Ca_data_exp
+        ,Annexin_data_exp=Annexin_data_exp
+    )
+    """
