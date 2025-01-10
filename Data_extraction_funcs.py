@@ -148,15 +148,16 @@ def Ring_sum(
             norm = 0
             for y in range(Ysize):
                 for x in range(Xsize):
-
+                    background_Ca = sim_grid_free_Ca[0][y][x] + sim_grid_bound_Ca[0][y][x]
+                    background_Ann = sim_grid_free_Annexin[0][y][x] + sim_grid_bound_Annexin[0][y][x]
                     if 0 <= x < Xsize and 0 <= y < Ysize:
                         if ref_grid[y][x] == inside_val:
                             r = np.sqrt( (x - x0)**2 + (y - y0)**2 )
 
-                            if R2 <= r <= R1 :
+                            if R2 <= r < R1 :
                                 norm += 1
-                                sum_Ca += sim_grid_free_Ca[t][y][x] + sim_grid_bound_Ca[t][y][x]
-                                sum_Annexin += sim_grid_free_Annexin[t][y][x] + sim_grid_bound_Annexin[t][y][x]
+                                sum_Ca += sim_grid_free_Ca[t][y][x] + sim_grid_bound_Ca[t][y][x] - background_Ca
+                                sum_Annexin += sim_grid_free_Annexin[t][y][x] + sim_grid_bound_Annexin[t][y][x] - background_Ann
                                 if t == 0:
                                     Visual_grid[y][x] = Vis_val
 
@@ -334,6 +335,7 @@ def Determining_open_n_close_time(
         data_path
         ,Ca_data_exp
         ,Annexin_data_exp
+        ,showplot = False
         ):
     
   
@@ -357,7 +359,7 @@ def Determining_open_n_close_time(
     tot_ca = [np.sum(real_data_Ca[t][:]) for t in range(exp_data_shape_t)]
 
     number_of_frames = len(tot_ca)
-    
+
     avg_start = 0
     N = 5
     for i in range(N):
@@ -379,11 +381,12 @@ def Determining_open_n_close_time(
     
     print(f"open frame = {frame_open} and the close frame = {frame_close}")
     print(f"total frame = {len(tot_ca)}")
-    plt.figure()
-    plt.plot(tot_ca,linestyle='-.',color="red")
-    plt.vlines(x=frame_open,ymin=min(tot_ca),ymax=max(tot_ca),label="hole opens")
-    plt.vlines(x=frame_close,ymin=min(tot_ca),ymax=max(tot_ca),linestyles='--',label="hole close")
-    plt.show()
+    if showplot == True:
+        plt.figure()
+        plt.plot(tot_ca,linestyle='-.',color="red")
+        plt.vlines(x=frame_open,ymin=min(tot_ca),ymax=max(tot_ca),label="hole opens")
+        plt.vlines(x=frame_close,ymin=min(tot_ca),ymax=max(tot_ca),linestyles='--',label="hole close")
+        plt.show()
 
     return frame_open, frame_close, number_of_frames
     

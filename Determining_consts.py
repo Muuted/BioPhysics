@@ -146,7 +146,6 @@ def Annexin_equil_ratio():
     plt.show()
 
 
-
 def Find_pump_via_area():
     print(r"Finding the value for the $ c_{pump} $ term")
 
@@ -293,7 +292,7 @@ def Find_pump_via_area():
         #plt.plot(vec,conc_over_time_Free_Ca/max(conc_over_time_Free_Ca),label="conc time")
         plt.legend()
         plt.show()
-        
+
         exit()
         plt.figure()
         plt.plot(ca_sim/max(ca_sim),'.-',label="sim")

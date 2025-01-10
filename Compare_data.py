@@ -18,6 +18,7 @@ def main_compare(
         ,data_path
         ,Ca_data
         ,Annexin_data
+        ,opening_frame
         ):
     Real_time_steps_data = 235
 
@@ -47,9 +48,17 @@ def main_compare(
             sim_ring_data_Ann = df_sim['Ring sum list Annexin'][i]
             print(f"i = {i}")
             break
-    
+
+
+    Tsize, ringsize = np.shape(sim_ring_data_Ann)
+    background_noise = [sim_ring_data_Ann[0][i] for i in range(ringsize)]
+    for t in range(Tsize):
+        for ring in range(ringsize):
+            pass #sim_ring_data_Ann[t][ring] += - background_noise[ring]
     
        
+    print(f"minimum is = {min([min(sim_ring_data_Ann[i]) for i in range(Tsize) ])}")
+
     print(f"shape of simulated ring sums = {np.shape(sim_ring_data_Ca)}")
 
     """   Experimental data loaded  """
@@ -94,14 +103,16 @@ def main_compare(
     
     """
 
-    vec = np.linspace(0,exp_data_shapeX,exp_data_shapeX)    
+    vec = np.linspace(
+        start=0
+        ,stop=exp_data_shapeX
+        ,num=exp_data_shapeX)    
 
     max_ca_sim = np.max(np.max(sim_ring_data_Ca))
     max_ann_sim = np.max(np.max(sim_ring_data_Ann))
 
     max_ca_data =np.max( np.max(real_data_Ca))
     max_ann_data = np.max(np.max(real_data_Ann))
-
 
     scaling_factor_ca = max_ca_data/max_ca_sim
     scaling_factor_ann = max_ann_data/max_ann_sim
@@ -136,13 +147,15 @@ def main_compare(
     
     cmap_type = matplotlib.cm.get_cmap('gist_ncar')
     #cmap_type.set_under('black')
-
+    
     vmin_val_Ca , vmax_val_Ca = 1e-7 , 6e-4
     vmin_val_Ann, vmax_val_Ann = 2e-6 , 8e-6
     normalize = True
-    data_opening_frame = 15
-    end_i = exp_data_shape_t - 1 - data_opening_frame
+    
+    end_i = exp_data_shape_t - 1 - opening_frame - 1
 
+    min_sim_ann = min([min(sim_ring_data_Ann[t]) for t in range(Tsize-1)])
+    
     for i in range(end_i):
         fig.canvas.manager.window.showMaximized()
         if np.shape(sim_ring_data_Ca)[0] !=  np.shape(animate_Ca):
@@ -153,7 +166,7 @@ def main_compare(
         t_show = round(time_check_vec[i]*sim_dt,3)
         T_final = round(time_check_vec[len(time_check_vec)-1]*sim_dt,3)
         
-        j = i + data_opening_frame  # getting the opening of the hole
+        j = i + opening_frame - 1  # getting the opening of the hole
                                     # in the experiment to match the simulation
 
 
@@ -180,7 +193,7 @@ def main_compare(
                            , rotation='horizontal'
                            ,fontsize=15,y=0.45
                            )
-        ax[0,0].set_ylim(0,max_ca_sim*1.1)
+        ax[0,0].set_ylim(np.min(sim_ring_data_Ca),max_ca_sim*1.1)
         ax[0,0].legend()
 
         ax[1,0].plot(vec,sim_ring_data_Ann[t]
@@ -205,7 +218,7 @@ def main_compare(
                            , rotation='horizontal'
                            ,fontsize=15,y=0.45
                            )
-        ax[1,0].set_ylim(0,max_ann_sim*1.1)
+        ax[1,0].set_ylim(min_sim_ann,max_ann_sim*1.1)
         ax[1,0].legend()
 
 
@@ -252,9 +265,9 @@ def main_compare(
         
 
         if t < 20 :
-            plt.pause(0.05)
+            plt.pause(0.01)
         else:
-            plt.pause(0.05)
+            plt.pause(0.01)
         
         if not os.path.exists(video_save_path):
             os.makedirs(video_save_path)
@@ -282,7 +295,7 @@ if __name__ == "__main__":
     ref_struct_name_cell ,fig_save_path = const_list[26:28]
     fig_folder_path ,video_save_path ,fig_name_df, data_path = const_list[28:32]
     Ca_data_experiment ,Annexin_data_experiment = const_list[32:34]
-    
+    frame_open ,frame_close = const_list[34:36]
     
     time1 = tm.time()
     main_compare(
@@ -294,6 +307,7 @@ if __name__ == "__main__":
         ,data_path = data_path
         ,Ca_data = Ca_data_experiment
         ,Annexin_data = Annexin_data_experiment
+        ,opening_frame=frame_open
         )
     
     

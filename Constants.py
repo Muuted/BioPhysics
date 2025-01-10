@@ -8,14 +8,10 @@ def constants(
           print_vals = True
             ):
     
-
-
-
-    
     Avogadro = 6.02214076e23 # 1/mol
     # time and step size, and diffusion constant
     picture_size = 83e-6 # meters
-    Real_sim_time =  120 #seconds
+    Real_sim_time =  110 #seconds
     real_close_time =  10 #s
     
     ref_fig_num_list = [4,27]
@@ -29,7 +25,7 @@ def constants(
     Ca_data_experiment = f"Ring_sum_data_Ca_filenum{ref_fig_num}.txt"
     Annexin_data_experiment = f"Ring_sum_data_Annexins_filenum{ref_fig_num}.txt"
     
-    """
+    
     frame_open, frame_close, data_number_of_frames = Determining_open_n_close_time(
         data_path=data_path
         ,Ca_data_exp=Ca_data_experiment
@@ -39,9 +35,10 @@ def constants(
 
     data_real_time = 120
     data_time_pr_frame = data_real_time/data_number_of_frames
+    
     data_hole_open_time = frame_open*data_time_pr_frame
-    real_close_time = frame_close*data_time_pr_frame
-    """
+    real_close_time = (frame_close - frame_open)*data_time_pr_frame
+    
   
     len_size = 80 # number of grid points
     dx, dy = picture_size/len_size ,picture_size/len_size # meters
@@ -51,7 +48,7 @@ def constants(
     c_in = 100e-9#*10*(-9)#e-9 #M Concetration inside cell
 
     D_Ca_cyto  = 2.7e-11#*10**(-11)#e-11 #meters^2/second
-    D_Annexin_cyto  = 2.7e-11 #5.0e-11 #meters^2/second
+    D_Annexin_cyto  = 2.7e-11 #5.0e-11 #meters^2/second     # 4.4e-13  or 4.4e-12 maybe?
 
     dt = stabil_condi(dt=0.1,dx=dx,dy=dy
                     ,D_list=[ D_Ca_cyto , D_Annexin_cyto ]
@@ -73,12 +70,13 @@ def constants(
     #A_total_conc = 3.3e-6 # Molar
 
     k1 = 1e4 #1e2 #30e3 # 1/(Ms) 1e-2
-    k2 = 1 #1e-1#1e-2 #1e-3 #1/s 1e2
+    k2 = 1e0 #1e-1#1e-2 #1e-3 #1/s 1e2
 
     
     bound_annexin_start = k1*A_total_conc*c_in/(k1*c_in + k2)
-    c_in_annexin = A_total_conc - bound_annexin_start 
-     
+    c_in_annexin = k2*A_total_conc/(k1*c_in+k2)
+    #c_in_annexin = A_total_conc - bound_annexin_start 
+
 
     #Closing mechanism time
     close_time = int(real_close_time/dt)
@@ -138,7 +136,9 @@ def constants(
         ,fig_folder_path ,video_save_path 
         ,fig_name_df ,data_path
         ,Ca_data_experiment ,Annexin_data_experiment
+        ,frame_open ,frame_close
     ]
+    
     return args_list
 
 

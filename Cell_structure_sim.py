@@ -175,7 +175,7 @@ if __name__ == "__main__":
     ref_struct_name_cell ,fig_save_path = const_list[26:28]
     fig_folder_path ,video_save_path ,fig_name_df, data_path = const_list[28:32]
     Ca_data_exp ,Annexin_data_exp = const_list[32:34]
-
+    frame_open ,frame_close = const_list[34:36]
 
     save_data = True
     
@@ -378,6 +378,7 @@ if __name__ == "__main__":
         ,data_path=data_path
         ,Ca_data=Ca_data_exp
         ,Annexin_data=Annexin_data_exp
+        ,opening_frame=frame_open
         )
         compare2 = tm.time()
         
