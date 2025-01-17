@@ -154,7 +154,7 @@ def Ring_sum(
                         if ref_grid[y][x] == inside_val:
                             r = np.sqrt( (x - x0)**2 + (y - y0)**2 )
 
-                            if R2 <= r < R1 :
+                            if R2 <= r <= R1 :
                                 norm += 1
                                 sum_Ca += sim_grid_free_Ca[t][y][x] + sim_grid_bound_Ca[t][y][x] - background_Ca
                                 sum_Annexin += sim_grid_free_Annexin[t][y][x] + sim_grid_bound_Annexin[t][y][x] - background_Ann
@@ -382,10 +382,41 @@ def Determining_open_n_close_time(
     print(f"open frame = {frame_open} and the close frame = {frame_close}")
     print(f"total frame = {len(tot_ca)}")
     if showplot == True:
+        tot_ca = [i/max(tot_ca) for i in tot_ca]
+        time_vec = np.linspace(
+            start=0
+            ,stop=120
+            ,num=len(tot_ca)
+            )
         plt.figure()
-        plt.plot(tot_ca,linestyle='-.',color="red")
-        plt.vlines(x=frame_open,ymin=min(tot_ca),ymax=max(tot_ca),label="hole opens")
-        plt.vlines(x=frame_close,ymin=min(tot_ca),ymax=max(tot_ca),linestyles='--',label="hole close")
+        plt.plot(time_vec,tot_ca,marker='*',color="red",label=r" $ [Ca_{tot}] $")
+        plt.vlines(
+            x=time_vec[frame_open],ymin=min(tot_ca),ymax=max(tot_ca)
+            ,label=f"hole opens " +r"t$ \approx $" + f"{int(time_vec[frame_open])}s"
+            )
+        plt.vlines(
+            x=time_vec[frame_close],ymin=min(tot_ca),ymax=max(tot_ca),linestyles='--'
+            ,label="hole closes " + r"t$ \approx $" + f"{int(time_vec[frame_close])}s"
+            )
+        
+        plt.title(
+            f"Finding the opening time and closing time of the hole in the cell \n"
+            #+r"open time$ \approx $"
+            #+ f"{int(time_vec[frame_open])}s  and close time" 
+            #+r"$ \approx $"
+            #+f"{int(time_vec[frame_close])}s \n"
+            +r"closure time  $ t_{closure} \approx $"
+            +f"{int(time_vec[frame_close] - time_vec[frame_open])}s"
+            ,fontsize=15)
+        plt.ylabel(
+            r" $ \frac{[Ca_{tot}]}{max([Ca_{tot}])} $ " 
+            + "         "
+            ,fontsize=20
+            ,rotation=0
+                   )
+        plt.xlabel( f" Time (seconds)",fontsize=15)
+        
+        plt.legend(fontsize=15)
         plt.show()
 
     return frame_open, frame_close, number_of_frames

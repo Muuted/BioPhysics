@@ -30,6 +30,7 @@ def constants(
         data_path=data_path
         ,Ca_data_exp=Ca_data_experiment
         ,Annexin_data_exp=Annexin_data_experiment
+        ,showplot=True
     )
     
 
