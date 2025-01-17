@@ -103,11 +103,11 @@ def constants(
     if print_vals == True:
         print(
             f" \n \n"
-            + "------------- Constant used in Simulation -------------------- \n "
+            + "------------- Constant used in Simulation -------------- \n "
             + f"    Real simulation time = {Real_sim_time} s \n "
             + f"    hole close time = {int(real_close_time)} s \n " 
             + f"    dx=dy = {dx:e} m \n "
-            + f"    dt = {dt:e} m \n "
+            + f"    dt = {dt:e} s \n "
             + f"    [Ca] outside cell = {c_out:e} \n "
             + f"    [Ca] inside cell = {c_in:e} \n "
             + f"    Diffuse constant Ca in cell = {D_Ca_cyto} m^2/s \n "
@@ -121,7 +121,7 @@ def constants(
             + f"    total number of sim steps = {T_tot:e} steps \n "
             #+ f"    sim equil time = {1/(k1*c_in_annexin + k2)} \n "
             #+ f"    size of grid = ({len_size},{len_size}) \n "
-            f" ------------------------------------------------------------- \n \n "
+            f" ------------------------------------------------------ \n \n "
         )
 
     args_list = [

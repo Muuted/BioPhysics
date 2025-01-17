@@ -11,6 +11,7 @@ from Ring_sum_file import main_ring_summing
 from Make_movie import Make_video2
 from Compare_data import main_compare
 
+
 def main_cell_structure_sim(
         c_in,c_out,D_Ca_cyto,T_tot,len_size
         ,dx,dy,k1,k2,c_in_annexin,bound_annexin_start,D_Annexin_cyto
@@ -91,6 +92,8 @@ def main_cell_structure_sim(
         )
     i = 0 # for showing that the theory steady state concentration  
           # matches the simulated one.
+    
+    k,j  = 0,0
     for t in np.arange(0,T_tot-1): 
         if t%(int(T_tot/10)) == 0:
             #print(f"time={t} of {T_tot}")
