@@ -113,11 +113,13 @@ def Ring_sum(
         ,sim_grid_free_Ca,sim_grid_bound_Ca
         ,sim_grid_free_Annexin,sim_grid_bound_Annexin
         ,hole_pos:tuple
-        ,num_of_rings:int  
+        #,num_of_rings:int
         ,inside_val:int
+        ,return_visplot = False
             )-> tuple:
 
-
+    num_of_rings = 30
+    
     Tsize, Ysize, Xsize = np.shape(sim_grid_free_Ca)
     x0,y0 = hole_pos 
 
@@ -167,15 +169,17 @@ def Ring_sum(
             Ring_sum_list_Ca[t][R] = sum_Ca/norm
             Ring_sum_list_Annexins[t][R] = sum_Annexin/norm
 
-        if t == 0:
-            plt.matshow(Visual_grid)
-            plt.title("Visual Grid, does this look correct? \n if yes, just close figure and sum will continue")
+        #if t == 0:
+         #   plt.matshow(Visual_grid)
+          #  plt.title("Visual Grid, does this look correct? \n if yes, just close figure and sum will continue")
             #plt.show()
 
         
         
-
-    return Ring_sum_list_Ca, Ring_sum_list_Annexins 
+    if return_visplot == True:
+        return Ring_sum_list_Ca, Ring_sum_list_Annexins, Visual_grid
+    else:
+        return Ring_sum_list_Ca, Ring_sum_list_Annexins 
 
 """
 def Ring_sum_quick(

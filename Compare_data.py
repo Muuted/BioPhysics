@@ -171,7 +171,7 @@ def main_compare(
 
 
         ax[0,0].plot(vec,sim_ring_data_Ca[t]
-                     ,label="simulation"
+                     ,label="simulation (Molar)"
                      ,linestyle="-"
                      ,marker = "o"
                      )
@@ -180,9 +180,9 @@ def main_compare(
                      ,linestyle="--"
                      ,marker = "*"
                      )
-        ax[0,0].set_title(f"concentration Calcium rings \n "
+        ax[0,0].set_title(f"     Calcium rings average value "+"\n "
                           +f"t={t_show}s of {T_final}"
-                          +f"and k1={k1:.1e} , k2={k2:.1e}"
+                          #+f"and k1={k1:.1e} , k2={k2:.1e}"
                           ,fontsize = 15
                           )
         ax[0,0].set_xlabel(f"Ring"
@@ -190,14 +190,14 @@ def main_compare(
                            ,x=1
                            )
         ax[0,0].set_ylabel(r"[Ca]       "
-                           , rotation='horizontal'
+                           ,rotation='horizontal'
                            ,fontsize=15,y=0.45
                            )
         ax[0,0].set_ylim(np.min(sim_ring_data_Ca),max_ca_sim*1.1)
         ax[0,0].legend()
 
         ax[1,0].plot(vec,sim_ring_data_Ann[t]
-                     ,label="simulation"
+                     ,label="simulation (Molar)"
                      ,linestyle="-"
                      ,marker = "o"
                      )
@@ -207,16 +207,19 @@ def main_compare(
                      ,marker = "*"
                     )
         ax[1,0].set_title(
-            f" Total concentration of Annexin rings \n"
-            +f" time ={t_show}s of {T_final}"
+            f"Total Annexins rings average value "+"\n"
+            +f"time={t_show}s of {T_final}"
             ,fontsize = 15
+            ,y=0.98
             )
         ax[1,0].set_xlabel(f"Ring"
                            ,fontsize = 15
+                           ,x=1
                            )
         ax[1,0].set_ylabel(r"[Ann]         "
                            , rotation='horizontal'
-                           ,fontsize=15,y=0.45
+                           ,fontsize=15
+                           ,y=0.45
                            )
         ax[1,0].set_ylim(min_sim_ann,max_ann_sim*1.1)
         ax[1,0].legend()
@@ -227,7 +230,7 @@ def main_compare(
                                ,vmin = vmin_val_Ca , vmax = vmax_val_Ca
                                )       
         
-        ax[0,1].set_title("Concentration Ca"
+        ax[0,1].set_title("Simulation [Ca] distribution (Molar) "
                           ,fontsize = 15
                           )
 
@@ -235,7 +238,7 @@ def main_compare(
         pos1 = ax[1,1].matshow(ToT_ann ,cmap=cmap_type
                                ,vmin = vmin_val_Ann , vmax = vmax_val_Ann
                                )
-        ax[1,1].set_title("total concentration annexins"
+        ax[1,1].set_title("total [annexins] distribution in (Molar)"
                           ,fontsize = 15
                           )
         
@@ -245,16 +248,21 @@ def main_compare(
             cbformat0.set_powerlimits((0,0)) 
             
             fig.colorbar(
-                pos0,ax=ax[0,1],shrink=1
+                pos0,ax=ax[0,1]#,shrink=1
                 ,format = cbformat0 #"%.1e"
+                ,label="Molar"
+                #,size=15
                     )
             
             
             cbformat1 = matplotlib.ticker.ScalarFormatter()   # create the formatter
             cbformat1.set_powerlimits((0,0))
 
-            fig.colorbar(pos1,ax=ax[1,1],shrink=1
-                         ,format = "%.1e"#cbformat1
+            fig.colorbar(
+                pos1,ax=ax[1,1]#,shrink=1
+                ,format = "%.1e"#cbformat1
+                ,label="Molar"
+                #,size=15
                          )
             #plt.show()
             #fig, ax = plt.subplots(2,2)

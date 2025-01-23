@@ -68,7 +68,7 @@ def main_ring_summing(
             ,sim_grid_free_Annexin = short_Free_Annexins
             ,sim_grid_bound_Annexin = short_Bound_Annexins
             ,hole_pos = [x0,y0]
-            ,num_of_rings = 10
+            #,num_of_rings = 10
             ,inside_val = inside_val
         )
     else:
@@ -79,7 +79,7 @@ def main_ring_summing(
             ,sim_grid_free_Annexin = Free_Annexins
             ,sim_grid_bound_Annexin = Bound_annexins
             ,hole_pos=[x0,y0]
-            ,num_of_rings = 10
+            #,num_of_rings = 10
             ,inside_val = inside_val
         )
 
@@ -115,6 +115,8 @@ if __name__ == "__main__":
     Real_sim_time, real_close_time = const_list[24:26]
     ref_struct_name_cell ,fig_save_path = const_list[26:28]
     fig_folder_path ,video_save_path ,fig_name_df, data_path = const_list[28:32]
+    Ca_data_exp ,Annexin_data_exp = const_list[32:34]
+    frame_open ,frame_close = const_list[34:36]
 
     main_ring_summing(
         fig_save_path = fig_save_path
