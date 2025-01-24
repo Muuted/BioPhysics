@@ -156,6 +156,7 @@ def main_compare(
 
     min_sim_ann = min([min(sim_ring_data_Ann[t]) for t in range(Tsize-1)])
     
+    
     for i in range(end_i):
         fig.canvas.manager.window.showMaximized()
         if np.shape(sim_ring_data_Ca)[0] !=  np.shape(animate_Ca):

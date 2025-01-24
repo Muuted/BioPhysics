@@ -61,8 +61,9 @@ def constants(
     pump_multiplyer = 30 # found from sim testing.
     c_pump = dt*(5e-8)*pump_multiplyer # Molar/second
     c_pump_base = (3.028415305204001e-09)/(5.104687e-03)
-    c_pump = c_pump_base*dt
-
+    c_pump =  c_pump_base*dt
+    c_pump = float('{:0.2e}'.format(c_pump))
+    
 
     # Anxexin constants.  
     A_total_density = (2.0e6)/(1.0e-18) #number/meter^3 from article directly
@@ -99,7 +100,7 @@ def constants(
     open_val = 20
     inside_val = 10
     outside_val = -5
-
+    
     if print_vals == True:
         print(
             f" \n \n"
@@ -116,8 +117,8 @@ def constants(
             + f"    Total initial conc Annexins = {A_total_conc:e} M \n "
             + f"    c_in_ann = {c_in_annexin:e} M \n "
             + f"    and the bound_ann_start = {bound_annexin_start:e} M \n "
-            + f"    k1 = {k1:e} 1/Ms \n "
-            + f"    and k2 = {k2:e} 1/s \n "
+            + f"    k1 = {k1:0.1e} 1/Ms \n "
+            + f"    and k2 = {k2:0.1e} 1/s \n "
             + f"    total number of sim steps = {T_tot:e} steps \n "
             #+ f"    sim equil time = {1/(k1*c_in_annexin + k2)} \n "
             #+ f"    size of grid = ({len_size},{len_size}) \n "

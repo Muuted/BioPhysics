@@ -391,6 +391,234 @@ def matshow_compare_times():
     plt.show()
 
 
+def radial_compare_times():
+    const_list = constants(print_vals=False)
+    c_in ,c_out, D_Ca_cyto, T_tot, len_size, dx, dy, k1, k2 = const_list[0:9]
+    c_in_annexin ,bound_annexin_start ,D_Annexin_cyto = const_list[9:12]
+    dt ,close_time, c_pump, holesize ,dR ,R ,x0 ,y0 = const_list[12:20]
+    wall_val ,inside_val ,outside_val ,open_val = const_list[20:24]
+    Real_sim_time, real_close_time = const_list[24:26]
+    ref_struct_name_cell ,fig_save_path = const_list[26:28]
+    fig_folder_path ,video_save_path ,fig_name_df, data_path = const_list[28:32]
+    Ca_data_exp ,Annexin_data_exp = const_list[32:34]
+    frame_open ,frame_close = const_list[34:36]
+
+    matlab_figures_path= "C:\\Users\\AdamSkovbjergKnudsen\\Desktop\\ISA Biophys\\figures\\progress comparison\\"
+    Real_time_steps_data = 235
+
+    """   The simulation data loaded  """
+    df_sim = pd.read_pickle(fig_folder_path + fig_name_df)
+    print(df_sim.info())
+
+    
+    Free_Ca = df_sim['Free Calcium'][0]
+    Free_annexin = df_sim['Free Annexins'][0]
+    Bound_annexin = df_sim['Bound Annexins'][0]
+
+    k1 = df_sim['k1'][0]
+    k2 = df_sim['k2'][0]
+    
+    sim_T_tot, Ysize, Xsize = np.shape(Free_Ca)
+    
+    sim_dt = df_sim['dt'][0]
+    
+       
+    hole_closure_time = df_sim['hole closure time'][0]
+
+    for i in range(5):
+        a = df_sim['Ring sum list Ca'][i]
+        if isinstance(a , np.ndarray):
+            sim_ring_data_Ca = df_sim['Ring sum list Ca'][i]
+            sim_ring_data_Ann = df_sim['Ring sum list Annexin'][i]
+            print(f"i = {i}")
+            break
+
+
+    Tsize, ringsize = np.shape(sim_ring_data_Ann)
+    background_noise = [sim_ring_data_Ann[0][i] for i in range(ringsize)]
+    for t in range(Tsize):
+        for ring in range(ringsize):
+            pass #sim_ring_data_Ann[t][ring] += - background_noise[ring]
+    
+       
+    print(f"minimum is = {min([min(sim_ring_data_Ann[i]) for i in range(Tsize) ])}")
+
+    print(f"shape of simulated ring sums = {np.shape(sim_ring_data_Ca)}")
+
+    """   Experimental data loaded  """
+
+    data_Ca = pd.read_csv(data_path + Ca_data_exp)
+    data_Ann= pd.read_csv(data_path + Annexin_data_exp)
+    
+    exp_data_shape_t, exp_data_shapeX = np.shape(data_Ca)
+    
+
+    real_data_Ca = np.zeros(shape=(exp_data_shape_t,exp_data_shapeX))
+    real_data_Ann = np.zeros(shape=(exp_data_shape_t,exp_data_shapeX))
+
+    for t in range(exp_data_shape_t):
+        for R in range(exp_data_shapeX):
+            real_data_Ca[t][R] = data_Ca.loc[t][R]
+            real_data_Ann[t][R] = data_Ann.loc[t][R]
+    """
+    First thing is that we need to make a list for the sim data, that has as many time rows as
+    our experimental data set.
+    """
+
+
+    time_check_vec = np.linspace(0,sim_T_tot,exp_data_shape_t)
+
+    animate_Ca = np.zeros(shape=(exp_data_shape_t,exp_data_shapeX))
+    animate_Ann = np.zeros(shape=(exp_data_shape_t,exp_data_shapeX))
+
+    vec = np.linspace(
+        start=0
+        ,stop=exp_data_shapeX
+        ,num=exp_data_shapeX
+        )    
+
+    max_ca_sim = np.max(np.max(sim_ring_data_Ca))
+    max_ann_sim = np.max(np.max(sim_ring_data_Ann))
+
+    max_ca_data =np.max( np.max(real_data_Ca))
+    max_ann_data = np.max(np.max(real_data_Ann))
+
+    scaling_factor_ca = max_ca_data/max_ca_sim
+    scaling_factor_ann = max_ann_data/max_ann_sim
+    
+    for t in range(exp_data_shape_t):
+        for R in range(exp_data_shapeX):
+            real_data_Ca[t][R] *= 1/scaling_factor_ca
+            real_data_Ann[t][R] *= 1/scaling_factor_ann
+
+
+    if np.shape(sim_ring_data_Ca)[0] !=  np.shape(real_data_Ca)[0]:
+        for i in range(exp_data_shape_t-1):
+            t = int(time_check_vec[i])
+            animate_Ca[i] = sim_ring_data_Ca[t]
+            animate_Ann[i] = sim_ring_data_Ann[t]
+    if np.shape(sim_ring_data_Ca)[0] ==  np.shape(real_data_Ca)[0]:
+        animate_Ca = sim_ring_data_Ca.copy
+        animate_Ann = sim_ring_data_Ann.copy
+    else:
+        print(f" we have a problem, the shapes doesnt match in Compare_data-py")
+        print(f"shape of simulated ring sums = {np.shape(sim_ring_data_Ca)}")
+        print(f"shape of animate ring sums = {np.shape(animate_Ca)}")
+        print(f"shape of data ring sums = {np.shape(real_data_Ca)}")
+        exit()
+
+    
+    fig, ax = plt.subplots(2,2)
+    
+    cmap_type = "gray" #"RdBu"
+    cmap_type = "gist_ncar"
+    #cmap_type = "nipy_spectral"
+    #cmap_type = "gnuplot"
+    
+    cmap_type = matplotlib.cm.get_cmap('gist_ncar')
+    #cmap_type.set_under('black')
+    
+    vmin_val_Ca , vmax_val_Ca = 1e-7 , 6e-4
+    vmin_val_Ann, vmax_val_Ann = 2e-6 , 8e-6
+    normalize = True
+    
+    end_i = exp_data_shape_t - 1 - frame_open - 1
+
+    min_sim_ann = min([min(sim_ring_data_Ann[t]) for t in range(Tsize-1)])
+
+    frame_list =[ int(i*(234/120)) for i in range(0,16,2)]
+    x_label_list =["a)","a)","b)","b)","c)","c)","d)","d)"]
+    white_space_str = "                                  "      
+    fig.suptitle(
+        f"The radial distribution of the concentration of Calcium ions from"
+        +f" the opening in the membrane. \n Shown at different times in the interval"
+        +f" of approximately {0}s to {round(frame_list[len(frame_list)-1]*(120/234),1)}s"
+        ,fontsize=20
+        )
+    i = 0
+    for h in range(2):
+        for k in range(2):
+            for _ in range(2):
+                fig.canvas.manager.window.showMaximized()
+
+                j = frame_list[i] + frame_open
+                t_real = frame_list[i]*(120/234)
+                t = frame_list[i]
+                t_show = round(t_real,1)
+
+                ax[h,k].plot(vec,sim_ring_data_Ca[t]
+                                ,label=f"simulation (Molar) t"+r"$ \approx $"+f"{t_show}"
+                                ,linestyle="-"
+                                ,marker = "o"
+                                )
+                ax[h,k].plot(vec,real_data_Ca[j]
+                                ,label=f"Experiment t"+r"$ \approx $"+f"{t_show}"
+                                ,linestyle="--"
+                                ,marker = "*"
+                                )
+                ax[h,k].set_xlabel(x_label_list[i] + white_space_str + f"Ring"
+                                    ,fontsize = 15
+                                    ,x=0.70
+                                    )
+                ax[h,k].set_ylabel(r"[Ca]       "
+                                    ,rotation='horizontal'
+                                    ,fontsize=15,y=0.45
+                                    )
+                ax[h,k].set_ylim(np.min(sim_ring_data_Ca),max_ca_sim*1.1)
+                ax[h,k].legend(
+                    fontsize=15
+                )
+
+                i+= 1
+    
+    
+    fig, ax = plt.subplots(2,2)
+    fig.suptitle(
+        f"The radial distribution of the concentration of total annexin proteins from"
+        +f" the opening in the membrane. \n Shown at different times in the interval"
+        +f" of approximately {0}s to {round(frame_list[len(frame_list)-1]*(120/234),1)}s"
+        ,fontsize=20
+        )
+    i = 0
+    for h in range(2):
+        for k in range(2):
+            for _ in range(2):
+                fig.canvas.manager.window.showMaximized()
+
+                j = frame_list[i] + frame_open
+                t_real = frame_list[i]*(120/234)
+                t = frame_list[i]
+                t_show = round(t_real,1)
+
+                ax[h,k].plot(vec,sim_ring_data_Ann[t]
+                                ,label=f"simulation (Molar) t"+r"$ \approx $"+f"{t_show}"
+                                ,linestyle="-"
+                                ,marker = "o"
+                                )
+                ax[h,k].plot(vec,real_data_Ann[j]
+                                ,label=f"Experiment t"+r"$ \approx $"+f"{t_show}"
+                                ,linestyle="--"
+                                ,marker = "*"
+                                )
+                ax[h,k].set_xlabel(x_label_list[i] + white_space_str + f"Ring"
+                                    ,fontsize = 15
+                                    ,x=0.70
+                                    )
+                ax[h,k].set_ylabel(r"[Ca]       "
+                                    ,rotation='horizontal'
+                                    ,fontsize=15,y=0.45
+                                    )
+                #ax[h,k].set_ylim(np.min(sim_ring_data_Ca),max_ca_sim*1.1)
+                ax[h,k].set_ylim(min_sim_ann,max_ann_sim*1.1)
+                ax[h,k].legend(
+                    fontsize=15
+                )
+
+                i+= 1    
+    
+
+    plt.show()
+
 
 if __name__ == "__main__":
     
@@ -398,4 +626,5 @@ if __name__ == "__main__":
     #plotting_ref_ring_structs()
     #plotting_time_evolution_stabilization()
     #visual_rings()
-    matshow_compare_times()
+    #matshow_compare_times()
+    radial_compare_times()
