@@ -14,7 +14,16 @@ from Circle_sim import main_circle_sim
 
 def Finding_the_pump_value():
     print(r"Finding the value for the $ c_{pump} $ term")
-    c_in,c_out,D_Ca_cyto,T_tot,len_size,dx,dy,k1,k2,c_in_annexin,bound_annexin_start,D_Annexin_cyto,dt,close_time,c_pump,holesize,dR,R,x0,y0,wall_val,inside_val,outside_val,open_val,Real_sim_time, real_close_time = constants()
+    #c_in,c_out,D_Ca_cyto,T_tot,len_size,dx,dy,k1,k2,c_in_annexin,bound_annexin_start,D_Annexin_cyto,dt,close_time,c_pump,holesize,dR,R,x0,y0,wall_val,inside_val,outside_val,open_val,Real_sim_time, real_close_time = constants()
+    const_list = constants()
+    c_in ,c_out, D_Ca_cyto, T_tot, len_size, dx, dy, k1, k2 = const_list[0:9]
+    c_in_annexin ,bound_annexin_start ,D_Annexin_cyto = const_list[9:12]
+    dt ,close_time, c_pump, holesize ,dR ,R ,x0 ,y0 = const_list[12:20]
+    wall_val ,inside_val ,outside_val ,open_val = const_list[20:24]
+    Real_sim_time, real_close_time = const_list[24:26]
+    ref_struct_name_cell ,fig_save_path = const_list[26:28]
+    fig_folder_path ,video_save_path ,fig_name_df, data_path = const_list[28:32]
+    Ca_data_exp ,Annexin_data_exp = const_list[32:34]
     Real_time = 80 #seconds.
     ref_time = int(55/dt)
     T_tot = int(Real_time/dt) # number of time steps.
@@ -339,6 +348,6 @@ def Find_pump_via_area():
     pass
 if __name__ == "__main__":
     
+    Finding_the_pump_value()
     #Annexin_equil_ratio()
-    #Finding_the_pump_value()
-    Find_pump_via_area()
+    #Find_pump_via_area()

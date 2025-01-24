@@ -286,7 +286,13 @@ def visual_rings():
     
     #fig.canvas.manager.window.showMaximized()
     plt.matshow(Visual_grid)
-    plt.title("")
+    plt.title(
+        f"Rings for radial distribution of either Calcium or Annexins \n "
+        +f" Where the opening is placed af (x,y)={x0,y0}"
+        ,fontsize=15
+        )
+    plt.ylabel(r"y",fontsize=15)
+    plt.xlabel(r"x",fontsize=15)
     plt.show()
 
 
@@ -625,6 +631,6 @@ if __name__ == "__main__":
     #plotting_ref_cell_structs()
     #plotting_ref_ring_structs()
     #plotting_time_evolution_stabilization()
-    #visual_rings()
+    visual_rings()
     #matshow_compare_times()
-    radial_compare_times()
+    #radial_compare_times()
