@@ -111,7 +111,7 @@ def main_compare(
     max_ca_sim = np.max(np.max(sim_ring_data_Ca))
     max_ann_sim = np.max(np.max(sim_ring_data_Ann))
 
-    max_ca_data =np.max( np.max(real_data_Ca))
+    max_ca_data = np.max( np.max(real_data_Ca))
     max_ann_data = np.max(np.max(real_data_Ann))
 
     scaling_factor_ca = max_ca_data/max_ca_sim

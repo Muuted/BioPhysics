@@ -291,8 +291,9 @@ def visual_rings():
         +f" Where the opening is placed af (x,y)={x0,y0}"
         ,fontsize=15
         )
-    plt.ylabel(r"y",fontsize=15)
+    plt.ylabel(r"y",fontsize=15)    
     plt.xlabel(r"x",fontsize=15)
+    plt.colorbar()
     plt.show()
 
 
