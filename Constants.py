@@ -11,7 +11,7 @@ def constants(
     Avogadro = 6.02214076e23 # 1/mol
     # time and step size, and diffusion constant
     picture_size = 83e-6 # meters
-    Real_sim_time =  1 #110 #seconds
+    Real_sim_time =  110 #seconds
     real_close_time =  10 #s
     
     ref_fig_num_list = [4,27]

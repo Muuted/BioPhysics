@@ -15,8 +15,16 @@ from Cell_structure_sim import main_cell_structure_sim
 
 def plotting_ref_ring_structs():
     import matplotlib as mpl
-    c_in,c_out,D_Ca_cyto,T_tot,len_size,dx,dy,k1,k2,c_in_annexin,bound_annexin_start,D_Annexin_cyto,dt,close_time,c_pump,holesize,dR,R,x0,y0,wall_val,inside_val,outside_val,open_val,Real_sim_time, real_close_time = constants()
-    Real_sim_time = 120
+    const_list = constants(print_vals=False)
+    c_in ,c_out, D_Ca_cyto, T_tot, len_size, dx, dy, k1, k2 = const_list[0:9]
+    c_in_annexin ,bound_annexin_start ,D_Annexin_cyto = const_list[9:12]
+    dt ,close_time, c_pump, holesize ,dR ,R ,x0 ,y0 = const_list[12:20]
+    wall_val ,inside_val ,outside_val ,open_val = const_list[20:24]
+    Real_sim_time, real_close_time = const_list[24:26]
+    ref_struct_name_cell ,fig_save_path = const_list[26:28]
+    fig_folder_path ,video_save_path ,fig_name_df, data_path = const_list[28:32]
+    Ca_data_exp ,Annexin_data_exp = const_list[32:34]
+    frame_open ,frame_close = const_list[34:36]
     
 
     data_path = "C:\\Users\\AdamSkovbjergKnudsen\\Desktop\\ISA Biophys\\data eksperimenter\\20191203-Calcium-sensors-ANXA-RFP for Python\\"
@@ -80,10 +88,18 @@ def plotting_ref_ring_structs():
 
 def plotting_ref_cell_structs():
     import matplotlib as mpl
-    c_in,c_out,D_Ca_cyto,T_tot,len_size,dx,dy,k1,k2,c_in_annexin,bound_annexin_start,D_Annexin_cyto,dt,close_time,c_pump,holesize,dR,R,x0,y0,wall_val,inside_val,outside_val,open_val,Real_sim_time, real_close_time = constants()
-    Real_sim_time = 120
+    const_list = constants(print_vals=False)
+    c_in ,c_out, D_Ca_cyto, T_tot, len_size, dx, dy, k1, k2 = const_list[0:9]
+    c_in_annexin ,bound_annexin_start ,D_Annexin_cyto = const_list[9:12]
+    dt ,close_time, c_pump, holesize ,dR ,R ,x0 ,y0 = const_list[12:20]
+    wall_val ,inside_val ,outside_val ,open_val = const_list[20:24]
+    Real_sim_time, real_close_time = const_list[24:26]
+    ref_struct_name_cell ,fig_save_path = const_list[26:28]
+    fig_folder_path ,video_save_path ,fig_name_df, data_path = const_list[28:32]
+    Ca_data_exp ,Annexin_data_exp = const_list[32:34]
+    frame_open ,frame_close = const_list[34:36]
     
-    ref_fig = 27
+    ref_fig = 4
 
     if ref_fig == 4:
         hole_pos1 = [34,4]
@@ -629,9 +645,9 @@ def radial_compare_times():
 
 if __name__ == "__main__":
     
-    #plotting_ref_cell_structs()
     #plotting_ref_ring_structs()
+    plotting_ref_cell_structs()
     #plotting_time_evolution_stabilization()
-    visual_rings()
+    #visual_rings()
     #matshow_compare_times()
     #radial_compare_times()
