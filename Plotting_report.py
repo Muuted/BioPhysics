@@ -161,6 +161,28 @@ def plotting_ref_cell_structs():
         ,fontsize=15
         )
     
+    micro_meter = 20e-6
+    pixels_for_20mum = micro_meter/dx
+    x_start = 1
+    x_line = [x_start, x_start + int(pixels_for_20mum)]
+    y_pos = 78
+    y_width = 4
+    y_line = [y_pos,y_pos]
+
+    plt.plot(
+    x_line,y_line
+    ,color="white",linewidth=y_width
+    )
+
+    plt.text(
+        x=(x_line[1]-x_line[0])/3
+        ,y =y_pos - y_width/2 + 1
+        ,s = r"$20 \mu m $"
+        ,color="white"
+        ,fontsize = 15
+        )
+    
+    
     plt.show()
 
 def plotting_time_evolution_stabilization():
@@ -299,17 +321,47 @@ def visual_rings():
         ,return_visplot=True
     )
 
+    micro_meter = 20e-6
+    pixels_for_20mum = micro_meter/dx
+    x_start = 1
+    x_line = [x_start, x_start + int(pixels_for_20mum)]
+    y_pos = 78
+    y_width = 4
+    y_line = [y_pos,y_pos]
     
     #fig.canvas.manager.window.showMaximized()
+    
     plt.matshow(Visual_grid)
     plt.title(
-        f"Rings for radial distribution of either Calcium or Annexins \n "
+        #f"Rings for radial distribution of either Calcium or Annexins \n "
+        f"Visual representation of the radial distribution \n "
         +f" Where the opening is placed af (x,y)={x0,y0}"
+        #+f", the white star"
         ,fontsize=15
         )
     plt.ylabel(r"y",fontsize=15)    
     plt.xlabel(r"x",fontsize=15)
     plt.colorbar()
+
+    plt.plot(
+        x_line,y_line
+        ,color="white",linewidth=y_width)
+    
+    """plt.plot(
+    [34, 34],[4,4]
+    ,color="white"
+    ,linewidth=y_width
+    ,marker='*'
+    )"""
+
+    plt.text(
+        x=(x_line[1]-x_line[0])/3
+        ,y =y_pos - y_width/2 + 1
+        ,s = r"$20 \mu m $"
+        ,color="white"
+        ,fontsize = 15
+        )
+    
     plt.show()
 
 
@@ -332,7 +384,6 @@ def matshow_compare_times():
     frame_list =[frame_open,25,32,40]
     time_list=[7.984,12.475,15.968,19.96]
     
-    matlab_fig_name = [f"matlab_cell_frame={i}.txt" for i in frame_list]
 
     time_list = [int((i-frame_open)*dt_frame) for i in frame_list]
     t_index_list = [int(i/dt) for i in time_list]
@@ -346,28 +397,8 @@ def matshow_compare_times():
     Free_annexin = df_sim['Free Annexins'][0]
     Bound_annexin = df_sim['Bound Annexins'][0]
     ref_struct = df_sim['Reference Matrix'][0]
+    dx = df_sim['dx'][0]
 
-    data_cell_1 = pd.read_csv(matlab_figures_path + matlab_fig_name[0])    
-    exp_data_shapeY, exp_data_shapeX = np.shape(data_cell_1)
-
-    #matlab_figures = np.zeros(shape=(len(frame_list),exp_data_shapeY,exp_data_shapeX))
-
-    """for i in range(len(frame_list)):
-        print(f" where are at file = {i} now")
-        data_cell_1 = pd.read_csv(
-            matlab_figures_path + matlab_fig_name[i]
-            ,dtype=float
-            )    
-        exp_data_shapeY, exp_data_shapeX = np.shape(data_cell_1)
-        if i == 0:
-            matlab_figures = np.zeros(shape=(len(frame_list),exp_data_shapeY,exp_data_shapeX))
-        #real_data_cell_1 = np.zeros(shape=(exp_data_shapeY,exp_data_shapeX))
-        for y in range(exp_data_shapeY):
-            for x in range(exp_data_shapeX):
-                matlab_figures[i][y][x] = data_cell_1.loc[y][x]
-    """        
-        #matlab_figures.append(real_data_cell_1)
-    
     
     fig, ax = plt.subplots(1,len(frame_list))
     fig.canvas.manager.window.showMaximized()
@@ -380,9 +411,27 @@ def matshow_compare_times():
     
     x_label_list =['i)','j)','k)','l)']
 
+    micro_meter = 20e-6
+    pixels_for_20mum = micro_meter/dx
+    x_start = 5
+    x_line = [x_start, x_start + int(pixels_for_20mum)]
+    y_pos = 75
+    y_width = 4
+    y_line = [y_pos,y_pos]
+
+
     for i in range(len(frame_list)):
         matlab_figures ="matlab_cell_frame={frame_list[i]}.svg"
 
+        ax[i].plot(x_line,y_line,color="y",linewidth=y_width)
+
+        ax[i].text(
+            x=(x_line[1]-x_line[0])/3
+            ,y =y_pos - y_width/2
+            ,s = r"$20 \mu m $"
+            ,color="y"
+            ,fontsize = 12
+            )
         k = t_index_list[i]
         t = time_list[i]
 
