@@ -24,7 +24,12 @@ def Finding_the_pump_value():
     ref_struct_name_cell ,fig_save_path = const_list[26:28]
     fig_folder_path ,video_save_path ,fig_name_df, data_path = const_list[28:32]
     Ca_data_exp ,Annexin_data_exp = const_list[32:34]
+
     Real_time = 80 #seconds.
+    real_close_time = 6 #s
+    close_time = int(real_close_time/dt)
+    c_pump = 3.028415e-9
+    
     ref_time = int(55/dt)
     T_tot = int(Real_time/dt) # number of time steps.
     c_in_annexin = 0
@@ -112,11 +117,11 @@ def Finding_the_pump_value():
     plt.title(
         r"Total [ $ Ca^{2+} $ ] in cell "
         +f" and " 
-        +r"$ c_{pump} $ $ \approx $ " 
-        + f"{c_pump:e}"
-        ,fontsize=15
+        +r"$ \sigma_{pump} $ $ \approx $ " 
+        + f"{(c_pump/dt):e}"
+        ,fontsize=20
         )
-    plt.xlabel("time [s]",fontsize=15)
+    plt.xlabel("time [s]",fontsize=20)
     plt.ylabel(
         r" $ \frac{ [Ca]_{tot} }{ max( [Ca]_{tot} ) } $ "
         +f"              "
@@ -346,6 +351,8 @@ def Find_pump_via_area():
 
 
     pass
+
+
 if __name__ == "__main__":
     
     Finding_the_pump_value()

@@ -247,8 +247,13 @@ def plotting_time_evolution_stabilization():
         ,num=len(sumAfree)
     )
     
-    fig, ax = plt.subplots(1,3)
+    fig, ax = plt.subplots(1,2)
     fig.canvas.manager.window.showMaximized()
+    fig.suptitle(
+        f"Time evolution of the equilibrium of free to bound annexins "
+        +f" and the total conservation of annexins"
+        ,fontsize=20
+        )
 
     ax[0].plot(time_vec1,A_f,label="analytical solution",marker='*')#,color="blue")
     ax[0].plot(time_vec2,sumAfree,label="simulation",linestyle='-',color="red")
@@ -272,14 +277,14 @@ def plotting_time_evolution_stabilization():
     A_tot = [A_f[i] + A_b[i] for i in range(len(A_f))]
     sumAtot = [i/points_inside for i in sumAtot]
     offset= 0.0001
-    ax[2].plot(time_vec1,A_tot,label="analytical solution",marker='*')
+    """ax[2].plot(time_vec1,A_tot,label="analytical solution",marker='*')
     ax[2].plot(time_vec2,sumAtot,label="simulation",linestyle='-',color="red")
     ax[2].set_title("Total Concentration \n of annexins",fontsize=15)
     ax[2].set_ylim(min(A_tot)*(1-offset),max(A_tot)*(1+offset) )
     ax[2].set_xlabel("Time (s) \n c)",fontsize=15)
     ax[2].tick_params(labelsize="large")
     ax[2].yaxis.offsetText.set_fontsize(15)
-    ax[2].legend(fontsize=15) 
+    ax[2].legend(fontsize=15) """
 
     plt.show()
 
@@ -391,6 +396,10 @@ def matshow_compare_times():
 
     df_sim = pd.read_pickle(fig_folder_path + fig_name_df)
     print(df_sim.info())
+    
+
+    #print(f"k1={df_sim['k1'][0]} and k2={df_sim['k2'][0]}")
+    
 
     
     Free_Ca = df_sim['Free Calcium'][0]
@@ -404,7 +413,7 @@ def matshow_compare_times():
     fig.canvas.manager.window.showMaximized()
 
     #fig.colorbar()
-    #fig.suptitle("hello")
+    #fig.suptitle(        )
 
     vmins = 0 #1e-9
     vmaxs = 3e-4
@@ -489,6 +498,7 @@ def radial_compare_times():
 
     k1 = df_sim['k1'][0]
     k2 = df_sim['k2'][0]
+
     
     sim_T_tot, Ysize, Xsize = np.shape(Free_Ca)
     
@@ -624,7 +634,7 @@ def radial_compare_times():
                                 ,marker = "o"
                                 )
                 ax[h,k].plot(vec,real_data_Ca[j]
-                                ,label=f"Experiment t"+r"$ \approx $"+f"{t_show}"
+                                ,label=f"Experiment (unitless) t"+r"$ \approx $"+f"{t_show}"
                                 ,linestyle="--"
                                 ,marker = "*"
                                 )
@@ -668,7 +678,7 @@ def radial_compare_times():
                                 ,marker = "o"
                                 )
                 ax[h,k].plot(vec,real_data_Ann[j]
-                                ,label=f"Experiment t"+r"$ \approx $"+f"{t_show}"
+                                ,label=f"Experiment (unitless) t"+r"$ \approx $"+f"{t_show}"
                                 ,linestyle="--"
                                 ,marker = "*"
                                 )
@@ -676,7 +686,7 @@ def radial_compare_times():
                                     ,fontsize = 15
                                     ,x=0.70
                                     )
-                ax[h,k].set_ylabel(r"[Ca]       "
+                ax[h,k].set_ylabel(r"[Annexin]         "
                                     ,rotation='horizontal'
                                     ,fontsize=15,y=0.45
                                     )
@@ -695,8 +705,8 @@ def radial_compare_times():
 if __name__ == "__main__":
     
     #plotting_ref_ring_structs()
-    plotting_ref_cell_structs()
+    #plotting_ref_cell_structs()
     #plotting_time_evolution_stabilization()
     #visual_rings()
     #matshow_compare_times()
-    #radial_compare_times()
+    radial_compare_times()

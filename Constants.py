@@ -11,7 +11,7 @@ def constants(
     Avogadro = 6.02214076e23 # 1/mol
     # time and step size, and diffusion constant
     picture_size = 83e-6 # meters
-    Real_sim_time =  1#110 #seconds
+    Real_sim_time =  110 #seconds
     real_close_time =  10 #s
     
     ref_fig_num_list = [4,27]
@@ -39,6 +39,7 @@ def constants(
     
     data_hole_open_time = frame_open*data_time_pr_frame
     real_close_time = (frame_close - frame_open)*data_time_pr_frame
+    
     
   
     len_size = 80 # number of grid points
@@ -71,7 +72,7 @@ def constants(
 
     # association and dissociation constants
     k1 = 1e4 # 1/(Ms)
-    k2 = 1e-1 #1/s 
+    k2 = 1e0 #1/s 
 
     
     bound_annexin_start = k1*A_total_conc*c_in/(k1*c_in + k2)
