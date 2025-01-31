@@ -59,9 +59,7 @@ def constants(
     
     T_tot = int(Real_sim_time/dt)
 
-    pump_multiplyer = 30 # found from sim testing.
-    c_pump = dt*(5e-8)*pump_multiplyer # Molar/second
-    c_pump_base = (3.028415305204001e-09)/(5.104687e-03)
+    c_pump_base = 5.93e-7
     c_pump =  c_pump_base*dt
     c_pump = float('{:0.2e}'.format(c_pump))
     
@@ -109,20 +107,18 @@ def constants(
             + f"    hole close time = {int(real_close_time)} s \n " 
             + f"    dx=dy = {dx:e} m \n "
             + f"    dt = {dt:e} s \n "
-            + f"    [Ca] outside cell = {c_out:e} \n "
-            + f"    [Ca] inside cell = {c_in:e} \n "
+            + f"    [Ca] outside cell = {c_out:0.1e} \n "
+            + f"    [Ca] inside cell = {c_in:0.1e} \n "
             + f"    Diffuse constant Ca in cell = {D_Ca_cyto} m^2/s \n "
             + f"    Diffuse constant Annexin in cell = {D_Annexin_cyto} m^2/s \n "
             + f"    c_pump = {c_pump} M/s \n "
             + f"    Total initial conc Annexins = {A_total_conc:e} M \n "
-            + f"    c_in_ann = {c_in_annexin:e} M \n "
-            + f"    and the bound_ann_start = {bound_annexin_start:e} M \n "
+            + f"    free annexin start = {c_in_annexin:e} M \n "
+            + f"    bound annexin start = {bound_annexin_start:e} M \n "
             + f"    k1 = {k1:0.1e} 1/Ms \n "
-            + f"    and k2 = {k2:0.1e} 1/s \n "
+            + f"    k2 = {k2:0.1e} 1/s \n "
             + f"    total number of sim steps = {T_tot:e} steps \n "
-            #+ f"    sim equil time = {1/(k1*c_in_annexin + k2)} \n "
-            #+ f"    size of grid = ({len_size},{len_size}) \n "
-            f" ------------------------------------------------------ \n \n "
+            + f" ------------------------------------------------------ \n \n "
         )
 
     args_list = [

@@ -182,7 +182,7 @@ if __name__ == "__main__":
 
     save_data = True
     
-    sim_time1 = tm.time()
+    
     Sim_data_list = main_cell_structure_sim(
         c_in,c_out,D_Ca_cyto,T_tot,len_size
         ,dx,dy,k1,k2,c_in_annexin,bound_annexin_start,D_Annexin_cyto
@@ -192,7 +192,7 @@ if __name__ == "__main__":
         ,ref_bakteria= ref_struct_name_cell
         ,data_path= data_path
                     )
-    sim_time2 = tm.time()
+    
     ref_structure,Free_Ca,Free_annexin,Bound_annexin,Bound_Ca= Sim_data_list
 
     plt.matshow(ref_structure)
@@ -225,15 +225,11 @@ if __name__ == "__main__":
     ax[0].legend()
     ax[0].set_title(f"total sum of Annexins \n dt = {dt}")
     
-    
-    #ax[1].hlines(y=sumfree[len(sumfree)-1],xmin=0,xmax=len(sumfree),label=f"{sumfree[len(sumfree)-1]}")
     ax[1].plot(time_vec,sumfree,'k',label="free annnexins")
     ax[1].set_title(f"Free Annexins, holeclosed={close_time}")
     ax[1].legend()
+       
     
-    
-    #ax[2].hlines(y=sumbound[len(sumbound)-1],xmin=0,xmax=len(sumbound),label=f"A_b_eval={sumbound[len(sumbound)-1]}")
-    #ax[2].hlines(y=A_b_init*i,xmin=0,xmax=len(sumbound),label=f"A_b_init={A_b_init*i}")
     ax[2].plot(time_vec,sumbound,'k',label="Bound Annexins")
     ax[2].set_title(f"bound Annexins, holeclosed={close_time}")
     ax[2].legend()
@@ -359,7 +355,7 @@ if __name__ == "__main__":
         plt.close("all")
 
         
-        ring_sim1 = tm.time()
+        
 
         main_ring_summing(
             fig_save_path=fig_save_path
@@ -368,9 +364,9 @@ if __name__ == "__main__":
             ,hole_pos= ""
             ,sum_quick=True
         )
-        ring_sim2 = tm.time()
         
-        compare1 = tm.time()
+        
+        
         
         main_compare(
         Real_sim_time=Real_sim_time
@@ -383,23 +379,15 @@ if __name__ == "__main__":
         ,Annexin_data=Annexin_data_exp
         ,opening_frame=frame_open
         )
-        compare2 = tm.time()
         
-        make_videos1 = tm.time()
+        
+        
         Make_video2(
             output_path=fig_folder_path
             ,input_path=video_save_path
             ,video_name= "movie.avi"
             ,fps= 8
         )
-        make_videos2 = tm.time()
+        
 
-        print(
-            f" \n --------------------------------- \n"
-            + f" simualation took = {(sim_time2-sim_time1)/60} s \n"
-            + f" ring sum took = {(ring_sim2-ring_sim1)/60} s \n"
-            + f" comparing took = {(compare2-compare1)/60} s \n"
-            + f" making video took = {(make_videos2-make_videos1)/60} s \n"
-            + f" \n --------------------------------- \n"
-        )
         

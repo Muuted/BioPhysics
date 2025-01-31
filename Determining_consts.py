@@ -26,9 +26,9 @@ def Finding_the_pump_value():
     Ca_data_exp ,Annexin_data_exp = const_list[32:34]
 
     Real_time = 80 #seconds.
-    real_close_time = 6 #s
+    #real_close_time = 6 #s
     close_time = int(real_close_time/dt)
-    c_pump = 3.028415e-9
+    #c_pump = float('{:0.2e}'.format(5.0e-7*dt))
     
     ref_time = int(55/dt)
     T_tot = int(Real_time/dt) # number of time steps.
@@ -67,7 +67,7 @@ def Finding_the_pump_value():
             ,inside_val=inside_val
                                     )
         
-
+        break
         if conc_Ca_time[ref_time]/max(conc_Ca_time) < 0.1:
             c_pump *=  (1 - d_c_pump)
             to_small = True
@@ -307,7 +307,7 @@ def Find_pump_via_area():
         plt.legend()
         plt.show()
 
-        exit()
+        
         plt.figure()
         plt.plot(ca_sim/max(ca_sim),'.-',label="sim")
         plt.plot(ca_exp[16:]/max(ca_exp),'.-',label="exp")
@@ -355,6 +355,6 @@ def Find_pump_via_area():
 
 if __name__ == "__main__":
     
-    Finding_the_pump_value()
+    #Finding_the_pump_value()
     #Annexin_equil_ratio()
-    #Find_pump_via_area()
+    Find_pump_via_area()

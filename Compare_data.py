@@ -170,6 +170,11 @@ def main_compare(
         j = i + opening_frame - 1  # getting the opening of the hole
                                     # in the experiment to match the simulation
 
+        fig.suptitle(
+            f"t={t_show}s of {T_final} for all the plots"
+            ,fontsize=25
+            )
+        
 
         ax[0,0].plot(vec,sim_ring_data_Ca[t]
                      ,label="simulation (Molar)"
@@ -181,8 +186,8 @@ def main_compare(
                      ,linestyle="--"
                      ,marker = "*"
                      )
-        ax[0,0].set_title(f"     Calcium rings average value "+"\n "
-                          +f"t={t_show}s of {T_final}"
+        ax[0,0].set_title(f"     Calcium rings average value "
+                          #+"\n "+f"t={t_show}s of {T_final}"
                           #+f"and k1={k1:.1e} , k2={k2:.1e}"
                           ,fontsize = 15
                           )
@@ -208,8 +213,8 @@ def main_compare(
                      ,marker = "*"
                     )
         ax[1,0].set_title(
-            f"Total Annexins rings average value "+"\n"
-            +f"time={t_show}s of {T_final}"
+            f"Total Annexins rings average value "
+            #+"\n"+f"time={t_show}s of {T_final}"
             ,fontsize = 15
             ,y=0.98
             )
